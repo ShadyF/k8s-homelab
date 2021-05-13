@@ -38,3 +38,16 @@ run k3sup from local machine
 `k3sup install --ip 192.168.1.184 --user master --local-path ~/.kube/config --merge --context homelab --ssh-key ~/.ssh/id_ed25519`
 
 Look into this guy for inspiration https://github.com/billimek/k8s-gitops
+
+#### Flux installation
+1. Make a personal token on github with repo privelages
+2. Install flux locally (flux-bin in AUR)
+3. Export GITHUB_TOKEN to env
+4. Run the following command
+```bash
+flux bootstrap github \                                                                                                                                                                                  Thu 13 May 2021 05:29:10 PM UTC
+--owner=ShadyF \
+--repository=homelab \
+--branch=master \
+--personal
+```
