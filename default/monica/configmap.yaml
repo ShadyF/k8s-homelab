@@ -4,6 +4,6 @@ metadata:
   name: monica-configmap
 data:
   APP_ENV: development
-  DB_HOST: monica-db-svc
+  DB_HOST: monica-db-svc.default
   DB_DATABASE: monica
   DB_USERNAME: monica
