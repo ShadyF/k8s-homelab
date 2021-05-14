@@ -23,6 +23,12 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: monica-db-secrets
+                  key: MYSQL_PASSWORD
           envFrom:
             - configMapRef:
                 name: monica-configmap

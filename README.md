@@ -60,3 +60,6 @@ flux bootstrap github \                                                         
 #### Enable sops for secret managment
 
 https://blog.sldk.de/2021/03/handling-secrets-in-flux-v2-repositories-with-sops/
+
+To encrypt data
+`sops --encrypt --in-place default/monica/secrets.yaml `
