@@ -33,7 +33,7 @@ spec:
             - secretRef:
                 name: monica-db-secrets
           volumeMounts:
-            - mountPath: "/config"
+            - mountPath: "/var/lib/mysql"
               name: mariadb-volume
 
 
