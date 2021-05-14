@@ -23,7 +23,7 @@ spec:
             claimName: mariadb-pvc
       containers:
         - name: monica-db
-          image: ghcr.io/linuxserver/mariadb
+          image: arm64v8/mariadb:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3306
