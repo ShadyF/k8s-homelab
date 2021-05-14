@@ -3,8 +3,7 @@ kind: ConfigMap
 metadata:
   name: monica-configmap
 data:
-  APP_ENV: production
-  APP_FORCE_URL: "true"
+  APP_ENV: development
   DB_HOST: monica-db-svc
   DB_DATABASE: monica
   DB_USERNAME: monica
