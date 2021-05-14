@@ -23,7 +23,7 @@ spec:
             claimName: mariadb-pvc
       containers:
         - name: monica-db
-          image: arm64v8/mariadb:latest
+          image: ghcr.io/linuxserver/mariadb:alpine
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3306
@@ -33,7 +33,7 @@ spec:
             - secretRef:
                 name: monica-db-secrets
           volumeMounts:
-            - mountPath: "/var/lib/mysql"
+            - mountPath: "/config"
               name: mariadb-volume
 
 
