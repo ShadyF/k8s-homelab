@@ -17,6 +17,10 @@ spec:
       labels:
         app: monica-db
     spec:
+      volumes:
+        - name: mariadb-volume
+          persistentVolumeClaim:
+            claimName: mariadb-pvc
       containers:
         - name: monica-db
           image: ghcr.io/linuxserver/mariadb:alpine
@@ -28,5 +32,8 @@ spec:
                 name: monica-db-configmap
             - secretRef:
                 name: monica-db-secrets
+          volumeMounts:
+            - mountPath: "/config"
+              name: mariadb-volume
 
 

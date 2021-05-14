@@ -17,6 +17,10 @@ spec:
       labels:
         app: monica
     spec:
+      volumes:
+        - name: monica-volume
+          persistentVolumeClaim:
+            claimName: monica-pvc
       containers:
         - name: monica
           image: monica:3.0.1-apache
@@ -34,5 +38,8 @@ spec:
                 name: monica-configmap
             - secretRef:
                 name: monica-secrets
+          volumeMounts:
+            - mountPath: "/var/www/html/storage"
+              name: monica-volume
 
 
