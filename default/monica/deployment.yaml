@@ -1,12 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: qbittorent-deployment
+  name: monica-deployment
   namespace: default
   labels:
     app: monica
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: monica

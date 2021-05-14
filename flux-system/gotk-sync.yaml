@@ -25,10 +25,8 @@ spec:
     kind: GitRepository
     name: flux-system
   validation: client
-  # Enable decryption
+  # Adapted from https://blog.sldk.de/2021/03/handling-secrets-in-flux-v2-repositories-with-sops/
   decryption:
-    # Use the sops provider
     provider: sops
     secretRef:
-      # Reference the new 'sops-gpg' secret
       name: sops-gpg
