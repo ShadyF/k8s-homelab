@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qbittorent-deployment
+  namespace: default
+  labels:
+    app: monica
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: monica
+  template:
+    metadata:
+      labels:
+        app: monica
+    spec:
+      containers:
+        - name: monica
+          image: monica:3.0.1-apache
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: monica-configmap
+            - secretRef:
+                name: monica-secrets
+
+

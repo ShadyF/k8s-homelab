@@ -1,9 +1,12 @@
 #### Kubectl cheatsheet commands
+
 ```bash
 # To change context
 kubectl config use-context homelab2 
 ```
+
 #### Which templating tool to use?
+
 https://learnk8s.io/templating-yaml-with-code
 
 #### Settings up raspberry pi
@@ -40,10 +43,12 @@ run k3sup from local machine
 Look into this guy for inspiration https://github.com/billimek/k8s-gitops
 
 #### Flux installation
+
 1. Make a personal token on github with repo privelages
 2. Install flux locally (flux-bin in AUR)
 3. Export GITHUB_TOKEN to env
 4. Run the following command
+
 ```bash
 flux bootstrap github \                                                                                                                                                                                  Thu 13 May 2021 05:29:10 PM UTC
 --owner=ShadyF \
@@ -51,3 +56,7 @@ flux bootstrap github \                                                         
 --branch=master \
 --personal
 ```
+
+#### Enable sops for secret managment
+
+https://blog.sldk.de/2021/03/handling-secrets-in-flux-v2-repositories-with-sops/
