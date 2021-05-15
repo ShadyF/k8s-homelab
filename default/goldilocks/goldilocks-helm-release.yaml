@@ -19,3 +19,5 @@ spec:
   values:
     vpa:
       enabled: false
+    dashboard:
+      replicaCount: 1
