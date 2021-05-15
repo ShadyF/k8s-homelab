@@ -70,3 +70,6 @@ To encrypt data
 kubectl proxy --port=8001
 NODE_NAME="k8-m1"; curl -sSL "http://localhost:8001/api/v1/nodes/${NODE_NAME}/proxy/configz" | jq '.kubeletconfig|.kind="KubeletConfiguration"|.apiVersion="kubelet.config.k8s.io/v1beta1"' > kubelet_configz_${NODE_NAME}`
 ```
+
+#### Install VPA
+https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler
