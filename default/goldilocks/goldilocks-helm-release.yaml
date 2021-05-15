@@ -18,4 +18,4 @@ spec:
       interval: 5m
   values:
     vpa:
-      enabled: true
+      enabled: false
