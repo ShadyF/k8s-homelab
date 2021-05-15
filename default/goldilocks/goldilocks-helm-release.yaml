@@ -17,6 +17,7 @@ spec:
         namespace: flux-system
       interval: 5m
   values:
+    uninstallVPA: true
     vpa:
       enabled: false
     dashboard:
