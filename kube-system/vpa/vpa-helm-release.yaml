@@ -9,7 +9,7 @@ spec:
   interval: 5m
   chart:
     spec:
-      chart: fairwinds-stable/vpa
+      chart: vpa
       version: 0.3.3
       sourceRef:
         kind: HelmRepository
