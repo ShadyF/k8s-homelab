@@ -108,8 +108,6 @@ spec:
         # image:
         #   repository: quay.io/prometheus/prometheus
         #   tag: v2.20.0
-        scrapeInterval: 15s
-        evaluationInterval: 15s
         retention: 2d
         enableAdminAPI: true
         walCompression: true
