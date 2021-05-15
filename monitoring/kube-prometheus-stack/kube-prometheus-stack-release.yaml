@@ -74,15 +74,15 @@ spec:
     kubeEtcd:
       enabled: false
     kubeControllerManager:
-      enabled: false
+      enabled: true
       # endpoints:
       # - 10.2.0.30
     kubeScheduler:
-      enabled: false
+      enabled: true
       # endpoints:
       # - 10.2.0.30
     kubeProxy:
-      enabled: false
+      enabled: true
     #    prometheus-node-exporter:
     #      tolerations:
     #        - key: "arm"
