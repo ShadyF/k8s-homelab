@@ -29,6 +29,9 @@ spec:
         - name: wireguard
           image: ghcr.io/linuxserver/wireguard:version-v1.0.20210424
           imagePullPolicy: IfNotPresent
+          securityContext:
+            capabilities:
+              add: [ "NET_ADMIN", "SYS_MODULE" ]
           ports:
             - protocol: UDP
               containerPort: 51820
