@@ -69,8 +69,10 @@ spec:
     #       sourceLabels:
     #       - node
     #       targetLabel: instance
-    #    grafana:
-    #      enabled: false
+    grafana:
+      sidecar:
+        datasources:
+          defaultDatasourceScrapeInterval: 15s
     kubeEtcd:
       enabled: false
     kubeControllerManager:
