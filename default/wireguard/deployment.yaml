@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wg-deployment
+  namespace: default
+  labels:
+    app: wireguard
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: wireguard
+  template:
+    metadata:
+      labels:
+        app: wireguard
+    spec:
+      volumes:
+        - name: wg-volume
+          persistentVolumeClaim:
+            claimName: wg-conf-pvc
+      containers:
+        - name: wireguard
+          image: ghcr.io/linuxserver/wireguard:version-v1.0.20210424
+          imagePullPolicy: IfNotPresent
+          ports:
+            - protocol: UDP
+              containerPort: 51820
+          env:
+            - name: TZ
+              value: Africa/Cairo
+            - name: SERVERPORT
+              value: "51820"
+            - name: PEERS
+              value: Laptop
+          volumeMounts:
+            - mountPath: "/config"
+              name: wg-volume
+
+
