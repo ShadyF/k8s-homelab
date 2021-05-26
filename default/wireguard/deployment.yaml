@@ -21,6 +21,10 @@ spec:
         - name: wg-volume
           persistentVolumeClaim:
             claimName: wg-conf-pvc
+        - name: lib-modules-volume
+          hostPath:
+            path: /lib/modules
+            type: Directory
       containers:
         - name: wireguard
           image: ghcr.io/linuxserver/wireguard:version-v1.0.20210424
@@ -38,5 +42,7 @@ spec:
           volumeMounts:
             - mountPath: "/config"
               name: wg-volume
+            - mountPath: "/lib/modules"
+              name: lib-modules-volume
 
 
