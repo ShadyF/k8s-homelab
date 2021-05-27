@@ -54,6 +54,7 @@ flux bootstrap github \                                                         
 --owner=ShadyF \
 --repository=homelab \
 --branch=master \
+--path=cluster/base \
 --personal
 ```
 
