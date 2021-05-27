@@ -25,4 +25,4 @@ spec:
     #      servicemonitor:
     #        enabled: true
     #        prometheusInstance: monitoring
-    installCRDs: true
+    installCRDs: false
