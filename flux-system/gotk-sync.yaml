@@ -25,3 +25,13 @@ spec:
     kind: GitRepository
     name: flux-system
   validation: client
+  # Adapted from https://blog.sldk.de/2021/03/handling-secrets-in-flux-v2-repositories-with-sops/
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-gpg
+  postBuild:
+    substitute: { }
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
