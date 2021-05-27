@@ -1,39 +1,39 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: monica-db
-  namespace: default
-  labels:
-    app: monica-db
-spec:
-  replicas: 1
-  strategy:
-    type: Recreate
-  selector:
-    matchLabels:
-      app: monica-db
-  template:
-    metadata:
-      labels:
-        app: monica-db
-    spec:
-      volumes:
-        - name: mariadb-volume
-          persistentVolumeClaim:
-            claimName: mariadb-pvc
-      containers:
-        - name: monica-db
-          image: ghcr.io/linuxserver/mariadb:alpine
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 3306
-          envFrom:
-            - configMapRef:
-                name: monica-db-configmap
-            - secretRef:
-                name: monica-db-secrets
-          volumeMounts:
-            - mountPath: "/config"
-              name: mariadb-volume
-
-
+#apiVersion: apps/v1
+#kind: Deployment
+#metadata:
+#  name: monica-db
+#  namespace: default
+#  labels:
+#    app: monica-db
+#spec:
+#  replicas: 1
+#  strategy:
+#    type: Recreate
+#  selector:
+#    matchLabels:
+#      app: monica-db
+#  template:
+#    metadata:
+#      labels:
+#        app: monica-db
+#    spec:
+#      volumes:
+#        - name: mariadb-volume
+#          persistentVolumeClaim:
+#            claimName: mariadb-pvc
+#      containers:
+#        - name: monica-db
+#          image: ghcr.io/linuxserver/mariadb:alpine
+#          imagePullPolicy: IfNotPresent
+#          ports:
+#            - containerPort: 3306
+#          envFrom:
+#            - configMapRef:
+#                name: monica-db-configmap
+#            - secretRef:
+#                name: monica-db-secrets
+#          volumeMounts:
+#            - mountPath: "/config"
+#              name: mariadb-volume
+#
+#
