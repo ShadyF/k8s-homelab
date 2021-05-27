@@ -1,0 +1,36 @@
+## This manifest will give a kustomization error if the cert-manager crds are not intalled before hand
+## Comment this file first, install the crds, then uncomment it
+#---
+#apiVersion: cert-manager.io/v1
+#kind: ClusterIssuer
+#metadata:
+#  name: letsencrypt-staging
+#spec:
+#  acme:
+#    server: https://acme-staging-v02.api.letsencrypt.org/directory
+#    email: "${SECRET_EMAIL}"
+#    privateKeySecretRef:
+#      name: letsencrypt-staging
+#    solvers:
+#      - http01:
+#          ingress:
+#            class: nginx
+#            podTemplate:
+#              spec:
+#                nodeSelector:
+#                  "kubernetes.io/os": linux
+#---
+#apiVersion: cert-manager.io/v1
+#kind: ClusterIssuer
+#metadata:
+#  name: letsencrypt-production
+#spec:
+#  acme:
+#    server: https://acme-v02.api.letsencrypt.org/directory
+#    email: "${SECRET_EMAIL}"
+#    privateKeySecretRef:
+#      name: letsencrypt-production
+#    solvers:
+#      - http01:
+#          ingress:
+#            class: nginx

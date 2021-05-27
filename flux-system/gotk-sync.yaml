@@ -1,3 +1,6 @@
+# Checkout the following links to see how to enable variable substitution
+# https://github.com/onedr0p/home-cluster/blob/main/cluster/base/core.yaml and
+# https://fluxcd.io/docs/components/kustomize/kustomization/#variable-substitution
 ---
 apiVersion: source.toolkit.fluxcd.io/v1beta1
 kind: GitRepository
@@ -30,3 +33,10 @@ spec:
     provider: sops
     secretRef:
       name: sops-gpg
+  postBuild:
+    substitute: { }
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-settings
+      - kind: Secret
+        name: cluster-secrets

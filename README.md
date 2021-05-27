@@ -62,7 +62,7 @@ flux bootstrap github \                                                         
 https://blog.sldk.de/2021/03/handling-secrets-in-flux-v2-repositories-with-sops/
 
 To encrypt data
-`sops --encrypt --in-place default/monica/secrets.yaml `
+`sops --encrypt --in-place flux-system/cluster-secrets.yaml `
 
 #### Get Kubelet config
 
@@ -72,4 +72,5 @@ NODE_NAME="k8-m1"; curl -sSL "http://localhost:8001/api/v1/nodes/${NODE_NAME}/pr
 ```
 
 #### Install VPA
+
 https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler
