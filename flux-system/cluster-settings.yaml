@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: cluster-vars
+  name: cluster-settings
   namespace: flux-system
 data:
   test: "123"
