@@ -1,16 +1,14 @@
----
+# Patches are done so that flux bootstrap does not overwrite them
+# See https://github.com/fluxcd/flux2/issues/524
+# Don't forget to include this file in the kustomization.yaml
 apiVersion: source.toolkit.fluxcd.io/v1beta1
 kind: GitRepository
 metadata:
   name: flux-system
   namespace: flux-system
 spec:
-  interval: 1m0s
-  ref:
-    branch: master
-  secretRef:
-    name: flux-system
-  url: ssh://git@github.com/ShadyF/homelab
+  ignore: |
+    *.md
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
 kind: Kustomization
@@ -18,10 +16,5 @@ metadata:
   name: flux-system
   namespace: flux-system
 spec:
-  interval: 10m0s
-  path: ./cluster/base
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-  validation: client
+  decryption:
+    provider: sops
