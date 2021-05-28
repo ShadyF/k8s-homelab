@@ -1,0 +1,32 @@
+#apiVersion: apps/v1
+#kind: Deployment
+#metadata:
+#  name: wstunnel-deployment
+#  namespace: vpn
+#  labels:
+#    app: wstunnel
+#spec:
+#  replicas: 1
+#  strategy:
+#    type: Recreate
+#  selector:
+#    matchLabels:
+#      app: wstunnel
+#  template:
+#    metadata:
+#      labels:
+#        app: wstunnel
+#    spec:
+#      hostNetwork: true
+#      dnsPolicy: ClusterFirstWithHostNet
+#      containers:
+#        - name: wstunnel
+#          image: erebe/wstunnel:latest
+#          imagePullPolicy: Always
+#          args:
+#            - "--server"
+#            - "ws://0.0.0.0:8084"
+#            - "-r"
+#            - "127.0.0.1:995"
+#          ports:
+#            - containerPort: 8084

@@ -77,3 +77,7 @@ NODE_NAME="k8-m1"; curl -sSL "http://localhost:8001/api/v1/nodes/${NODE_NAME}/pr
 #### Install VPA
 
 https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler
+
+### Tunneling wireguard via websockets
+
+https://kirill888.github.io/notes/wireguard-via-websocket/
