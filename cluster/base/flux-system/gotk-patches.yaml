@@ -18,3 +18,5 @@ metadata:
 spec:
   decryption:
     provider: sops
+    secretRef:
+      name: sops-gpg
