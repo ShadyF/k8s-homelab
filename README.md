@@ -40,6 +40,8 @@ master ALL=(ALL) NOPASSWD:ALL
 run k3sup from local machine
 `k3sup install --ip 192.168.1.184 --user master --local-path ~/.kube/config --merge --context homelab --ssh-key ~/.ssh/id_ed25519 --k3s-channel latest --no-extras`
 
+To get the kubeconfig, add `--skip-install` at the end
+
 Look into this guy for inspiration https://github.com/billimek/k8s-gitops
 
 #### Flux installation
