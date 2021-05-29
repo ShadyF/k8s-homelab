@@ -81,3 +81,6 @@ https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler
 ### Tunneling wireguard via websockets
 
 https://kirill888.github.io/notes/wireguard-via-websocket/
+
+### Buildx
+https://www.docker.com/blog/multi-arch-images/
