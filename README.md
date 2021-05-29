@@ -83,7 +83,16 @@ https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler
 https://kirill888.github.io/notes/wireguard-via-websocket/
 
 ### Buildx
+
 https://www.docker.com/blog/multi-arch-images/
 
 ### Create a docker registry secret
+
 `kubectl create secret docker-registry regcred --docker-server="https://index.docker.io/v1/" --docker-username=<username> --docker-password=<password> --docker-email=<email> --dry-run=client -oyaml > regcred.yaml`
+
+### To make pod not crash
+
+```yaml
+command: ['sleep']
+args: ['infinity']
+```

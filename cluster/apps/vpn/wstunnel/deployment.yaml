@@ -17,13 +17,13 @@ spec:
       labels:
         app: wstunnel
     spec:
-      imagePullSecrets:
-        - name: regcred
       containers:
         - name: wstunnel
           image: shadyf/wstunnel:latest
           imagePullPolicy: IfNotPresent
           command: [ '/wstunnel' ]
-          args: [ "--server", "ws://0.0.0.0:8084", "-r", "127.0.0.1:995" ]
+          args: [ "--server", "ws://0.0.0.0:48513", "-r", "wg-svc:51820" ]
           ports:
-            - containerPort: 8084
+            - containerPort: 48513
+      imagePullSecrets:
+        - name: regcred
