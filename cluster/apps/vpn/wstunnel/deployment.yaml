@@ -23,7 +23,7 @@ spec:
         - name: wstunnel
           image: shadyf/wstunnel:latest
           imagePullPolicy: IfNotPresent
-          command: ['sh -c "sleep 500"']
-#          args: [ "-c", "ws://0.0.0.0:8084", "-r", "127.0.0.1:995" ]
+          command: [ 'sleep' ]
+          args: [ "infinity" ]
           ports:
             - containerPort: 8084
