@@ -17,6 +17,7 @@ spec:
       labels:
         app: wstunnel
     spec:
+      restartPolicy: Never
       imagePullSecrets:
         - name: regcred
       containers:
