@@ -24,6 +24,7 @@ spec:
         - name: wstunnel
           image: shadyf/wstunnel:latest
           imagePullPolicy: IfNotPresent
-          args: [ "--server", "ws://0.0.0.0:8084", "-r", "127.0.0.1:995" ]
+          command: ["sh"]
+#          args: [ "--server", "ws://0.0.0.0:8084", "-r", "127.0.0.1:995" ]
           ports:
             - containerPort: 8084
