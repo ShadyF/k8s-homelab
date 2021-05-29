@@ -18,7 +18,8 @@ spec:
     - host: "home.${SECRET_DOMAIN}"
       http:
         paths:
-          - path: /
+          - pathType: Prefix
+            path: /
             backend:
               service:
                 name: wstunnel-svc
