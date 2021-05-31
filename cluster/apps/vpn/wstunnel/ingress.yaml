@@ -25,4 +25,4 @@ spec:
               service:
                 name: wstunnel-svc
                 port:
-                  number: 80
+                  number: 48513
