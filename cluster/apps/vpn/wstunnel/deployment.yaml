@@ -22,7 +22,7 @@ spec:
           image: shadyf/wstunnel:latest
           imagePullPolicy: IfNotPresent
           command: [ '/wstunnel' ]
-          args: [ "-v", "--server", "ws://0.0.0.0:48513", "-r", "wg-svc:51820" ]
+          args: [ "-v", "--server", "ws://0.0.0.0:48513", "-r", "127.0.0.1:51820" ]
           ports:
             - containerPort: 48513
       imagePullSecrets:
