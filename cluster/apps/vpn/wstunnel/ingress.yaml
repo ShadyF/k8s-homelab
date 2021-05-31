@@ -2,6 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: wstunnel-ingress
+  namespace: vpn
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
@@ -9,7 +10,6 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
     nginx.ingress.kubernetes.io/connection-proxy-header: "upgrade"
     cert-manager.io/cluster-issuer: "letsencrypt-production"
-    certmanager.k8s.io/acme-challenge-type: http01
 spec:
   tls:
     - hosts:
