@@ -15,10 +15,6 @@ spec:
       - http01:
           ingress:
             class: nginx
-            podTemplate:
-              spec:
-                nodeSelector:
-                  "kubernetes.io/os": linux
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
