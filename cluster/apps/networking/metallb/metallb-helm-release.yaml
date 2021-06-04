@@ -1,0 +1,36 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: metallb
+  namespace: networking
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: metallb
+      version: 2.4.0
+      sourceRef:
+        kind: HelmRepository
+        name: bitnami-charts
+        namespace: flux-system
+      interval: 5m
+  values:
+    configInline:
+      # The address-pools section lists the IP addresses that MetalLB is
+      # allowed to allocate, along with settings for how to advertise
+      # those addresses over BGP once assigned. You can have as many
+      # address pools as you want.
+      address-pools:
+        - # A name for the address pool. Services can request allocation
+          # from a specific address pool using this name, by listing this
+          # name under the 'metallb.universe.tf/address-pool' annotation.
+          name: metallb-cluster-pool
+          # Protocol can be used to select how the announcement is done.
+          # Supported values are bgp and layer2.
+          protocol: layer2
+          # A list of IP address ranges over which MetalLB has
+          # authority. You can list multiple ranges in a single pool, they
+          # will all share the same settings. Each range can be either a
+          # CIDR prefix, or an explicit start-end range of IPs.
+          addresses:
+            - 192.168.1.240-192.168.1.249

@@ -19,6 +19,6 @@ spec:
     controller:
       replicaCount: 1
       service:
-        type: NodePort
+        type: LoadBalancer
         # See https://docs.microsoft.com/en-us/azure/aks/concepts-network#client-source-ip-preservation
         externalTrafficPolicy: Local
