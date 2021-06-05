@@ -20,5 +20,6 @@ spec:
       replicaCount: 1
       service:
         type: LoadBalancer
+        loadBalancerIP: 192.168.1.240
         # See https://docs.microsoft.com/en-us/azure/aks/concepts-network#client-source-ip-preservation
         externalTrafficPolicy: Local
