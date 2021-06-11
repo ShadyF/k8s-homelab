@@ -1,3 +1,4 @@
+# TODO: Figure out why people add resource limits here
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
@@ -24,3 +25,15 @@ spec:
         # Also see https://metallb.universe.tf/usage/#traffic-policies for what happens when used
         # in conjuction with MetalLB
         externalTrafficPolicy: Cluster
+        config:
+          ssl-protocols: "TLSv1.3 TLSv1.2"
+          proxy-body-size: "100m"
+          # Helps with getting real IP, I think?
+          use-forwarded-headers: "true"
+        # Enable when grafana / prometheus is added
+        metrics:
+          enabled: false
+          serviceMonitor:
+            enabled: false
+#        extraArgs:
+#          default-ssl-certificate: "networking/${SECRET_DOMAIN/./-}-tls"

@@ -52,7 +52,7 @@ Look into this guy for inspiration https://github.com/billimek/k8s-gitops
 4. Run the following command
 
 ```bash
-flux bootstrap github \                                                                                                                                                                                  Thu 13 May 2021 05:29:10 PM UTC
+flux bootstrap github \                                                                                                                                                                                  
 --owner=ShadyF \
 --repository=homelab \
 --branch=master \
@@ -93,6 +93,79 @@ https://www.docker.com/blog/multi-arch-images/
 ### To make pod not crash
 
 ```yaml
-command: ['sleep']
-args: ['infinity']
+command: [ 'sleep' ]
+args: [ 'infinity' ]
 ```
+
+### Doing SD backups
+
+https://www.raspberrypi.org/documentation/linux/filesystem/backup.md
+
+### Add wifi to raspi
+
+https://itsfoss.com/connect-wifi-terminal-ubuntu/
+
+TLDR:
+
+```bash
+sudo nano /etc/netplan/50-cloud-init.yaml
+```
+
+then paste in the following under `networks`
+
+```yaml
+wifis:
+  wlan0:
+    dhcp4: true
+    optional: true
+    access-points:
+      "SSID_name":
+        password: "WiFi_password"
+```
+
+then type in the following command
+
+`sudo netplan apply`
+
+### Changing default shell
+
+```bash
+chsh --shell /usr/bin/fish
+```
+
+### Get RPI cpu temp in ubuntu
+
+`cat /sys/class/thermal/thermal_zone0/temp`
+
+### Settings up SSD
+
+https://jamesachambers.com/raspberry-pi-4-usb-boot-config-guide-for-ssd-flash-drives/
+
+### Getting Metallb to work on raspberry pi 4's wifi
+
+See https://github.com/raspberrypi/linux/issues/2677
+
+Add the following to crontab to enable promiscuous mode on startup
+
+```bash
+sudo crontab -e
+
+# Add the following line to crontab (no need for sudo since we invoked crontab with sudo)
+ip link set wlan0 promisc on
+```
+
+### Enable TRIM while using ssd
+
+See https://wiki.archlinux.org/title/Solid_state_drive
+
+```bash
+sudo systemctl enable fstrim.timer
+sudo systemctl start fstrim.timer
+```
+
+### Using cloudflare DNS challenge instead of basic acme challenge
+##### Generating cloudflare API token
+https://github.com/k8s-at-home/template-cluster-k3s#cloud-cloudflare-api-token
+
+See https://www.reddit.com/r/selfhosted/comments/ga02px/you_should_probably_know_about_letsencrypt_dns/
+

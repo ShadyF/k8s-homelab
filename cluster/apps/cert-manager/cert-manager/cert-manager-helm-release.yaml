@@ -16,13 +16,21 @@ spec:
         namespace: flux-system
       interval: 5m
   values:
-    #    webhook:
-    #      enabled: true
-    #    cainjector:
-    #      replicaCount: 1
-    #    prometheus:
-    #      enabled: true
-    #      servicemonitor:
-    #        enabled: true
-    #        prometheusInstance: monitoring
     installCRDs: false
+    webhook:
+      enabled: true
+    extraArgs:
+      - --dns01-recursive-nameservers=1.1.1.1:53
+      - --dns01-recursive-nameservers-only
+    cainjector:
+      replicaCount: 1
+    podDnsPolicy: "None"
+    podDnsConfig:
+      nameservers:
+        - "1.1.1.1"
+        - "8.8.8.8"
+#    prometheus:
+#      enabled: true
+#      servicemonitor:
+#        enabled: true
+#        prometheusInstance: monitoring
