@@ -36,7 +36,6 @@ spec:
       skip-provider-button:
       pass-authorization-header:
       email-domain: "*"
-      redirect-url: "https://auth.${SECRET_DOMAIN}/oauth2/callback"
       cookie-domain: ".${SECRET_DOMAIN}"
       whitelist-domain: ".${SECRET_DOMAIN}"
 
