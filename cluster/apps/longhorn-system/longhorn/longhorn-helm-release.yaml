@@ -20,3 +20,8 @@ spec:
       defaultClassReplicaCount: 2
     defaultSettings:
       defaultReplicaCount: 2
+    ingress:
+      enabled: true
+      host: "longhorn.${SECRET_DOMAIN}"
+      tls: true
+      tlsSecret: longhorn-tls
