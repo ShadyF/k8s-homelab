@@ -27,4 +27,5 @@ spec:
       tlsSecret: longhorn-tls
       annotations:
         kubernetes.io/ingress.class: "nginx"
+        nginx.ingress.kubernetes.io/connection-proxy-header: "upgrade"
         cert-manager.io/cluster-issuer: "letsencrypt-production"
