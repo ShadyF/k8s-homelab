@@ -27,7 +27,7 @@ spec:
     config:
       clientID: "${SECRET_OAUTH2_CLIENT_ID}"
       clientSecret: "${SECRET_OAUTH2_CLIENT_SECRET}"
-      cookieSecret: "${SECRET_OAUTH2_COOKIE_SECRET}"
+#      cookieSecret: "${SECRET_OAUTH2_COOKIE_SECRET}"
     extraArgs:
       provider: oidc
       oidc-issuer-url: "https://${SECRET_OAUTH2_DOMAIN}/"
