@@ -1,4 +1,5 @@
 # https://auth.domain.com/oauth2/callback needs to be added to callbacks in auth0
+# TODO: Add toleration to ARM devices since the image in this release will only work on ARM devices
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
@@ -19,7 +20,21 @@ spec:
     image:
       repository: "quay.io/oauth2-proxy/oauth2-proxy"
       tag: "v7.1.3-arm64"
+
     replicaCount: 1
+
+    config:
+      clientID: "${SECRET_AUTH0_CLIENT_ID}"
+      clientSecret: "${SECRET_AUTH0_CLIENT_SECRET}"
+      cookieSecret: "${SECRET_OAUTH2_COOKIE_SECRET}"
+
+    authenticatedEmailsFile:
+      enabled: true
+      # Defines how the email addresses file will be projected, via a configmap or secret
+      persistence: configmap
+      # One email per line
+      restricted_access: ${SECRET_EMAIL}
+
     ingress:
       enabled: true
       path: /oauth2
@@ -27,22 +42,12 @@ spec:
       tls:
         - hosts:
             - "auth.${SECRET_DOMAIN}"
-    config:
-      clientID: "${SECRET_AUTH0_CLIENT_ID}"
-      clientSecret: "${SECRET_AUTH0_CLIENT_SECRET}"
-      cookieSecret: "${SECRET_OAUTH2_COOKIE_SECRET}"
+
     extraArgs:
       provider: oidc
       oidc-issuer-url: "https://${SECRET_AUTH0_DOMAIN}/"
       skip-provider-button:
       pass-authorization-header:
-      email-domain: ""
+      email-domain: "*"
       cookie-domain: ".${SECRET_DOMAIN}"
       whitelist-domain: ".${SECRET_DOMAIN}"
-    # https://github.com/oauth2-proxy/manifests/blob/main/helm/oauth2-proxy/values.yaml#L50
-    authenticatedEmailsFile:
-      enabled: true
-      # Defines how the email addresses file will be projected, via a configmap or secret
-      persistence: configmap
-      # One email per line
-      restricted_access: ${SECRET_EMAIL}
