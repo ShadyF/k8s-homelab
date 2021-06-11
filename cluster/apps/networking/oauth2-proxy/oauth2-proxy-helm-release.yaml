@@ -33,7 +33,8 @@ spec:
       # Defines how the email addresses file will be projected, via a configmap or secret
       persistence: configmap
       # One email per line
-      restricted_access: ${SECRET_EMAIL}
+      restricted_access: |
+        ${SECRET_EMAIL}
 
     ingress:
       enabled: true
