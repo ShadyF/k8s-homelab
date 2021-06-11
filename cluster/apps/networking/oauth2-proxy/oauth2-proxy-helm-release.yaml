@@ -24,15 +24,16 @@ spec:
         - hosts:
             - "auth.${SECRET_DOMAIN}"
     config:
-      clientID: ${SECRET_OAUTH2_CLIENT_ID}
-      clientSecret: ${SECRET_OAUTH2_CLIENT_SECRET}
-    #      cookieSecret: "${SECRET_OAUTH2_COOKIE_SECRET}"
+      clientID: "${SECRET_AUTH0_CLIENT_ID}"
+      clientSecret: "${SECRET_AUTH0_CLIENT_SECRET}"
+      cookieSecret: "${SECRET_OAUTH2_COOKIE_SECRET}"
     extraArgs:
       provider: oidc
-      oidc-issuer-url: "https://${SECRET_OAUTH2_DOMAIN}/"
+      oidc-issuer-url: "https://${SECRET_AUTH0_DOMAIN}/"
       skip-provider-button:
       pass-authorization-header:
       email-domain: "*"
       cookie-domain: ".${SECRET_DOMAIN}"
       whitelist-domain: ".${SECRET_DOMAIN}"
+
 
