@@ -24,8 +24,8 @@ spec:
         - hosts:
             - "auth.${SECRET_DOMAIN}"
     config:
-      clientID: "${SECRET_OAUTH2_CLIENT_ID}"
-      clientSecret: "${SECRET_OAUTH2_CLIENT_SECRET}"
+      clientID: ${SECRET_OAUTH2_CLIENT_ID}
+      clientSecret: ${SECRET_OAUTH2_CLIENT_SECRET}
     #      cookieSecret: "${SECRET_OAUTH2_COOKIE_SECRET}"
     extraArgs:
       provider: oidc
