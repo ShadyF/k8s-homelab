@@ -49,6 +49,6 @@ spec:
       oidc-issuer-url: "https://${SECRET_AUTH0_DOMAIN}/"
       skip-provider-button:
       pass-authorization-header:
-      email-domain: "*"
+#      email-domain: "*"
       cookie-domain: ".${SECRET_DOMAIN}"
       whitelist-domain: ".${SECRET_DOMAIN}"
