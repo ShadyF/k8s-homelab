@@ -27,6 +27,7 @@ spec:
         externalTrafficPolicy: Cluster
         config:
           ssl-protocols: "TLSv1.3 TLSv1.2"
+          # Same size defined in cloudflare
           proxy-body-size: "100m"
           # Helps with getting real IP, I think?
           use-forwarded-headers: "true"
@@ -35,5 +36,8 @@ spec:
           enabled: false
           serviceMonitor:
             enabled: false
+        # Wildcare certificate so we don't have to define a certificate for each ingress we create
+        extraArgs:
+          default-ssl-certificate: "networking/${SECRET_DOMAIN/./-}-tls"
 #        extraArgs:
 #          default-ssl-certificate: "networking/${SECRET_DOMAIN/./-}-tls"
