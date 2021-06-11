@@ -1,3 +1,4 @@
+# https://auth.domain.com/oauth2/callback needs to be added to callbacks in auth0
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
@@ -35,8 +36,14 @@ spec:
       oidc-issuer-url: "https://${SECRET_AUTH0_DOMAIN}/"
       skip-provider-button:
       pass-authorization-header:
-      email-domain: "*"
+      email-domain: ""
       cookie-domain: ".${SECRET_DOMAIN}"
       whitelist-domain: ".${SECRET_DOMAIN}"
-
-
+    # https://github.com/oauth2-proxy/manifests/blob/main/helm/oauth2-proxy/values.yaml#L50
+    authenticatedEmailsFile:
+      enabled: true
+      # Defines how the email addresses file will be projected, via a configmap or secret
+      persistence: configmap
+      # One email per line
+      restricted_access: |-
+        ${SECRET_EMAIL}
