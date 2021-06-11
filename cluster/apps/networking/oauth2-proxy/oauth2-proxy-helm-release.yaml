@@ -1,38 +1,38 @@
-#apiVersion: helm.toolkit.fluxcd.io/v2beta1
-#kind: HelmRelease
-#metadata:
-#  name: oauth2-proxy
-#  namespace: networking
-#spec:
-#  interval: 5m
-#  chart:
-#    spec:
-#      chart: oauth2-proxy
-#      version: 3.3.2
-#      sourceRef:
-#        kind: HelmRepository
-#        name: oauth2-proxy-charts
-#        namespace: flux-system
-#      interval: 5m
-#  values:
-#    replicaCount: 1
-#    ingress:
-#      enabled: true
-#      path: /oauth2
-#      hosts: [ "auth.${SECRET_DOMAIN}" ]
-#      tls:
-#        - hosts:
-#            - "auth.${SECRET_DOMAIN}"
-#    config:
-#      clientID: "${SECRET_OAUTH2_CLIENT_ID}"
-#      clientSecret: "${SECRET_OAUTH2_CLIENT_SECRET}"
-#    #      cookieSecret: "${SECRET_OAUTH2_COOKIE_SECRET}"
-#    extraArgs:
-#      provider: oidc
-#      oidc-issuer-url: "https://${SECRET_OAUTH2_DOMAIN}/"
-#      skip-provider-button:
-#      pass-authorization-header:
-#      email-domain: "*"
-#      cookie-domain: ".${SECRET_DOMAIN}"
-#      whitelist-domain: ".${SECRET_DOMAIN}"
-#
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: oauth2-proxy
+  namespace: networking
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: oauth2-proxy
+      version: 3.3.2
+      sourceRef:
+        kind: HelmRepository
+        name: oauth2-proxy-charts
+        namespace: flux-system
+      interval: 5m
+  values:
+    replicaCount: 1
+    ingress:
+      enabled: true
+      path: /oauth2
+      hosts: [ "auth.${SECRET_DOMAIN}" ]
+      tls:
+        - hosts:
+            - "auth.${SECRET_DOMAIN}"
+    config:
+      clientID: "${SECRET_OAUTH2_CLIENT_ID}"
+      clientSecret: "${SECRET_OAUTH2_CLIENT_SECRET}"
+    #      cookieSecret: "${SECRET_OAUTH2_COOKIE_SECRET}"
+    extraArgs:
+      provider: oidc
+      oidc-issuer-url: "https://${SECRET_OAUTH2_DOMAIN}/"
+      skip-provider-button:
+      pass-authorization-header:
+      email-domain: "*"
+      cookie-domain: ".${SECRET_DOMAIN}"
+      whitelist-domain: ".${SECRET_DOMAIN}"
+
