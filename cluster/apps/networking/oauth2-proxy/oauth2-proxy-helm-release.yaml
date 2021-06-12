@@ -38,10 +38,12 @@ spec:
             - "auth.${SECRET_DOMAIN}"
     extraArgs:
       provider: google
+      skip-provider-button: false
+      email-domain:
       cookie-domain: ".${SECRET_DOMAIN}"
       whitelist-domain: ".${SECRET_DOMAIN}"
       exclude-logging-path: "/ping"
-    
+
   valuesFrom:
     - kind: Secret
       name: oauth2-proxy-helm-values
