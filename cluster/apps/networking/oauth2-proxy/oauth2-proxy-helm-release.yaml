@@ -46,7 +46,8 @@ spec:
             - "auth.${SECRET_DOMAIN}"
     extraArgs:
       provider: google
-      provider-display-name: "Home Account"
+      provider-display-name: "a valid email"
+      custom-sign-in-logo: "https://user-images.githubusercontent.com/6564442/121783721-86babe00-cbb0-11eb-8fef-54d4e7aa03b8.png"
       skip-provider-button: "false"
       pass-basic-auth: "false"
       cookie-domain: ".${SECRET_DOMAIN}"
