@@ -21,6 +21,12 @@ spec:
       repository: "quay.io/oauth2-proxy/oauth2-proxy"
       tag: "v7.1.3-arm64"
 
+    config:
+      # https://github.com/oauth2-proxy/oauth2-proxy/issues/73
+      configFile: |-
+        email_domains = []
+        upstreams = [ "file:///dev/null" ]
+
     replicaCount: 1
 
     authenticatedEmailsFile:
@@ -38,8 +44,7 @@ spec:
             - "auth.${SECRET_DOMAIN}"
     extraArgs:
       provider: google
-      skip-provider-button: false
-      email-domain:
+      skip-provider-button: "false"
       cookie-domain: ".${SECRET_DOMAIN}"
       whitelist-domain: ".${SECRET_DOMAIN}"
       exclude-logging-path: "/ping"
