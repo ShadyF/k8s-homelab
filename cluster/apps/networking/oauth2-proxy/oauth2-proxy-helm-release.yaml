@@ -1,4 +1,4 @@
-# https://auth.domain.com/oauth2/callback needs to be added to callbacks in auth0
+# If using Auth0, https://auth.domain.com/oauth2/callback needs to be added as callback in auth0
 # TODO: Add toleration to ARM devices since the image in this release will only work on ARM devices
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
@@ -22,16 +22,15 @@ spec:
       tag: "v7.1.3-arm64"
 
     config:
-      # https://github.com/oauth2-proxy/oauth2-proxy/issues/73
+      existingSecret: oauth2-proxy-client-secrets
+      # Override configFile to disable all email domains to be used
       configFile: |-
         email_domains = []
         upstreams = [ "file:///dev/null" ]
-        skip_provider_button = false
-        pass_basic_auth = false
-        pass_authorization_header = true
 
     replicaCount: 1
 
+    # Won't work if email_domains = "*"
     authenticatedEmailsFile:
       enabled: true
       # One email per line
@@ -47,11 +46,9 @@ spec:
             - "auth.${SECRET_DOMAIN}"
     extraArgs:
       provider: google
+      provider-display-name: "Home Account"
+      skip-provider-button: false
+      pass-basic-auth: false
       cookie-domain: ".${SECRET_DOMAIN}"
       whitelist-domain: ".${SECRET_DOMAIN}"
       exclude-logging-path: "/ping"
-
-  valuesFrom:
-    - kind: Secret
-      name: oauth2-proxy-helm-values
-      optional: false
