@@ -36,6 +36,12 @@ spec:
       tls:
         - hosts:
             - "auth.${SECRET_DOMAIN}"
+    extraArgs:
+      provider: google
+      cookie-domain: ".${SECRET_DOMAIN}"
+      whitelist-domain: ".${SECRET_DOMAIN}"
+      exclude-logging-path: "/ping"
+    
   valuesFrom:
     - kind: Secret
       name: oauth2-proxy-helm-values
