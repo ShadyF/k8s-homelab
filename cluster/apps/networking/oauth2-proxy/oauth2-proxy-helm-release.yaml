@@ -47,8 +47,8 @@ spec:
     extraArgs:
       provider: google
       provider-display-name: "Home Account"
-      skip-provider-button: false
-      pass-basic-auth: false
+      skip-provider-button: "false"
+      pass-basic-auth: "false"
       cookie-domain: ".${SECRET_DOMAIN}"
       whitelist-domain: ".${SECRET_DOMAIN}"
       exclude-logging-path: "/ping"
