@@ -23,6 +23,12 @@ spec:
 
     replicaCount: 1
 
+    authenticatedEmailsFile:
+      enabled: true
+      # One email per line
+      restricted_access: |
+        ${SECRET_EMAIL}
+
     ingress:
       enabled: true
       path: /oauth2
