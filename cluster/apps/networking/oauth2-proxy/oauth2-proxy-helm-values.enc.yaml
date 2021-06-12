@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+    name: oauth2-proxy-helm-values
+    namespace: networking
+data:
+    values.yaml: ENC[AES256_GCM,data:6EAH4BLvgAcHDh54l3t/NZuMYVnXQOoD1y3e3CBcc3kclG+2RXNd2D+9yV1j8+k42WwM9cxSvC7EHyb8Z27M4ziyyucEem6qQurC0Wl083TOLATWIdNwMU2qLj7UkRX2tTuiabTceZwn2j6tpVZn7IDyGoS6iEKAvbMdJkikeCPavDyhJl0eJJTPUrMAbdRVNERJuQyacChIclauZhcfvEb6hYRTEYKy9ynny5wPUw1/+OsmLEdBGgpX2lXA7Ik0o1kRaUj64/mZ4s4Eh9md0cWxn/XVYW5mMvREfjnGiULTSudmJU1Yy0D1hW3KMWML+XgGmjduShnVuqUg2vUV2ySbpC0riIRrR6sRrCfyhwV0EMHAEtjHo86GmI+JfTgpxwMXL5m9xABNiPCO54h8N4REoB2rX5a+QHJfoNbWl1HOwYIpNZwn50BhiGqDO0PogbLfb6DLO8pCQDtn0uFA3gUQ7ajWOYtkv5gJbfrw/q/dJEO9K/HTCY8cM3zm/HaAHUCUtKOhJLJrj0TAsPRH2HFiOQ6UUCFnlZ7gkiG450ZjMtocfKf8VZ+aFZ7sRNebTw7XdUF6uzu0Pw==,iv:i8oY+MBQPEm66NHdwoCLEI+WxCkV/L0FlCRV/lhXadc=,tag:GK+ffH0dOgWdtwAT2NcONQ==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age: []
+    lastmodified: "2021-06-12T10:19:37Z"
+    mac: ENC[AES256_GCM,data:IhgjyUj5gNmsC/c1k+lVQ5BhqEDCChPPt7o6zjWSC1KRqjEeqGR2AtTc2F9HCGJFhOfvZHInz8liwQxVDO87lUcAE3gXpff/fgWoy0/OGGqPipp6kxMfoEfbRzYurbIXXfrVeyFo7JP5lYbtvq8/l835wl9m8ChqZQ94MuUo0XY=,iv:d+/AIIvTyQz4C1g/7YD4J9AAO89UwgJRkUrNSN0ApKI=,tag:168B3zI/CPcNftSwqT/eCA==,type:str]
+    pgp:
+        - created_at: "2021-06-12T10:19:36Z"
+          enc: |
+            -----BEGIN PGP MESSAGE-----
+
+            hQGMA71EESEn7N2iAQv7BV/v4ux+oZ9ViMI+Mr93jfPaGeNCQq+sJDcTVtqKAQv9
+            VzW8Z4a+9a6pkUkVksviFVlfqp5jKk7DvYFxn4LaBeDHixGywWQLnbRPGjVBKp9k
+            y/tRR3qDGV0VhhaLTUUFS/6c4qeLcgpti9c9hvr/WEpu9VgU5N/3f9PYulZTnjnO
+            v+HYCFCO+SL+UX8sxK0T682kMfXyLTrF4zBzlTQSd73HbGg7FIOLo1BDOeGuVUap
+            7Jckn/3v+GJGN8j49X63njMY4JQPIJz684cWFk5C1Oms9OaTzgXCzq54XQBWGn9p
+            WxDOcZ2fvjn6T8cKOMPu9xyreeENRPvKTZIvxj/ReVg0yaxUhzNLg4ywugtHL8q0
+            LhfupfwSJ/AHXc8IVHBAbiFVbuz4jk7LYFBm2vwN9EEdkiRM9z0p7Pm4E0gUnSW4
+            LIL/+6y+JfE23cEb6w6d9PiwNQMlK3QvYT/pepl3JBgb4aLqe6r96ILSiuc7MShO
+            qw69RnKZO33VNDIyiQEp0l4B82QlpJ5qIIWosGLS479ULIj586rbtUySRcZ9Iha0
+            96zeQV72xfTMIxMZ8KBahR6S1kYQ8hi90MpHSQy+wkFXCv2MwIkZcA/C3ba6KRxc
+            Dc4i9uH8DViAmJY3uNdE
+            =boHT
+            -----END PGP MESSAGE-----
+          fp: 2D47B9C25AAD87860CC1778F7022B8F414F4AEED
+    encrypted_regex: ^(data|stringData)$
+    version: 3.7.1
