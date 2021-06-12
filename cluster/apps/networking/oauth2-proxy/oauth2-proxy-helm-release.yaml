@@ -26,6 +26,9 @@ spec:
       configFile: |-
         email_domains = []
         upstreams = [ "file:///dev/null" ]
+        skip_provider_button = false
+        pass_basic_auth = false
+        pass_authorization_header = true
 
     replicaCount: 1
 
@@ -44,7 +47,6 @@ spec:
             - "auth.${SECRET_DOMAIN}"
     extraArgs:
       provider: google
-      skip-provider-button: "false"
       cookie-domain: ".${SECRET_DOMAIN}"
       whitelist-domain: ".${SECRET_DOMAIN}"
       exclude-logging-path: "/ping"
