@@ -3,4 +3,4 @@ kind: Kustomization
 # need namespace or else this will happen
 namespace: networking
 resources:
-  - https://github.com/kubernetes-sigs/external-dns/blob/v0.8.0/docs/contributing/crd-source/crd-manifest.yaml
+  - https://raw.githubusercontent.com/kubernetes-sigs/external-dns/v0.8.0/docs/contributing/crd-source/crd-manifest.yaml
