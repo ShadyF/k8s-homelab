@@ -19,7 +19,7 @@ spec:
   values:
     image:
       registry: gcr.io
-      repository: k8s-staging-external-dns/external-dns
+      repository: gcr.io/k8s-staging-external-dns/external-dns
       tag: v20210616-v0.8.0-56-g35f25947-arm64v8
     logLevel: debug
     domainFilters:
