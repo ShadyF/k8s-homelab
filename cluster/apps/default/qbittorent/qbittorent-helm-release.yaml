@@ -46,7 +46,6 @@ spec:
       downloads:
         enabled: true
         existingClaim: nfs-media-downloads-pvc
-        mountPath: /media-rocinante
 #    resources:
 #      requests:
 #        memory: 250Mi
