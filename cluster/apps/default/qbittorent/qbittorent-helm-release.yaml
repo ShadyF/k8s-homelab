@@ -34,9 +34,9 @@ spec:
         tls:
           - hosts:
               - "qb.${SECRET_DOMAIN}"
-    securityContext:
-      fsGroup: 1000
-      runAsUser: 1000
+    podSecurityContext:
+      fsGroup: 1001
+      runAsUser: 1001
     persistence:
       config:
         enabled: true
