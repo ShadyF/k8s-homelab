@@ -26,14 +26,14 @@ spec:
           external-dns/is-public: "true"
           external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
         hosts:
-          - host: "qb.${SECRET_DOMAIN}"
+          - host: "qbit.${SECRET_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
         tls:
           - secretName: qbittorent-tls
             hosts:
-              - "qb.${SECRET_DOMAIN}"
+              - "qbit.${SECRET_DOMAIN}"
     settings:
       automaticPortSetup: true
     podSecurityContext:
@@ -46,9 +46,9 @@ spec:
       downloads:
         enabled: true
         existingClaim: nfs-media-downloads-pvc
-#    resources:
-#      requests:
-#        memory: 250Mi
-#        cpu: 500m
-#      limits:
-#        memory: 6000Mi
+    resources:
+      requests:
+        memory: 250Mi
+        cpu: 500m
+      limits:
+        memory: 6000Mi
