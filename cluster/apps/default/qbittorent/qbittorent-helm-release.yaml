@@ -34,6 +34,8 @@ spec:
         tls:
           - hosts:
               - "qb.${SECRET_DOMAIN}"
+    settings:
+      automaticPortSetup: true
     podSecurityContext:
       fsGroup: 1001
       runAsUser: 1001
