@@ -164,12 +164,75 @@ sudo systemctl start fstrim.timer
 ```
 
 ### Using cloudflare DNS challenge instead of basic acme challenge
-First things first, you'll need to change your domain's DNS to cloudflare. 
-1. Use cloudflare nameservers instead of namecheap https://www.namecheap.com/support/knowledgebase/article.aspx/9607/2210/how-to-set-up-dns-records-for-your-domain-in-cloudflare-account/
+
+First things first, you'll need to change your domain's DNS to cloudflare.
+
+1. Use cloudflare nameservers instead of
+   namecheap https://www.namecheap.com/support/knowledgebase/article.aspx/9607/2210/how-to-set-up-dns-records-for-your-domain-in-cloudflare-account/
 
 See https://cert-manager.io/docs/configuration/acme/dns01/cloudflare/
+
 ##### Generating cloudflare API token
+
 https://github.com/k8s-at-home/template-cluster-k3s#cloud-cloudflare-api-token
 
 See https://www.reddit.com/r/selfhosted/comments/ga02px/you_should_probably_know_about_letsencrypt_dns/
 
+### Reconciling using flux
+
+```bash
+# Reconcile gitcontroller (given that flux-system is the name of the gitcontroller)
+flux reconcile source git flux-system
+
+# Reconcile kustomization (given that apps is the name of the kustomization controller)
+flux reconcile kustomization apps
+
+# Reconcile a helm release
+flux reconcile helmrelease oauth2-proxy -n networking
+```
+
+### Issues regarding raspberry pi 4 freezing after certain amount of time
+
+Added usb-quirks as an initial solution
+
+https://github.com/ubuntu/microk8s/issues/2280
+
+https://github.com/k3s-io/k3s/issues/1297
+
+### Remove useless ubuntu stuff
+
+```bash
+# Remove snapd, takes up CPU and not needed on a kube node
+sudo apt autoremove --purge snapd
+```
+
+### Making cloudflare DDNS work with gargoyle / openwrt based routers
+
+https://community.cloudflare.com/t/ddns-api-not-working/22409
+TLDR - Should be `ip@domain.com` rather than `ip.domain.com`
+However, using gargoyle v1.12.0, you'll encounter another issue, the DDNS record won't be proxied.
+This is because the cloudflare-dns script doesn't send the `proxied` parameter which defaults to `false`
+
+To fix this, we're going to have to edit the cloudflare ddns script
+```bash
+# ssh into gargoyle router
+ssh root@192.168.1.1 -i gargoyle
+
+# edit cloudflare ddns script with vim
+vim /plugin_root/usr/lib/ddns-gargoyle/cloudflare-ddns-helper.sh
+
+# Go down to the end of the file and you should find this line
+{"id":"$ZONEID","type":"A","name":"$HOST","content":"$LOCAL_IP"}
+
+# Add to it the proxied parameter so that it would be like this 
+{"id":"$ZONEID","type":"A","name":"$HOST","content":"$LOCAL_IP","proxied":true}
+```
+
+### Creating an NFS server
+https://www.tecmint.com/install-nfs-server-on-ubuntu/
+
+https://www.rancher.co.jp/docs/rancher/v2.x/en/cluster-admin/volumes-and-storage/examples/nfs/
+
+### To see the data created in a longhorn volume
+1. use `lsblk -f` or `df -H` to find your desired PVC path
+2. `cd` into it
