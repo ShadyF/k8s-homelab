@@ -31,7 +31,8 @@ spec:
               - path: /
                 pathType: Prefix
         tls:
-          - hosts:
+          - secretName: qbittorent-tls
+            hosts:
               - "qb.${SECRET_DOMAIN}"
     settings:
       automaticPortSetup: true
