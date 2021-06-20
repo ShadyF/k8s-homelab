@@ -37,7 +37,7 @@ spec:
     persistence:
       config:
         enabled: true
-        existingClaim: qb-config
+        existingClaim: qb-config-pvc
       downloads:
         enabled: true
         existingClaim: nfs-media-downloads-pvc
