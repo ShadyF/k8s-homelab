@@ -58,15 +58,13 @@ spec:
         command: [ "ss-local" ]
         args: [ "-s",  "185.65.134.66", "-p", "443", "-l", "1080", "-b", "0.0.0.0", "-k", "23#dfsbbb", "-m", "chacha20" ]
         imagePullPolicy: IfNotPresent
-        stdin: true
-        tty: true
         ports:
           - containerPort: 1080
             protocol: TCP
         startupProbe:
           tcpSocket:
             port: 1080
-          initialDelaySeconds: 20
+          initialDelaySeconds: 5
           timeoutSeconds: 1
           periodSeconds: 10
           failureThreshold: 60
