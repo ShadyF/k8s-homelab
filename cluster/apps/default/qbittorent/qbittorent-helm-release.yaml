@@ -65,7 +65,7 @@ spec:
         startupProbe:
           tcpSocket:
             port: 1080
-          initialDelaySeconds: 5
+          initialDelaySeconds: 20
           timeoutSeconds: 1
           periodSeconds: 10
           failureThreshold: 60
