@@ -52,3 +52,50 @@ spec:
         cpu: 500m
       limits:
         memory: 6000Mi
+    additionalContainers:
+      - name: shadowsocks
+        image: shadowsocks/shadowsocks-libev:v3.3.5
+        command: "ss-local -s 185.65.134.66 -p 443 -l 1080 -b 0.0.0.0 -k 23#dfsbbb -m chacha20"
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 1080
+            protocol: TCP
+        startupProbe:
+          tcpSocket:
+            port: 1080
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+          periodSeconds: 10
+          failureThreshold: 60
+          successThreshold: 1
+        livenessProbe:
+          tcpSocket:
+            port: 1080
+          timeoutSeconds: 1
+          periodSeconds: 10
+          failureThreshold: 3
+          successThreshold: 1
+        readinessProbe:
+          tcpSocket:
+            port: 1080
+          timeoutSeconds: 1
+          periodSeconds: 10
+          failureThreshold: 3
+          successThreshold: 1
+#        tty: true
+#        volumeMounts:
+#          - mountPath: /config
+#            name: config
+#          - mountPath: /data
+#            name: data
+#          - mountPath: /session
+#            name: data
+#            subPath: .session
+#          - mountPath: /watch
+#            name: data
+#            subPath: watch
+#          - mountPath: /download
+#            name: data
+#            subPath: torrents
+#          - mountPath: /socket
+#            name: socket

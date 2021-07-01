@@ -210,10 +210,11 @@ sudo apt autoremove --purge snapd
 
 https://community.cloudflare.com/t/ddns-api-not-working/22409
 TLDR - Should be `ip@domain.com` rather than `ip.domain.com`
-However, using gargoyle v1.12.0, you'll encounter another issue, the DDNS record won't be proxied.
-This is because the cloudflare-dns script doesn't send the `proxied` parameter which defaults to `false`
+However, using gargoyle v1.12.0, you'll encounter another issue, the DDNS record won't be proxied. This is because the
+cloudflare-dns script doesn't send the `proxied` parameter which defaults to `false`
 
 To fix this, we're going to have to edit the cloudflare ddns script
+
 ```bash
 # ssh into gargoyle router
 ssh root@192.168.1.1 -i gargoyle
@@ -229,10 +230,51 @@ vim /plugin_root/usr/lib/ddns-gargoyle/cloudflare-ddns-helper.sh
 ```
 
 ### Creating an NFS server
+
 https://www.tecmint.com/install-nfs-server-on-ubuntu/
 
 https://www.rancher.co.jp/docs/rancher/v2.x/en/cluster-admin/volumes-and-storage/examples/nfs/
 
+#### Settings up nfs mounting in windows
+
+https://graspingtech.com/mount-nfs-share-windows-10/
+
 ### To see the data created in a longhorn volume
+
 1. use `lsblk -f` or `df -H` to find your desired PVC path
 2. `cd` into it
+
+### VPN with kube
+
+https://github.com/bjw-s/k8s-gitops/blob/10dd2f3bd358bd694b0aaed8b34618806e64842a/cluster/apps/vpn/vpn-gateway/helmrelease.yaml
+
+https://github.com/seanrclayton/kub_yaml/blob/master/pia-deluge-vpncheckkillswitch.yaml
+
+### Settings up log2ram to reduce sd card / ssd writes
+
+https://github.com/azlux/log2ram
+
+### Fixing oauth2 proxy slowing down everything
+
+https://stackoverflow.com/questions/58997958/oauth2-proxy-authentication-calls-slow-on-kubernetes-cluster-with-auth-annotatio
+
+TLDR:
+When auth-url is set to auth.domain.com, this means that the request goes outside of the cluster (so called hairpin
+mode), and goes back via External IP of Ingress that routes to internal ClusterIP Service (which adds extra hops),
+instead going directly with ClusterIP/Service DNS name (you stay within Kubernetes cluster)
+
+To solve this, set the `auth-url `to the internal `oauth2` service.
+
+**_Note:_** This doesn't happen with other repos (ones in references) because they use a split-horizon DNS, meaning they
+have a DNS internal to their network that resolves queries to internal IPs and another one externaly that resolves
+queries to external IPs.
+
+If a request is made to `auth.domain.com` from **inside** the internal network, the **internal** DNS resolves this to an
+internal IP.
+
+If a request is made to `auth.domain.com` from **outside** the network, the **external** DNS (cloudflare, google,
+etc...) resolves this to the external IP set in the DNS records.
+
+### Probes explained
+
+https://developers.redhat.com/blog/2020/11/10/you-probably-need-liveness-and-readiness-probes#
