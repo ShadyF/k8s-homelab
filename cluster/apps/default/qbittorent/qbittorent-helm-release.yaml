@@ -113,9 +113,8 @@ spec:
         #          - name: DNS
         #            value: "true"
         securityContext:
-          capabilities:
-            add: [ "NET_ADMIN", "NET_RAW" ]
-          privileged: true
+          runAsUser: 568
+          runAsGroup: 568
         #          ports:
         #            - containerPort: 1080
         #              protocol: TCP
