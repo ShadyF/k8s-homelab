@@ -46,12 +46,20 @@ spec:
       downloads:
         enabled: true
         existingClaim: nfs-media-downloads-pvc
+      openvpn-config:
+        enabled: true
+        # mountPath: "/vpn/"
+        # subPath: "configuration.yaml"
+        type: "custom"
+        volumeSpec:
+          configMap:
+            name: openvpn-config
     resources:
       requests:
         memory: 250Mi
         cpu: 500m
       limits:
-        memory: 6000Mi
+        memory: 5000Mi
     additionalContainers:
       - name: shadowsocks
         image: shadowsocks/shadowsocks-libev:v3.3.5
@@ -83,6 +91,43 @@ spec:
           periodSeconds: 10
           failureThreshold: 3
           successThreshold: 1
+      - name: openvpn
+          # repo doesn't contain semver release
+          image: dperson/openvpn-client:latest
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+#          ports:
+#            - containerPort: 1080
+#              protocol: TCP
+          volumeMounts:
+            - mountPath: /vpn
+              name: openvpn-config
+#          startupProbe:
+#            tcpSocket:
+#              port: 1080
+#            initialDelaySeconds: 5
+#            timeoutSeconds: 1
+#            periodSeconds: 10
+#            failureThreshold: 60
+#            successThreshold: 1
+#          livenessProbe:
+#            tcpSocket:
+#              port: 1080
+#            timeoutSeconds: 1
+#            periodSeconds: 10
+#            failureThreshold: 3
+#            successThreshold: 1
+#          readinessProbe:
+#            tcpSocket:
+#              port: 1080
+#            timeoutSeconds: 1
+#            periodSeconds: 10
+#            failureThreshold: 3
+#            successThreshold: 1
+
 #        tty: true
 #        volumeMounts:
 #          - mountPath: /config
