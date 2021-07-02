@@ -114,7 +114,7 @@ spec:
         #            value: "true"
         securityContext:
           capabilities:
-            add: [ "NET_ADMIN" ]
+            add: [ "NET_ADMIN", "NET_RAW" ]
         # privileged: true
         #          ports:
         #            - containerPort: 1080
