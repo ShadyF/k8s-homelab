@@ -95,10 +95,16 @@ spec:
         # repo doesn't contain semver release
         image: dperson/openvpn-client:latest
         imagePullPolicy: IfNotPresent
+        env:
+          - name: FIREWALL
+            value: "true"
+          - name: DNS
+            value: "true"
         securityContext:
           capabilities:
             add:
               - NET_ADMIN
+        # privileged: true
         #          ports:
         #            - containerPort: 1080
         #              protocol: TCP
@@ -127,21 +133,3 @@ spec:
 #            periodSeconds: 10
 #            failureThreshold: 3
 #            successThreshold: 1
-
-#        tty: true
-#        volumeMounts:
-#          - mountPath: /config
-#            name: config
-#          - mountPath: /data
-#            name: data
-#          - mountPath: /session
-#            name: data
-#            subPath: .session
-#          - mountPath: /watch
-#            name: data
-#            subPath: watch
-#          - mountPath: /download
-#            name: data
-#            subPath: torrents
-#          - mountPath: /socket
-#            name: socket
