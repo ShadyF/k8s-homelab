@@ -56,6 +56,14 @@ spec:
         enabled: true
         type: hostPath
         hostPath: "/dev/net"
+      run-tmpfs:
+        enabled: true
+        type: emptyDir
+        medium: Memory
+      tmp-tmpfs:
+        enabled: true
+        type: emptyDir
+        medium: Memory
     resources:
       requests:
         memory: 250Mi
@@ -115,6 +123,10 @@ spec:
             name: openvpn-config
           - mountPath: /dev/net
             name: dev-net
+          - mountPath: /run
+            name: run-tmpfs
+          - mountPath: /tmp
+            name: tmp-tmpfs
 #          startupProbe:
 #            tcpSocket:
 #              port: 1080
