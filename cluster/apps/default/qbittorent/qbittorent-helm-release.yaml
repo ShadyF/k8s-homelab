@@ -55,7 +55,7 @@ spec:
       dev-net:
         enabled: true
         type: hostPath
-        mountPath: "/dev/net"
+        hostPath: "/dev/net"
     resources:
       requests:
         memory: 250Mi
