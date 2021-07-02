@@ -92,19 +92,19 @@ spec:
           failureThreshold: 3
           successThreshold: 1
       - name: openvpn
-          # repo doesn't contain semver release
-          image: dperson/openvpn-client:latest
-          imagePullPolicy: IfNotPresent
-          securityContext:
-            capabilities:
-              add:
-                - NET_ADMIN
-#          ports:
-#            - containerPort: 1080
-#              protocol: TCP
-          volumeMounts:
-            - mountPath: /vpn
-              name: openvpn-config
+        # repo doesn't contain semver release
+        image: dperson/openvpn-client:latest
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          capabilities:
+            add:
+              - NET_ADMIN
+        #          ports:
+        #            - containerPort: 1080
+        #              protocol: TCP
+        volumeMounts:
+          - mountPath: /vpn
+            name: openvpn-config
 #          startupProbe:
 #            tcpSocket:
 #              port: 1080
