@@ -104,6 +104,7 @@ spec:
           capabilities:
             add:
               - NET_ADMIN
+              - SYS_MODULE
         # privileged: true
         #          ports:
         #            - containerPort: 1080
