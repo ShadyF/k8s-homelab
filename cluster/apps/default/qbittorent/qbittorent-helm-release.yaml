@@ -48,12 +48,14 @@ spec:
         existingClaim: nfs-media-downloads-pvc
       openvpn-config:
         enabled: true
-        # mountPath: "/vpn/"
-        # subPath: "configuration.yaml"
         type: "custom"
         volumeSpec:
           configMap:
             name: openvpn-config
+      dev-net:
+        enabled: true
+        type: hostPath
+        mountPath: "/dev/net"
     resources:
       requests:
         memory: 250Mi
@@ -104,7 +106,6 @@ spec:
           capabilities:
             add:
               - NET_ADMIN
-              - SYS_MODULE
         # privileged: true
         #          ports:
         #            - containerPort: 1080
@@ -112,6 +113,8 @@ spec:
         volumeMounts:
           - mountPath: /vpn
             name: openvpn-config
+          - mountPath: /dev/net
+            name: dev-net
 #          startupProbe:
 #            tcpSocket:
 #              port: 1080
