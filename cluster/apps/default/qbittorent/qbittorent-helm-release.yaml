@@ -108,9 +108,7 @@ spec:
         securityContext:
           capabilities:
             add: [ "NET_ADMIN", "SYS_MODULE" ]
-          sysctls:
-            - name: net.ipv6.conf.all.disable_ipv6
-              value: "0"
+          privileged: true
         env:
           - name: VPN_FILES
             value: "mullvad_de_fra.conf;mullvad_ca.crt"
