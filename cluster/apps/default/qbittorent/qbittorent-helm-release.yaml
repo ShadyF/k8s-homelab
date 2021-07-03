@@ -71,65 +71,63 @@ spec:
       limits:
         memory: 5000Mi
     additionalContainers:
-      - name: shadowsocks
-        image: shadowsocks/shadowsocks-libev:v3.3.5
-        command: [ "ss-local" ]
-        args: [ "-s",  "185.65.134.66", "-p", "443", "-l", "1080", "-b", "0.0.0.0", "-k", "23#dfsbbb", "-m", "chacha20" ]
-        imagePullPolicy: IfNotPresent
-        ports:
-          - containerPort: 1080
-            protocol: TCP
-        startupProbe:
-          tcpSocket:
-            port: 1080
-          initialDelaySeconds: 5
-          timeoutSeconds: 1
-          periodSeconds: 10
-          failureThreshold: 60
-          successThreshold: 1
-        livenessProbe:
-          tcpSocket:
-            port: 1080
-          timeoutSeconds: 1
-          periodSeconds: 10
-          failureThreshold: 3
-          successThreshold: 1
-        readinessProbe:
-          tcpSocket:
-            port: 1080
-          timeoutSeconds: 1
-          periodSeconds: 10
-          failureThreshold: 3
-          successThreshold: 1
+      #      - name: shadowsocks
+      #        image: shadowsocks/shadowsocks-libev:v3.3.5
+      #        command: [ "ss-local" ]
+      #        args: [ "-s",  "185.65.134.66", "-p", "443", "-l", "1080", "-b", "0.0.0.0", "-k", "23#dfsbbb", "-m", "chacha20" ]
+      #        imagePullPolicy: IfNotPresent
+      #        ports:
+      #          - containerPort: 1080
+      #            protocol: TCP
+      #        startupProbe:
+      #          tcpSocket:
+      #            port: 1080
+      #          initialDelaySeconds: 5
+      #          timeoutSeconds: 1
+      #          periodSeconds: 10
+      #          failureThreshold: 60
+      #          successThreshold: 1
+      #        livenessProbe:
+      #          tcpSocket:
+      #            port: 1080
+      #          timeoutSeconds: 1
+      #          periodSeconds: 10
+      #          failureThreshold: 3
+      #          successThreshold: 1
+      #        readinessProbe:
+      #          tcpSocket:
+      #            port: 1080
+      #          timeoutSeconds: 1
+      #          periodSeconds: 10
+      #          failureThreshold: 3
+      #          successThreshold: 1
       - name: openvpn
         # repo doesn't contain semver release
-        image: dperson/openvpn-client:aarch64
+        image: qmcgaw/gluetun:v3.19.1
         imagePullPolicy: IfNotPresent
         securityContext:
           capabilities:
-            add: [ "NET_ADMIN", "SYS_MODULE" ]
-          privileged: true
+            add: [ "NET_ADMIN" ]
         env:
-          - name: VPN_FILES
-            value: "mullvad_de_fra.conf;mullvad_ca.crt"
-#          - name: FIREWALL
-#            value: ""
-          - name: DNS
-            value: ""
-          - name: ROUTE
-            value: 127.0.0.1/32
+          - name: VPNSP
+            value: "mullvad"
+          - name: COUNTRY
+            value: "Germany,Italy"
+          - name: SHADOWSOCKS
+            value: "on"
+          - name: SHADOWSOCKS_LOG
+            value: "on"
+        envFrom:
+          - secretRef:
+              name: openvpn-secrets
         #          ports:
         #            - containerPort: 1080
         #              protocol: TCP
-        volumeMounts:
-          - mountPath: /vpn
-            name: openvpn-config
+#        volumeMounts:
+#          - mountPath: /vpn
+#            name: openvpn-config
           #          - mountPath: /dev/net
           #            name: dev-net
-          - mountPath: /run
-            name: run-tmpfs
-          - mountPath: /tmp
-            name: tmp-tmpfs
 #          startupProbe:
 #            tcpSocket:
 #              port: 1080
