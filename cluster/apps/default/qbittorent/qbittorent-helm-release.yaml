@@ -52,10 +52,10 @@ spec:
         volumeSpec:
           configMap:
             name: openvpn-config
-      dev-net:
-        enabled: true
-        type: hostPath
-        hostPath: "/dev/net"
+#      dev-net:
+#        enabled: true
+#        type: hostPath
+#        hostPath: "/dev/net"
       run-tmpfs:
         enabled: true
         type: emptyDir
