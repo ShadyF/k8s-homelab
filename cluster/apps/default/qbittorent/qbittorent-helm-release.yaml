@@ -108,6 +108,9 @@ spec:
         securityContext:
           capabilities:
             add: [ "NET_ADMIN" ]
+          runAsUser: 1001
+          runAsGroup: 1001
+          fsGroup: 1001
         env:
           - name: VPNSP
             value: "mullvad"
@@ -120,12 +123,12 @@ spec:
         envFrom:
           - secretRef:
               name: openvpn-secrets
-        #          ports:
-        #            - containerPort: 1080
-        #              protocol: TCP
-#        volumeMounts:
-#          - mountPath: /vpn
-#            name: openvpn-config
+          #          ports:
+          #            - containerPort: 1080
+          #              protocol: TCP
+          #        volumeMounts:
+          #          - mountPath: /vpn
+          #            name: openvpn-config
           #          - mountPath: /dev/net
           #            name: dev-net
 #          startupProbe:
