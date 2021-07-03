@@ -103,7 +103,7 @@ spec:
           successThreshold: 1
       - name: openvpn
         # repo doesn't contain semver release
-        image: dperson/openvpn-client:rpi
+        image: dperson/openvpn-client:aarch64
         imagePullPolicy: IfNotPresent
         securityContext:
           capabilities:
@@ -112,8 +112,8 @@ spec:
         env:
           - name: VPN_FILES
             value: "mullvad_de_fra.conf;mullvad_ca.crt"
-          - name: FIREWALL
-            value: ""
+#          - name: FIREWALL
+#            value: ""
           - name: DNS
             value: ""
           - name: ROUTE
