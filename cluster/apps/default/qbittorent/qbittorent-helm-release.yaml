@@ -105,6 +105,9 @@ spec:
         # repo doesn't contain semver release
         image: dperson/openvpn-client:latest
         imagePullPolicy: IfNotPresent
+        securityContext:
+          capabilities:
+            add: [ "NET_ADMIN", "SYS_MODULE" ]
         env:
           - name: VPN_FILES
             value: "mullvad_de_fra.conf;mullvad_ca.crt"
@@ -112,9 +115,6 @@ spec:
 #            value: ""
 #          - name: DNS
 #            value: ""
-        securityContext:
-          capabilities:
-            add: [ NET_ADMIN, NET_RAW ]
         #          ports:
         #            - containerPort: 1080
         #              protocol: TCP
