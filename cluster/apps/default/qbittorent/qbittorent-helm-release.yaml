@@ -105,22 +105,22 @@ spec:
         # repo doesn't contain semver release
         image: dperson/openvpn-client:aarch64
         imagePullPolicy: IfNotPresent
-        securityContext:
-          capabilities:
-            add: [ "NET_ADMIN", "SYS_MODULE" ]
+#        securityContext:
+#          capabilities:
+#            add: [ "NET_ADMIN", "SYS_MODULE" ]
         env:
           - name: VPN_FILES
             value: "mullvad_de_fra.conf;mullvad_ca.crt"
-#          - name: FIREWALL
-#            value: ""
-#          - name: DNS
-#            value: ""
+        #          - name: FIREWALL
+        #            value: ""
+        #          - name: DNS
+        #            value: ""
         #          ports:
         #            - containerPort: 1080
         #              protocol: TCP
         volumeMounts:
-          - mountPath: /vpn
-            name: openvpn-config
+#          - mountPath: /vpn
+#            name: openvpn-config
           #          - mountPath: /dev/net
           #            name: dev-net
           - mountPath: /run
