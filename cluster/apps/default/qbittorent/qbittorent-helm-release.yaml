@@ -108,13 +108,13 @@ spec:
         env:
           - name: VPN_FILES
             value: "mullvad_de_fra.conf;mullvad_ca.crt"
-          - name: FIREWALL
-            value: ""
-          - name: DNS
-            value: ""
+#          - name: FIREWALL
+#            value: ""
+#          - name: DNS
+#            value: ""
         securityContext:
           capabilities:
-            add: [ "NET_ADMIN", "NET_RAW" ]
+            add: [ NET_ADMIN, NET_RAW ]
         #          ports:
         #            - containerPort: 1080
         #              protocol: TCP
