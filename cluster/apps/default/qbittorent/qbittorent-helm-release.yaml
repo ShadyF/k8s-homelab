@@ -113,16 +113,16 @@ spec:
         #          - name: DNS
         #            value: "true"
         securityContext:
-          runAsUser: 568
-          runAsGroup: 568
+          capabilities:
+            add: [ "NET_ADMIN", "NET_RAW" ]
         #          ports:
         #            - containerPort: 1080
         #              protocol: TCP
         volumeMounts:
           - mountPath: /vpn
             name: openvpn-config
-          - mountPath: /dev/net
-            name: dev-net
+#          - mountPath: /dev/net
+#            name: dev-net
           - mountPath: /run
             name: run-tmpfs
           - mountPath: /tmp
