@@ -52,10 +52,10 @@ spec:
         volumeSpec:
           configMap:
             name: openvpn-config
-#      dev-net:
-#        enabled: true
-#        type: hostPath
-#        hostPath: "/dev/net"
+      #      dev-net:
+      #        enabled: true
+      #        type: hostPath
+      #        hostPath: "/dev/net"
       run-tmpfs:
         enabled: true
         type: emptyDir
@@ -108,10 +108,10 @@ spec:
         env:
           - name: VPN_FILES
             value: "mullvad_de_fra.conf;mullvad_ca.crt"
-        #          - name: FIREWALL
-        #            value: "true"
-        #          - name: DNS
-        #            value: "true"
+          - name: FIREWALL
+            value: ""
+          - name: DNS
+            value: ""
         securityContext:
           capabilities:
             add: [ "NET_ADMIN", "NET_RAW" ]
@@ -121,8 +121,8 @@ spec:
         volumeMounts:
           - mountPath: /vpn
             name: openvpn-config
-#          - mountPath: /dev/net
-#            name: dev-net
+          #          - mountPath: /dev/net
+          #            name: dev-net
           - mountPath: /run
             name: run-tmpfs
           - mountPath: /tmp
