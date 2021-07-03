@@ -107,7 +107,7 @@ spec:
         imagePullPolicy: IfNotPresent
         securityContext:
           capabilities:
-            add: [ "NET_ADMIN" ]
+            add: [ "NET_ADMIN", "SYS_MODULE" ]
         env:
           - name: VPN_FILES
             value: "mullvad_de_fra.conf;mullvad_ca.crt"
