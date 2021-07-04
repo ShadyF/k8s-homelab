@@ -56,7 +56,7 @@ spec:
       #        enabled: true
       #        type: hostPath
       #        hostPath: "/dev/net"
-      run-tmpfs:
+      gluetun:
         enabled: true
         type: emptyDir
         medium: Memory
@@ -129,11 +129,9 @@ spec:
           #          ports:
           #            - containerPort: 1080
           #              protocol: TCP
-          #        volumeMounts:
-          #          - mountPath: /vpn
-          #            name: openvpn-config
-          #          - mountPath: /dev/net
-          #            name: dev-net
+        volumeMounts:
+          - mountPath: /gluetun
+            name: gluetun
 #          startupProbe:
 #            tcpSocket:
 #              port: 1080
