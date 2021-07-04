@@ -56,10 +56,10 @@ spec:
       #        enabled: true
       #        type: hostPath
       #        hostPath: "/dev/net"
-#      gluetun:
-#        enabled: true
-#        type: emptyDir
-#        medium: Memory
+      #      gluetun:
+      #        enabled: true
+      #        type: emptyDir
+      #        medium: Memory
       tmp-tmpfs:
         enabled: true
         type: emptyDir
@@ -108,7 +108,7 @@ spec:
         securityContext:
           capabilities:
             add: [ "NET_ADMIN" ]
-          privileged: true
+          readOnlyRootFilesystem: false
         env:
           - name: VPNSP
             value: "mullvad"
