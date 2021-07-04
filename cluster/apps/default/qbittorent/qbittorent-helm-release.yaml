@@ -53,36 +53,6 @@ spec:
       limits:
         memory: 5000Mi
     additionalContainers:
-#            - name: shadowsocks
-#              image: shadowsocks/shadowsocks-libev:v3.3.5
-#              command: [ "ss-local" ]
-#              args: [ "-s",  "185.65.134.66", "-p", "443", "-l", "1080", "-b", "0.0.0.0", "-k", "23#dfsbbb", "-m", "chacha20" ]
-#              imagePullPolicy: IfNotPresent
-#              ports:
-#                - containerPort: 1080
-#                  protocol: TCP
-#              startupProbe:
-#                tcpSocket:
-#                  port: 1080
-#                initialDelaySeconds: 5
-#                timeoutSeconds: 1
-#                periodSeconds: 10
-#                failureThreshold: 60
-#                successThreshold: 1
-#              livenessProbe:
-#                tcpSocket:
-#                  port: 1080
-#                timeoutSeconds: 1
-#                periodSeconds: 10
-#                failureThreshold: 3
-#                successThreshold: 1
-#              readinessProbe:
-#                tcpSocket:
-#                  port: 1080
-#                timeoutSeconds: 1
-#                periodSeconds: 10
-#                failureThreshold: 3
-#                successThreshold: 1
       - name: openvpn
         # repo doesn't contain semver release
         image: qmcgaw/gluetun:v3.19.1
@@ -101,6 +71,8 @@ spec:
             value: "on"
           - name: PROTOCOL
             value: "tcp"
+          - name: OPENVPN_IPV6
+            value: "on"
         envFrom:
           - secretRef:
               name: openvpn-secrets
