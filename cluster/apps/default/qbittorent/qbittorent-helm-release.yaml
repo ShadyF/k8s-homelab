@@ -36,9 +36,9 @@ spec:
               - "qbit.${SECRET_DOMAIN}"
     settings:
       automaticPortSetup: true
-    podSecurityContext:
-      runAsUser: 1001
-      runAsGroup: 1001
+#    podSecurityContext:
+#      runAsUser: 1001
+#      runAsGroup: 1001
     persistence:
       config:
         enabled: true
