@@ -119,10 +119,10 @@ spec:
             value: "on"
           - name: SHADOWSOCKS_LOG
             value: "on"
-          - name: PUID
-            value: 1001
-          - name: PGID
-            value: 1001
+#          - name: PUID
+#            value: "1001"
+#          - name: PGID
+#            value: "1001"
         envFrom:
           - secretRef:
               name: openvpn-secrets
