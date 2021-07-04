@@ -107,7 +107,7 @@ spec:
         imagePullPolicy: IfNotPresent
         securityContext:
           capabilities:
-            add: [ "NET_ADMIN" ]
+            add: [ "NET_ADMIN", "SYS_MODULE" ]
           runAsUser: 1001
           runAsGroup: 1001
         env:
