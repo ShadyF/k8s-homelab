@@ -90,6 +90,7 @@ spec:
         securityContext:
           capabilities:
             add: [ "NET_ADMIN" ]
+          readOnlyRootFilesystem: false
         env:
           - name: VPNSP
             value: "mullvad"
