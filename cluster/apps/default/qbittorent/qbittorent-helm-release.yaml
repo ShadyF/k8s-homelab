@@ -36,9 +36,9 @@ spec:
               - "qbit.${SECRET_DOMAIN}"
     settings:
       automaticPortSetup: true
-    podSecurityContext:
-      fsGroup: 1001
-      runAsUser: 1001
+#    podSecurityContext:
+#      fsGroup: 1001
+#      runAsUser: 1001
     persistence:
       config:
         enabled: true
@@ -105,8 +105,8 @@ spec:
         # repo doesn't contain semver release
         image: qmcgaw/gluetun:v3.19.1
         imagePullPolicy: IfNotPresent
-#        command: [ 'sleep' ]
-#        args: [ 'infinity' ]
+        command: [ 'sleep' ]
+        args: [ 'infinity' ]
         securityContext:
           capabilities:
             add: [ "NET_ADMIN" ]
@@ -120,10 +120,10 @@ spec:
             value: "on"
           - name: SHADOWSOCKS_LOG
             value: "on"
-          - name: PUID
-            value: "1001"
-          - name: PGID
-            value: "1001"
+        #          - name: PUID
+        #            value: "1001"
+        #          - name: PGID
+        #            value: "1001"
         envFrom:
           - secretRef:
               name: openvpn-secrets
