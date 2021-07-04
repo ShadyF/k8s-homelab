@@ -56,10 +56,10 @@ spec:
       #        enabled: true
       #        type: hostPath
       #        hostPath: "/dev/net"
-      gluetun:
-        enabled: true
-        type: emptyDir
-        medium: Memory
+#      gluetun:
+#        enabled: true
+#        type: emptyDir
+#        medium: Memory
       tmp-tmpfs:
         enabled: true
         type: emptyDir
@@ -107,9 +107,8 @@ spec:
         imagePullPolicy: IfNotPresent
         securityContext:
           capabilities:
-            add: [ "NET_ADMIN", "SYS_MODULE" ]
-          runAsUser: 1001
-          runAsGroup: 1001
+            add: [ "NET_ADMIN" ]
+          privileged: true
         env:
           - name: VPNSP
             value: "mullvad"
@@ -129,9 +128,9 @@ spec:
           #          ports:
           #            - containerPort: 1080
           #              protocol: TCP
-        volumeMounts:
-          - mountPath: /gluetun
-            name: gluetun
+#        volumeMounts:
+#          - mountPath: /gluetun
+#            name: gluetun
 #          startupProbe:
 #            tcpSocket:
 #              port: 1080
