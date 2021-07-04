@@ -39,6 +39,7 @@ spec:
     podSecurityContext:
       fsGroup: 1001
       runAsUser: 1001
+      readOnlyRootFilesystem: false
     persistence:
       config:
         enabled: true
@@ -108,7 +109,6 @@ spec:
         securityContext:
           capabilities:
             add: [ "NET_ADMIN" ]
-          readOnlyRootFilesystem: false
         env:
           - name: VPNSP
             value: "mullvad"
