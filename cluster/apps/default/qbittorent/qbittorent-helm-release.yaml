@@ -36,9 +36,9 @@ spec:
               - "qbit.${SECRET_DOMAIN}"
     settings:
       automaticPortSetup: true
-#    podSecurityContext:
-#      fsGroup: 1001
-#      runAsUser: 1001
+    #    podSecurityContext:
+    #      fsGroup: 1001
+    #      runAsUser: 1001
     persistence:
       config:
         enabled: true
@@ -46,87 +46,69 @@ spec:
       downloads:
         enabled: true
         existingClaim: nfs-media-downloads-pvc
-      openvpn-config:
-        enabled: true
-        type: "custom"
-        volumeSpec:
-          configMap:
-            name: openvpn-config
-      #      dev-net:
-      #        enabled: true
-      #        type: hostPath
-      #        hostPath: "/dev/net"
-      #      gluetun:
-      #        enabled: true
-      #        type: emptyDir
-      #        medium: Memory
-      tmp-tmpfs:
-        enabled: true
-        type: emptyDir
-        medium: Memory
     resources:
       requests:
         memory: 250Mi
         cpu: 500m
       limits:
         memory: 5000Mi
-    additionalContainers:
-      #      - name: shadowsocks
-      #        image: shadowsocks/shadowsocks-libev:v3.3.5
-      #        command: [ "ss-local" ]
-      #        args: [ "-s",  "185.65.134.66", "-p", "443", "-l", "1080", "-b", "0.0.0.0", "-k", "23#dfsbbb", "-m", "chacha20" ]
-      #        imagePullPolicy: IfNotPresent
-      #        ports:
-      #          - containerPort: 1080
-      #            protocol: TCP
-      #        startupProbe:
-      #          tcpSocket:
-      #            port: 1080
-      #          initialDelaySeconds: 5
-      #          timeoutSeconds: 1
-      #          periodSeconds: 10
-      #          failureThreshold: 60
-      #          successThreshold: 1
-      #        livenessProbe:
-      #          tcpSocket:
-      #            port: 1080
-      #          timeoutSeconds: 1
-      #          periodSeconds: 10
-      #          failureThreshold: 3
-      #          successThreshold: 1
-      #        readinessProbe:
-      #          tcpSocket:
-      #            port: 1080
-      #          timeoutSeconds: 1
-      #          periodSeconds: 10
-      #          failureThreshold: 3
-      #          successThreshold: 1
-      - name: openvpn
-        # repo doesn't contain semver release
-        image: qmcgaw/gluetun:v3.19.1
-        imagePullPolicy: IfNotPresent
-        command: [ 'sleep' ]
-        args: [ 'infinity' ]
-        securityContext:
-          capabilities:
-            add: [ "NET_ADMIN" ]
-          readOnlyRootFilesystem: false
-        env:
-          - name: VPNSP
-            value: "mullvad"
-          - name: COUNTRY
-            value: "Germany,Italy"
-          - name: SHADOWSOCKS
-            value: "on"
-          - name: SHADOWSOCKS_LOG
-            value: "on"
-        #          - name: PUID
-        #            value: "1001"
-        #          - name: PGID
-        #            value: "1001"
-        envFrom:
-          - secretRef:
-              name: openvpn-secrets
+#    additionalContainers:
+#      #      - name: shadowsocks
+#      #        image: shadowsocks/shadowsocks-libev:v3.3.5
+#      #        command: [ "ss-local" ]
+#      #        args: [ "-s",  "185.65.134.66", "-p", "443", "-l", "1080", "-b", "0.0.0.0", "-k", "23#dfsbbb", "-m", "chacha20" ]
+#      #        imagePullPolicy: IfNotPresent
+#      #        ports:
+#      #          - containerPort: 1080
+#      #            protocol: TCP
+#      #        startupProbe:
+#      #          tcpSocket:
+#      #            port: 1080
+#      #          initialDelaySeconds: 5
+#      #          timeoutSeconds: 1
+#      #          periodSeconds: 10
+#      #          failureThreshold: 60
+#      #          successThreshold: 1
+#      #        livenessProbe:
+#      #          tcpSocket:
+#      #            port: 1080
+#      #          timeoutSeconds: 1
+#      #          periodSeconds: 10
+#      #          failureThreshold: 3
+#      #          successThreshold: 1
+#      #        readinessProbe:
+#      #          tcpSocket:
+#      #            port: 1080
+#      #          timeoutSeconds: 1
+#      #          periodSeconds: 10
+#      #          failureThreshold: 3
+#      #          successThreshold: 1
+#      - name: openvpn
+#        # repo doesn't contain semver release
+#        image: qmcgaw/gluetun:v3.19.1
+#        imagePullPolicy: IfNotPresent
+#        #        command: [ 'sleep' ]
+#        #        args: [ 'infinity' ]
+#        securityContext:
+#          capabilities:
+#            add: [ "NET_ADMIN" ]
+#          readOnlyRootFilesystem: false
+#        env:
+#          - name: VPNSP
+#            value: "mullvad"
+#          - name: COUNTRY
+#            value: "Germany,Italy"
+#          - name: SHADOWSOCKS
+#            value: "on"
+#          - name: SHADOWSOCKS_LOG
+#            value: "on"
+#        #          - name: PUID
+#        #            value: "1001"
+#        #          - name: PGID
+#        #            value: "1001"
+#        envFrom:
+#          - secretRef:
+#              name: openvpn-secrets
           #          ports:
           #            - containerPort: 1080
           #              protocol: TCP
