@@ -106,6 +106,8 @@ spec:
         # repo doesn't contain semver release
         image: qmcgaw/gluetun:v3.19.1
         imagePullPolicy: IfNotPresent
+        command: [ 'sleep' ]
+        args: [ 'infinity' ]
         securityContext:
           capabilities:
             add: [ "NET_ADMIN" ]
