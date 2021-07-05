@@ -111,7 +111,7 @@ spec:
               - -c
               - if curl -s https://am.i.mullvad.net/connected | grep -q "You are connected to Mullvad"  ; then exit 0; else exit $?; fi
           initialDelaySeconds: 30
-          timeoutSeconds: 1
+          timeoutSeconds: 5
           periodSeconds: 60
           failureThreshold: 3
           successThreshold: 1
