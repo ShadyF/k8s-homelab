@@ -36,6 +36,9 @@ spec:
               - "qbit.${SECRET_DOMAIN}"
     settings:
       automaticPortSetup: true
+    env:
+      - name: WAIT_FOR_VPN
+        value: "true"
     securityContext:
       runAsUser: 1001
       runAsGroup: 1001
@@ -46,6 +49,10 @@ spec:
       downloads:
         enabled: true
         existingClaim: nfs-media-downloads-pvc
+      shared:
+        enabled: true
+        type: emptyDir
+        mountPath: /shared
     resources:
       requests:
         memory: 250Mi
@@ -76,28 +83,39 @@ spec:
         envFrom:
           - secretRef:
               name: openvpn-secrets
-#                    ports:
-#                      - containerPort: 1080
-#                      protocol: TCP
-#          startupProbe:
-#            tcpSocket:
-#              port: 1080
-#            initialDelaySeconds: 5
-#            timeoutSeconds: 1
-#            periodSeconds: 10
-#            failureThreshold: 60
-#            successThreshold: 1
-#          livenessProbe:
-#            tcpSocket:
-#              port: 1080
-#            timeoutSeconds: 1
-#            periodSeconds: 10
-#            failureThreshold: 3
-#            successThreshold: 1
-#          readinessProbe:
-#            tcpSocket:
-#              port: 1080
-#            timeoutSeconds: 1
-#            periodSeconds: 10
-#            failureThreshold: 3
-#            successThreshold: 1
+        volumeMounts:
+          - mountPath: "/shared"
+            name: shared
+        # Write "connected" to the shared emptyDir to allow qbittorrent to run
+        # This should avoid situation where qbittorrent would run before the VPN, causing IP leaks
+        # There's no need to handle when the VPN disconnects since, should the VPN container still be alive, the killswitch
+        # will kick in.
+        startupProbe:
+          exec:
+            command:
+              - /bin/sh
+              - -c
+              - grep -q city /gluetun/servers.json && echo "connected" > /shared/vpnstatus
+          initialDelaySeconds: 1
+          timeoutSeconds: 1
+          periodSeconds: 5
+          failureThreshold: 30
+          successThreshold: 1
+        livenessProbe:
+          exec:
+            command:
+              - /bin/sh
+              - -c
+              - if curl -s https://am.i.mullvad.net/connected | grep -q "You are connected to Mullvad"  ; then exit 0; else exit $?; fi
+          initialDelaySeconds: 30
+          timeoutSeconds: 1
+          periodSeconds: 60
+          failureThreshold: 3
+          successThreshold: 1
+#        readinessProbe:
+#          tcpSocket:
+#            port: 1080
+#          timeoutSeconds: 1
+#          periodSeconds: 10
+#          failureThreshold: 3
+#          successThreshold: 1
