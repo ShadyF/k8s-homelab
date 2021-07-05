@@ -71,7 +71,7 @@ spec:
           - name: VPNSP
             value: "mullvad"
           - name: COUNTRY
-            value: "Germany,Italy"
+            value: "Germany,Italy,Ireland,Netherlands"
           - name: SHADOWSOCKS
             value: "on"
           - name: SHADOWSOCKS_LOG
@@ -88,8 +88,9 @@ spec:
             name: shared
         # Write "connected" to the shared emptyDir to allow qbittorrent to run
         # This should avoid situation where qbittorrent would run before the VPN, causing IP leaks
-        # There's no need to handle when the VPN disconnects since, should the VPN container still be alive, the killswitch
-        # will kick in.
+        # There's no need to handle when the VPN disconnects since the VPN container has a built in killswitch.
+        # Moreover, if the container goes down (due to the liveness probe), the pod itself won't run (verify this, saw this behaviour but not 100% sure)
+        # See https://docs.k8s-at-home.com/our-helm-charts/common-library-add-ons/#openvpn
         startupProbe:
           exec:
             command:
