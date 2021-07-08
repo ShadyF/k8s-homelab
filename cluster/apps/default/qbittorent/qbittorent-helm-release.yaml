@@ -89,7 +89,7 @@ spec:
           - name: OPENVPN_IPV6
             value: "on"
           - name: OPENVPN_TARGET_IP
-            value: "127.0.0.1:1080"
+            value: "127.0.0.1"
           - name: PORT
             value: "1080"
           - name: DOT_PROVIDERS
