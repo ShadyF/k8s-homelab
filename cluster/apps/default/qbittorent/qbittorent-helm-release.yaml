@@ -49,6 +49,14 @@ spec:
       downloads:
         enabled: true
         existingClaim: nfs-media-downloads-pvc
+      openvpn-config:
+        enabled: true
+        type: "custom"
+        secret:
+          secretName: openvpn-secrets
+          items:
+            - key: mullvad_de_fra.conf
+              path: mullvad_de_fra.conf
       shared:
         enabled: true
         type: emptyDir
@@ -76,14 +84,18 @@ spec:
           capabilities:
             add: [ "NET_ADMIN" ]
         env:
-          - name: VPNSP
-            value: "mullvad"
-          - name: COUNTRY
-            value: "Netherlands,Italy,Germany,Ireland"
-          - name: SHADOWSOCKS
-            value: "on"
-          - name: SHADOWSOCKS_LOG
-            value: "on"
+          - name: OPENVPN_USER
+            valueFrom:
+              secretKeyRef:
+                name: openvpn-secrets
+                key: OPENVPN_USER
+          - name: OPENVPN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: openvpn-secrets
+                key: OPENVPN_PASSWORD
+          - name: OPENVPN_CUSTOM_CONFIG
+            value: "/gluetun/mullvad_de_fra.conf"
           - name: PROTOCOL
             value: "tcp"
           - name: OPENVPN_IPV6
@@ -92,12 +104,12 @@ spec:
             value: "google"
           - name: TZ
             value: "Africa/Cairo"
-        envFrom:
-          - secretRef:
-              name: openvpn-secrets
         volumeMounts:
           - mountPath: "/shared"
             name: shared
+          - name: openvpn-conf
+            mountPath: "/gluetun"
+            readOnly: true
         # Write "connected" to the shared emptyDir to allow qbittorrent to run
         # This should avoid situation where qbittorrent would run before the VPN, causing IP leaks
         # There's no need to handle when the VPN disconnects since the VPN container has a built in killswitch.
