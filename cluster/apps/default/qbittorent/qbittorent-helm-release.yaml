@@ -97,8 +97,8 @@ spec:
                 key: OPENVPN_PASSWORD
           - name: OPENVPN_CUSTOM_CONFIG
             value: "/gluetun/custom/mullvad_de_fra.conf"
-          - name: FIREWALL_OUTBOUND_SUBNETS
-            value: 127.0.0.1/32
+          - name: FIREWALL_INPUT_PORTS
+            value: "443,1080"
           - name: PROTOCOL
             value: "tcp"
           - name: OPENVPN_IPV6
