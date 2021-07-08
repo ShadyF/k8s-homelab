@@ -107,9 +107,8 @@ spec:
         volumeMounts:
           - mountPath: "/shared"
             name: shared
-          - name: openvpn-conf
+          - name: openvpn-config
             mountPath: "/gluetun"
-            readOnly: true
         # Write "connected" to the shared emptyDir to allow qbittorrent to run
         # This should avoid situation where qbittorrent would run before the VPN, causing IP leaks
         # There's no need to handle when the VPN disconnects since the VPN container has a built in killswitch.
