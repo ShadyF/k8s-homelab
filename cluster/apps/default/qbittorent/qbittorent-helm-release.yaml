@@ -99,6 +99,8 @@ spec:
             value: "/gluetun/custom/mullvad_de_fra.conf"
           - name: FIREWALL_INPUT_PORTS
             value: "443,1080"
+          - name: FIREWALL
+            value: "off"
           - name: FIREWALL_DEBUG
             value: "on"
           - name: PROTOCOL
