@@ -91,7 +91,7 @@ spec:
           - name: OPENVPN_TARGET_IP
             value: "127.0.0.1"
           - name: PORT
-            value: "1080"
+            value: "1401"
           - name: DOT_PROVIDERS
             value: "google"
           - name: TZ
