@@ -60,9 +60,17 @@ spec:
       limits:
         memory: 5000Mi
     additionalContainers:
+      - name: shadowsocks
+        image: shadowsocks/shadowsocks-libev:v3.3.5
+        command: [ "ss-local" ]
+        args: [ "-s",  "185.65.134.66", "-p", "443", "-l", "8388", "-b", "0.0.0.0", "-k", "23#dfsbbb", "-m", "chacha20" ]
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 1080
+            protocol: TCP
       - name: openvpn
         # repo doesn't contain semver release
-        image: qmcgaw/gluetun:latest
+        image: qmcgaw/gluetun:v3.19.1
         imagePullPolicy: IfNotPresent
         securityContext:
           capabilities:
