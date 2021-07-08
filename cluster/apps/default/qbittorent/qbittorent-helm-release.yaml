@@ -91,10 +91,7 @@ spec:
                 name: openvpn-secrets
                 key: OPENVPN_USER
           - name: OPENVPN_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: openvpn-secrets
-                key: OPENVPN_PASSWORD
+            value: "m"
           - name: OPENVPN_CUSTOM_CONFIG
             value: "/gluetun/custom/mullvad_de_fra.conf"
           - name: FIREWALL_OUTBOUND_SUBNETS
