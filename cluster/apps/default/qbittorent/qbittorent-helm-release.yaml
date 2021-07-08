@@ -49,8 +49,8 @@ spec:
       downloads:
         enabled: true
         existingClaim: nfs-media-downloads-pvc
-#      openvpn-config:
-#        enabled: true
+      openvpn-config:
+        enabled: true
 #        type: "custom"
 #        secret:
 #          secretName: openvpn-secrets
