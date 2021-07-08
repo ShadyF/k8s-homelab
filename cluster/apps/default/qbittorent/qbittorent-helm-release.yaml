@@ -82,6 +82,8 @@ spec:
             value: "on"
           - name: DOT_PROVIDERS
             value: "google"
+          - name: TZ
+            value: "Africa/Cairo"
         envFrom:
           - secretRef:
               name: openvpn-secrets
