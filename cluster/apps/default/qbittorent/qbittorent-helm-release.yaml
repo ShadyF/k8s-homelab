@@ -102,7 +102,7 @@ spec:
           - name: FIREWALL_VPN_INPUT_PORTS
             value: "443"
           - name: FIREWALL
-            value: "on"
+            value: "off"
           - name: FIREWALL_DEBUG
             value: "on"
           - name: PROTOCOL
