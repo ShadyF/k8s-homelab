@@ -98,11 +98,11 @@ spec:
           - name: OPENVPN_CUSTOM_CONFIG
             value: "/gluetun/custom/mullvad_de_fra.conf"
           - name: FIREWALL_INPUT_PORTS
-            value: "443"
+            value: "443,1080"
           - name: FIREWALL_VPN_INPUT_PORTS
-            value: "443"
+            value: "443,1080"
           - name: FIREWALL
-            value: "off"
+            value: "on"
           - name: FIREWALL_DEBUG
             value: "on"
           - name: PROTOCOL
