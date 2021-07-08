@@ -52,11 +52,12 @@ spec:
       openvpn-config:
         enabled: true
         type: "custom"
-        secret:
-          secretName: openvpn-secrets
-          items:
-            - key: "mullvad_de_fra.conf"
-              path: "mullvad_de_fra.conf"
+        volumeSpec:
+          secret:
+            secretName: openvpn-secrets
+            items:
+              - key: mullvad_de_fra.conf
+                path: mullvad_de_fra.conf
       shared:
         enabled: true
         type: emptyDir
