@@ -72,10 +72,10 @@ spec:
       - name: shadowsocks
         image: shadowsocks/shadowsocks-libev:v3.3.5
         command: [ "ss-local" ]
-        args: [ "-s",  "185.65.134.66", "-p", "443", "-l", "1401", "-b", "0.0.0.0", "-k", "23#dfsbbb", "-m", "chacha20" ]
+        args: [ "-s",  "185.65.134.66", "-p", "443", "-l", "1080", "-b", "0.0.0.0", "-k", "23#dfsbbb", "-m", "chacha20" ]
         imagePullPolicy: IfNotPresent
         ports:
-          - containerPort: 1401
+          - containerPort: 1080
             protocol: TCP
       - name: openvpn
         # repo doesn't contain semver release
