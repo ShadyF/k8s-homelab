@@ -71,7 +71,7 @@ spec:
           - name: VPNSP
             value: "mullvad"
           - name: COUNTRY
-            value: "Germany,Italy,Ireland,Netherlands"
+            value: "Netherlands,Italy,Germany,Ireland"
           - name: SHADOWSOCKS
             value: "on"
           - name: SHADOWSOCKS_LOG
