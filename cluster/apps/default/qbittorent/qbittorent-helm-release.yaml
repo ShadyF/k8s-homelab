@@ -51,12 +51,12 @@ spec:
         existingClaim: nfs-media-downloads-pvc
       openvpn-config:
         enabled: true
-#        type: "custom"
-#        secret:
-#          secretName: openvpn-secrets
-#          items:
-#            - key: mullvad_de_fra.conf
-#              path: mullvad_de_fra.conf
+        type: "custom"
+        secret:
+          secretName: openvpn-secrets
+          items:
+            - key: "mullvad_de_fra.conf"
+              path: "mullvad_de_fra.conf"
       shared:
         enabled: true
         type: emptyDir
