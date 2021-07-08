@@ -62,7 +62,7 @@ spec:
     additionalContainers:
       - name: openvpn
         # repo doesn't contain semver release
-        image: qmcgaw/gluetun:v3.19.1
+        image: qmcgaw/gluetun:latest
         imagePullPolicy: IfNotPresent
         securityContext:
           capabilities:
