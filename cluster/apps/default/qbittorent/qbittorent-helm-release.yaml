@@ -95,7 +95,7 @@ spec:
                 name: openvpn-secrets
                 key: OPENVPN_PASSWORD
           - name: OPENVPN_CUSTOM_CONFIG
-            value: "/gluetun/mullvad_de_fra.conf"
+            value: "/gluetun/custom/mullvad_de_fra.conf"
           - name: PROTOCOL
             value: "tcp"
           - name: OPENVPN_IPV6
@@ -108,7 +108,7 @@ spec:
           - mountPath: "/shared"
             name: shared
           - name: openvpn-config
-            mountPath: "/gluetun"
+            mountPath: "/gluetun/custom/"
         # Write "connected" to the shared emptyDir to allow qbittorrent to run
         # This should avoid situation where qbittorrent would run before the VPN, causing IP leaks
         # There's no need to handle when the VPN disconnects since the VPN container has a built in killswitch.
