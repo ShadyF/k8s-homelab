@@ -25,6 +25,7 @@ spec:
             enabled: true
             primary: false
             port: 3000
+            targetPort: 3000
             protocol: HTTP
     ingress:
       main:
