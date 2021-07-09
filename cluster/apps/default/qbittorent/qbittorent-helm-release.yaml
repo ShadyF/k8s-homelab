@@ -39,8 +39,8 @@ spec:
       - name: WAIT_FOR_VPN
         value: "true"
     securityContext:
-      runAsUser: 1002
-      runAsGroup: 1002
+      runAsUser: 1001
+      runAsGroup: 1001
     persistence:
       config:
         enabled: true
@@ -74,6 +74,9 @@ spec:
       - name: flood
         image: jesec/flood:4.6.1
         imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 3000
+            protocol: TCP
         env:
           - name: FLOOD_OPTION_AUTH
             value: "none"
