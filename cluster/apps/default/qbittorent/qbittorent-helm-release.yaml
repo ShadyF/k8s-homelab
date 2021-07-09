@@ -82,8 +82,8 @@ spec:
             value: "none"
           - name: FLOOD_OPTION_QBURL
             value: "http://127.0.0.1:8080"
-          - name: FLOOD_OPTION_RUNDIR
-            value: "/config"
+#          - name: FLOOD_OPTION_RUNDIR
+#            value: "/config"
         volumeMounts:
           - name: flood-config
             mountPath: "/config"
