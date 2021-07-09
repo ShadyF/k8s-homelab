@@ -48,6 +48,7 @@ spec:
       flood-config:
         enabled: true
         existingClaim: flood-config-pvc
+        readOnly: false
       downloads:
         enabled: true
         existingClaim: nfs-media-downloads-pvc
@@ -82,8 +83,12 @@ spec:
             value: "none"
           - name: FLOOD_OPTION_QBURL
             value: "http://127.0.0.1:8080"
-#          - name: FLOOD_OPTION_RUNDIR
-#            value: "/config"
+          - name: FLOOD_OPTION_RUNDIR
+            value: "/config"
+          - name: FLOOD_OPTION_QBUSER
+            value: dummy
+          - name: FLOOD_OPTION_QBPASS
+            value: dummy2
         volumeMounts:
           - name: flood-config
             mountPath: "/config"
