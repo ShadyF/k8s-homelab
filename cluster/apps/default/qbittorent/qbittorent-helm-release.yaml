@@ -57,9 +57,9 @@ spec:
             paths:
               - path: /
                 pathType: Prefix
-            service:
-              name: qbittorrent-flood
-              port: 3000
+                service:
+                  name: qbittorrent
+                  port: 3000
         tls:
           - secretName: flood-tls
             hosts:
