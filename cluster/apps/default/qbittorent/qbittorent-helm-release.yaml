@@ -39,12 +39,15 @@ spec:
       - name: WAIT_FOR_VPN
         value: "true"
     securityContext:
-      runAsUser: 1001
-      runAsGroup: 1001
+      runAsUser: 1002
+      runAsGroup: 1002
     persistence:
       config:
         enabled: true
         existingClaim: qb-config-pvc
+      flood-config:
+        enabled: true
+        existingClaim: flood-config-pvc
       downloads:
         enabled: true
         existingClaim: nfs-media-downloads-pvc
@@ -68,6 +71,21 @@ spec:
       limits:
         memory: 5000Mi
     additionalContainers:
+      - name: flood
+        image: jesec/flood:4.6.1
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: FLOOD_OPTION_AUTH
+            value: "none"
+          - name: FLOOD_OPTION_QBURL
+            value: "http://127.0.0.1:8080"
+          - name: FLOOD_OPTION_RUNDIR
+            value: "/config"
+        volumeMounts:
+          - name: flood-config
+            mountPath: "/config"
+          - name: downloads
+            mountPath: "/downloads"
       - name: shadowsocks
         image: shadowsocks/shadowsocks-libev:v3.3.5
         command: [ "ss-local" ]
