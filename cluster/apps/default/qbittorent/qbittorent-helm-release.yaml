@@ -1,4 +1,3 @@
----
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
@@ -78,7 +77,6 @@ spec:
           - containerPort: 1080
             protocol: TCP
       - name: openvpn
-        # repo doesn't contain semver release
         image: qmcgaw/gluetun:v3.19.1
         imagePullPolicy: IfNotPresent
         securityContext:
@@ -90,13 +88,9 @@ spec:
               secretKeyRef:
                 name: openvpn-secrets
                 key: OPENVPN_USER
-          - name: OPENVPN_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: openvpn-secrets
-                key: OPENVPN_PASSWORD
           - name: OPENVPN_CUSTOM_CONFIG
             value: "/gluetun/custom/mullvad_de_fra.conf"
+          # Should be the same as the shadowsocks bridge server
           - name: FIREWALL_OUTBOUND_SUBNETS
             value: "185.213.155.66/32"
           - name: PROTOCOL
@@ -139,10 +133,3 @@ spec:
           periodSeconds: 120
           failureThreshold: 5
           successThreshold: 1
-#        readinessProbe:
-#          tcpSocket:
-#            port: 1080
-#          timeoutSeconds: 1
-#          periodSeconds: 10
-#          failureThreshold: 3
-#          successThreshold: 1
