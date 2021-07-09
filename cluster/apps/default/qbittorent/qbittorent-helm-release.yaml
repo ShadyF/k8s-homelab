@@ -88,6 +88,11 @@ spec:
               secretKeyRef:
                 name: openvpn-secrets
                 key: OPENVPN_USER
+          - name: OPENVPN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: openvpn-secrets
+                key: OPENVPN_PASSWORD
           - name: OPENVPN_CUSTOM_CONFIG
             value: "/gluetun/custom/mullvad_de_fra.conf"
           # Should be the same as the shadowsocks bridge server
