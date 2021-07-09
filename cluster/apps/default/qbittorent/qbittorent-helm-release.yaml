@@ -46,14 +46,13 @@ spec:
         enabled: true
         existingClaim: qb-config-pvc
       flood-config:
-        enabled: true
+        enabled: false
         existingClaim: flood-config-pvc
-        readOnly: false
       downloads:
         enabled: true
         existingClaim: nfs-media-downloads-pvc
       openvpn-config:
-        enabled: true
+        enabled: false
         type: "custom"
         volumeSpec:
           secret:
@@ -92,8 +91,10 @@ spec:
         volumeMounts:
           - name: flood-config
             mountPath: "/config"
+            readOnly: false
           - name: downloads
             mountPath: "/downloads"
+            readOnly: true
       - name: shadowsocks
         image: shadowsocks/shadowsocks-libev:v3.3.5
         command: [ "ss-local" ]
