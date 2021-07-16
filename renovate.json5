@@ -1,0 +1,25 @@
+{
+  "enabled": true,
+  "timezone": "Africa/Cairo",
+  "semanticCommits": "enabled",
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "Renovate Dashboard",
+  "commitBody": "Signed-off-by: Shady Fanous <shadyf@users.noreply.github.com>",
+  // Do not notify on closed unmerged PRs
+  "suppressNotifications": ["prIgnoreNotification"],
+  // Do not rebase PRs
+  "rebaseWhen": "conflicted",
+  "helm-values": {
+    "fileMatch": [
+      "cluster/.+/helm-release\\.yaml$",
+    ],
+  },
+  "kubernetes": {
+    "fileMatch": [
+      "cluster/.+\\.yaml$",
+    ],
+    "ignorePaths": [
+      "cluster/base/",
+    ],
+  }
+}
