@@ -235,9 +235,18 @@ https://www.tecmint.com/install-nfs-server-on-ubuntu/
 
 https://www.rancher.co.jp/docs/rancher/v2.x/en/cluster-admin/volumes-and-storage/examples/nfs/
 
+https://linuxize.com/post/how-to-mount-an-nfs-share-in-linux/
+
+#### Mounting nfs volume in linux on startup
+
+TLDR, add the following to /et/fstab
+`192.168.1.xxx:/srv/nfs /home/<user>/nfs  nfs      defaults    0       0`
+
 #### Settings up nfs mounting in windows
 
-https://graspingtech.com/mount-nfs-share-windows-10/
+https://docs.datafabric.hpe.com/62/AdministratorGuide/MountingNFSonWindowsClient.html
+**NOTE:** Use `AnonymousUID` and `AnonymousGID` instead of `AnonymousUid` and `AnonymousGid` when setting UID and GID
+values in windows registry editor
 
 ### To see the data created in a longhorn volume
 
@@ -278,3 +287,8 @@ etc...) resolves this to the external IP set in the DNS records.
 ### Probes explained
 
 https://developers.redhat.com/blog/2020/11/10/you-probably-need-liveness-and-readiness-probes#
+
+https://blog.devgenius.io/understanding-kubernetes-probes-5daaff67599a (Great article)
+
+TL/DR: there is no default readiness probe ("should I send this pod traffic?") and the default liveness probe ("should I
+kill this pod?") is just whether the container is still running.

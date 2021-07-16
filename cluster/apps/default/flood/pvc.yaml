@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: qb-config-pvc
+  name: flood-config-pvc
   namespace: default
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   storageClassName: longhorn
   resources:
     requests:
-      storage: 100Mi
+      storage: 50Mi
