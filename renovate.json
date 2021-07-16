@@ -1,5 +1,10 @@
 {
   "extends": [
     "config:base"
-  ]
+  ],
+  "kubernetes": {
+    "fileMatch": [
+      "cluster/.+\\.yaml$"
+    ]
+  }
 }
