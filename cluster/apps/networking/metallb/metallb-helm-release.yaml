@@ -7,6 +7,7 @@ spec:
   interval: 5m
   chart:
     spec:
+      # renovate: registryUrl=https://charts.bitnami.com/bitnami
       chart: metallb
       version: 2.4.2
       sourceRef:
@@ -40,9 +41,9 @@ spec:
         registry: docker.io
         repository: metallb/controller
         tag: v0.10.1
-#      tolerations:
-#        - key: "arm"
-#          operator: "Exists"
+    #      tolerations:
+    #        - key: "arm"
+    #          operator: "Exists"
     speaker:
       image:
         registry: docker.io
