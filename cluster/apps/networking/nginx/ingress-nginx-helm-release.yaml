@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: ingress-nginx
-      version: 3.31.0
+      version: 3.34.0
       sourceRef:
         kind: HelmRepository
         name: ingress-nginx-charts
@@ -25,19 +25,19 @@ spec:
         # Also see https://metallb.universe.tf/usage/#traffic-policies for what happens when used
         # in conjuction with MetalLB
         externalTrafficPolicy: Cluster
-        config:
-          ssl-protocols: "TLSv1.3 TLSv1.2"
-          # Same size defined in cloudflare
-          proxy-body-size: "100m"
-          # Helps with getting real IP, I think?
-          use-forwarded-headers: "true"
-        # Enable when grafana / prometheus is added
-        metrics:
+      config:
+        ssl-protocols: "TLSv1.3 TLSv1.2"
+        # Same size defined in cloudflare
+        proxy-body-size: "100m"
+        # Helps with getting real IP, I think?
+        use-forwarded-headers: "true"
+      # Enable when grafana / prometheus is added
+      metrics:
+        enabled: false
+        serviceMonitor:
           enabled: false
-          serviceMonitor:
-            enabled: false
-        # Wildcare certificate so we don't have to define a certificate for each ingress we create
-        extraArgs:
-          default-ssl-certificate: "networking/${SECRET_DOMAIN/./-}-tls"
+      # Wildcare certificate so we don't have to define a certificate for each ingress we create
+      extraArgs:
+        default-ssl-certificate: "networking/${SECRET_DOMAIN/./-}-tls"
 #        extraArgs:
 #          default-ssl-certificate: "networking/${SECRET_DOMAIN/./-}-tls"
