@@ -6,7 +6,9 @@
   "dependencyDashboardTitle": "Renovate Dashboard",
   "commitBody": "Signed-off-by: Shady Fanous <shadyf@users.noreply.github.com>",
   // Do not notify on closed unmerged PRs
-  "suppressNotifications": ["prIgnoreNotification"],
+  "suppressNotifications": [
+    "prIgnoreNotification"
+  ],
   // Do not rebase PRs
   "rebaseWhen": "conflicted",
   "helm-values": {
@@ -21,5 +23,117 @@
     "ignorePaths": [
       "cluster/base/",
     ],
-  }
+  },
+  "packageRules": [
+    // Setup datasources
+    {
+      "matchDatasources": [
+        "helm"
+      ],
+      "semanticCommitScope": "charts",
+      "commitMessageTopic": "{{depName}}",
+      "commitMessageExtra": "to {{{newValue}}}",
+      "separateMinorPatch": true,
+      "ignoreDeprecated": true,
+    },
+    {
+      "matchDatasources": [
+        "docker"
+      ],
+      "enabled": true,
+      "matchUpdateTypes": [
+        "major",
+        "minor",
+        "patch"
+      ],
+    },
+    {
+      "matchDatasources": [
+        "docker"
+      ],
+      "semanticCommitScope": "images",
+      "commitMessageTopic": "{{depName}}",
+      "commitMessageExtra": "to {{{newValue}}}",
+      "separateMinorPatch": true,
+    },
+    // Add labels according to package and update types
+    {
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "commitMessagePrefix": "feat(images)!: ",
+      "labels": [
+        "renovate/image",
+        "dep/major"
+      ],
+    },
+    {
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchUpdateTypes": [
+        "minor"
+      ],
+      "semanticCommitType": "feat",
+      "labels": [
+        "renovate/image",
+        "dep/minor"
+      ],
+    },
+    {
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "semanticCommitType": "fix",
+      "labels": [
+        "renovate/image",
+        "dep/patch"
+      ],
+    },
+    {
+      "matchDatasources": [
+        "helm"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "commitMessagePrefix": "feat(charts)!: ",
+      "labels": [
+        "renovate/helm",
+        "dep/major"
+      ],
+    },
+    {
+      "matchDatasources": [
+        "helm"
+      ],
+      "matchUpdateTypes": [
+        "minor"
+      ],
+      "semanticCommitType": "feat",
+      "labels": [
+        "renovate/helm",
+        "dep/minor"
+      ],
+    },
+    {
+      "matchDatasources": [
+        "helm"
+      ],
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "semanticCommitType": "fix",
+      "labels": [
+        "renovate/helm",
+        "dep/patch"
+      ],
+    },
+  ]
 }
