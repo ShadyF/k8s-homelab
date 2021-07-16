@@ -32,7 +32,6 @@ spec:
         tls:
           - hosts:
               - "qbit.${SECRET_DOMAIN}"
-          # secretName: qbittorent-tls
     settings:
       automaticPortSetup: true
     env:

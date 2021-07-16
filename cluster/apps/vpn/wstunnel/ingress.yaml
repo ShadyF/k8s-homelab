@@ -15,7 +15,7 @@ spec:
   tls:
     - hosts:
         - "wg.${SECRET_DOMAIN}"
-      secretName: wstunnel-tls
+#      secretName: wstunnel-tls
   rules:
     - host: "wg.${SECRET_DOMAIN}"
       http:
