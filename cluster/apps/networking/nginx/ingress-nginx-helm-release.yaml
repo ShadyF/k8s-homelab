@@ -39,5 +39,3 @@ spec:
       # Wildcare certificate so we don't have to define a certificate for each ingress we create
       extraArgs:
         default-ssl-certificate: "networking/${SECRET_DOMAIN/./-}-tls"
-#        extraArgs:
-#          default-ssl-certificate: "networking/${SECRET_DOMAIN/./-}-tls"
