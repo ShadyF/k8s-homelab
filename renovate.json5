@@ -157,13 +157,23 @@
       ],
     },
     // version strategies
+    //    {
+    //      "matchDatasources": [
+    //        "docker"
+    //      ],
+    //      "versioning": "loose",
+    //      "matchPackageNames": [
+    //        "ghcr.io/linuxserver/wireguard",
+    //      ],
+    //    }
+    // custom version schemes
     {
       "matchDatasources": [
         "docker"
       ],
-      "versioning": "loose",
+      "versioning": "regex:^version-v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$",
       "matchPackageNames": [
-        "ghcr.io/linuxserver/wireguard",
+        "ghcr.io/linuxserver/wireguard"
       ],
     }
   ]
