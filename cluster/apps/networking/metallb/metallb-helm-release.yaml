@@ -36,19 +36,19 @@ spec:
           addresses:
             - 192.168.1.240-192.168.1.249
     # Change controller image from bitnami/metallb-controller to metallb/controller (bitnami image doesn't support ARM)
-#    controller:
-#      image:
-#        registry: docker.io
-#        repository: metallb/controller
-#        tag: v0.10.1
+    controller:
+      image:
+        registry: docker.io
+        repository: metallb/controller
+        tag: v0.10.2
     #      tolerations:
     #        - key: "arm"
     #          operator: "Exists"
-#    speaker:
-#      image:
-#        registry: docker.io
-#        repository: metallb/speaker
-#        tag: v0.10.1
+    speaker:
+      image:
+        registry: docker.io
+        repository: metallb/speaker
+        tag: v0.10.2
 #      tolerations:
 #        - key: "arm"
 #          operator: "Exists"
