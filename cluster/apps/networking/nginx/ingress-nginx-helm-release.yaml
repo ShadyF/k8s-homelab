@@ -33,8 +33,7 @@ spec:
         # Helps with getting real IP, I think?
         use-forwarded-headers: "true"
         log-format-escape-json: "true"
-        log-format-upstream: |
-        '{
+        log-format-upstream: '{
           "msec": "$msec",
           "connection": "$connection",
           "connection_requests": "$connection_requests",
