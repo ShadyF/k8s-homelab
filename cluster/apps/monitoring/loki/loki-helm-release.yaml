@@ -19,6 +19,7 @@ spec:
     # https://github.com/grafana/helm-charts/blob/main/charts/loki/values.yaml
     replicas: 1
 
+    # PVC is mounted to /data
     persistence:
       enabled: true
       existingClaim: loki-pvc
