@@ -25,7 +25,7 @@ spec:
         # See https://docs.microsoft.com/en-us/azure/aks/concepts-network#client-source-ip-preservation
         # Also see https://metallb.universe.tf/usage/#traffic-policies for what happens when used
         # in conjuction with MetalLB
-        externalTrafficPolicy: Cluster
+        externalTrafficPolicy: Local
       config:
         ssl-protocols: "TLSv1.3 TLSv1.2"
         # Same size defined in cloudflare
