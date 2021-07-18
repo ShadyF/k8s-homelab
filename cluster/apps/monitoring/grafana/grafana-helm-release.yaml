@@ -107,12 +107,12 @@ spec:
     #      datasources:
     #        enabled: true
     #        searchNamespace: ALL
-#    plugins:
+    plugins:
+      - grafana-worldmap-panel
 #      - natel-discrete-panel
 #      - pr0ps-trackmap-panel
 #      - grafana-piechart-panel
 #      - vonage-status-panel
-#      - grafana-worldmap-panel
 #      - grafana-clock-panel
 # Needed for prometheus to get metrics about grafana, enable later.
 #    serviceMonitor:
