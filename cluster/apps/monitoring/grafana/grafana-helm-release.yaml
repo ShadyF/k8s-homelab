@@ -30,7 +30,8 @@ spec:
       GF_DATE_FORMATS_INTERVAL_DAY: "DD/MM"
       GF_DATE_FORMATS_INTERVAL_MONTH: "MM-YYYY"
       GF_DATE_FORMATS_INTERVAL_YEAR: "YYYY"
-    #    adminPassword: "testabc}"
+    admin:
+      existingSecret: "grafana-secrets"
     persistence:
       enabled: false
     grafana.ini:
@@ -49,6 +50,7 @@ spec:
       grafana_net:
         url: https://grafana.net
       # Disable login form (https://grafana.com/docs/grafana/latest/auth/overview/#basic-authentication)
+      # TODO: https://stackoverflow.com/questions/33111835/how-to-set-up-grafana-so-that-no-password-is-necessary-to-view-dashboards
       auth.basic:
         disable_login_form: false
     ingress:
