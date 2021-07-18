@@ -1,0 +1,58 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: loki
+  namespace: monitoring
+spec:
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://grafana.github.io/helm-charts
+      chart: loki
+      version: 2.5.3
+      sourceRef:
+        kind: HelmRepository
+        name: grafana-charts
+        namespace: flux-system
+      interval: 5m
+  values:
+    # https://github.com/grafana/helm-charts/blob/main/charts/loki/values.yaml
+    replicas: 1
+
+    persistence:
+      enabled: true
+      existingClaim: loki-pvc
+
+    # https://grafana.com/docs/loki/latest/storage/
+    config:
+      auth_enabled: false
+      server:
+        http_listen_port: 3100
+
+      # TODO: Use S3 / Minio instead of filesystem
+      schema_config:
+        configs:
+          - from: "2020-10-24"
+            store: boltdb-shipper
+            object_store: filesystem
+            schema: v11
+            index:
+              prefix: index_
+              period: 24h
+
+      storage_config:
+        boltdb_shipper:
+          active_index_directory: /data/loki/boltdb-shipper-active
+          cache_location: /data/loki/boltdb-shipper-cache
+          cache_ttl: 24h         # Can be increased for faster performance over longer query periods, uses more disk space
+          shared_store: filesystem
+        filesystem:
+          directory: /data/loki/chunks
+
+    livenessProbe:
+      initialDelaySeconds: 60
+    readinessProbe:
+      initialDelaySeconds: 60
+# Enable when prometheus is installed
+#    serviceMonitor:
+#      enabled: true
