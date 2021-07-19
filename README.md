@@ -90,52 +90,10 @@ https://www.docker.com/blog/multi-arch-images/
 
 `kubectl create secret docker-registry regcred --docker-server="https://index.docker.io/v1/" --docker-username=<username> --docker-password=<password> --docker-email=<email> --dry-run=client -oyaml > regcred.yaml`
 
-### To make pod not crash
-
-```yaml
-command: [ 'sleep' ]
-args: [ 'infinity' ]
-```
 
 ### Doing SD backups
 
 https://www.raspberrypi.org/documentation/linux/filesystem/backup.md
-
-### Add wifi to raspi
-
-https://itsfoss.com/connect-wifi-terminal-ubuntu/
-
-TLDR:
-
-```bash
-sudo nano /etc/netplan/50-cloud-init.yaml
-```
-
-then paste in the following under `networks`
-
-```yaml
-wifis:
-  wlan0:
-    dhcp4: true
-    optional: true
-    access-points:
-      "SSID_name":
-        password: "WiFi_password"
-```
-
-then type in the following command
-
-`sudo netplan apply`
-
-### Changing default shell
-
-```bash
-chsh --shell /usr/bin/fish
-```
-
-### Get RPI cpu temp in ubuntu
-
-`cat /sys/class/thermal/thermal_zone0/temp`
 
 ### Settings up SSD
 
@@ -262,27 +220,6 @@ https://github.com/seanrclayton/kub_yaml/blob/master/pia-deluge-vpncheckkillswit
 ### Settings up log2ram to reduce sd card / ssd writes
 
 https://github.com/azlux/log2ram
-
-### Fixing oauth2 proxy slowing down everything
-
-https://stackoverflow.com/questions/58997958/oauth2-proxy-authentication-calls-slow-on-kubernetes-cluster-with-auth-annotatio
-
-TLDR:
-When auth-url is set to auth.domain.com, this means that the request goes outside of the cluster (so called hairpin
-mode), and goes back via External IP of Ingress that routes to internal ClusterIP Service (which adds extra hops),
-instead going directly with ClusterIP/Service DNS name (you stay within Kubernetes cluster)
-
-To solve this, set the `auth-url `to the internal `oauth2` service.
-
-**_Note:_** This doesn't happen with other repos (ones in references) because they use a split-horizon DNS, meaning they
-have a DNS internal to their network that resolves queries to internal IPs and another one externaly that resolves
-queries to external IPs.
-
-If a request is made to `auth.domain.com` from **inside** the internal network, the **internal** DNS resolves this to an
-internal IP.
-
-If a request is made to `auth.domain.com` from **outside** the network, the **external** DNS (cloudflare, google,
-etc...) resolves this to the external IP set in the DNS records.
 
 ### Probes explained
 

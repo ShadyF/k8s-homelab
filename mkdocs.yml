@@ -1,8 +1,10 @@
 site_name: ShadyF's K8s Homelab
 site_description: The documentation website of my k8s homelab cluster
+
 # Repo details
 repo_url: https://github.com/ShadyF/homelab
 repo_name: ShadyF/homelab
+
 # Hide edit button on pages
 edit_uri: ""
 
@@ -26,8 +28,8 @@ theme:
   logo: https://raw.githubusercontent.com/ShadyF/shadyf.github.io/master/favicon.ico
   features:
     - navigation.instant
-    - navigation.tabs
     - navigation.top
+#    - navigation.tabs
 
 extra:
   # https://squidfunk.github.io/mkdocs-material/setup/setting-up-the-footer/?h=social#configuration
@@ -38,12 +40,13 @@ extra:
       link: https://www.linkedin.com/in/ssfanous/
     - icon: fontawesome/solid/paper-plane
       link: mailto:sssfanous@gmail.com
-      
+
 copyright: Copyright &copy; 2020 - 2021 Shady Fanous
 
 
 plugins:
   - search
+
 extra_css:
   - _static/custom.css
 
@@ -86,12 +89,14 @@ markdown_extensions:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
 
-      # Tasks use a custom checkbox (https://facelessuser.github.io/pymdown-extensions/extensions/tasklist/)
+  # Tasks use a custom checkbox (https://facelessuser.github.io/pymdown-extensions/extensions/tasklist/)
   - pymdownx.tasklist:
       custom_checkbox: true
 
-#nav:
-#  - Introduction: 'index.md'
-#  - Installation:
-#      - Introduction: 'index.md'
-#      - Introduction2: 'index.md'
+nav:
+  - Introduction: 'index.md'
+  - Cluster Setup:
+      - Setting up Raspberry Pi for k3s: 'cluster_setup/setting_up_raspberry_pi.md'
+      - Installing k3s: 'cluster_setup/installing_k3s.md'
+  - Apps: 'apps/oauth2-proxy.md'
+  - Tips and Tricks: 'tips_and_tricks.md'
