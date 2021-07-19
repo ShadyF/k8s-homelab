@@ -99,13 +99,13 @@ spec:
           gnetId: 12559
           revision: 10
           datasource: Loki
-    sidecar:
-      dashboards:
-        enabled: true
-        searchNamespace: ALL
-      datasources:
-        enabled: true
-        searchNamespace: ALL
+#    sidecar:
+#      dashboards:
+#        enabled: true
+#        searchNamespace: ALL
+#      datasources:
+#        enabled: true
+#        searchNamespace: ALL
     plugins:
       - grafana-worldmap-panel
       - grafana-image-renderer
