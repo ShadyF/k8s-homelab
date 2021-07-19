@@ -76,7 +76,7 @@ spec:
         ports:
           - containerPort: 1080
             protocol: TCP
-      - name: openvpn
+      - name: gluetun
         image: qmcgaw/gluetun:v3.20.0
         imagePullPolicy: IfNotPresent
         securityContext:
