@@ -80,35 +80,35 @@ spec:
     #            access: proxy
     #            url: http://thanos-query:9090/
     #            isDefault: true
-    #    dashboardProviders:
-    #      dashboardproviders.yaml:
-    #        apiVersion: 1
-    #        providers:
-    #          - name: 'default'
-    #            orgId: 1
-    #            folder: ''
-    #            type: file
-    #            disableDeletion: false
-    #            editable: true
-    #            options:
-    #              path: /var/lib/grafana/dashboards/default
-    #    dashboards:
-    #      default:
-    #        # # Ref: https://grafana.com/grafana/dashboards/12175
-    #        # calico-felix:
-    #        #   gnetId: 12175
-    #        #   revision: 5
-    #        #   datasource: Prometheus
-    #        # Ref: https://grafana.com/grafana/dashboards/2842
-    #    sidecar:
-    #      dashboards:
-    #        enabled: true
-    #        searchNamespace: ALL
-    #      datasources:
-    #        enabled: true
-    #        searchNamespace: ALL
+    dashboardProviders:
+      dashboardproviders.yaml:
+        apiVersion: 1
+        providers:
+          - name: 'default'
+            orgId: 1
+            folder: ''
+            type: file
+            disableDeletion: false
+            editable: true
+            options:
+              path: /var/lib/grafana/dashboards/default
+    dashboards:
+      default:
+        # Ref: https://grafana.com/grafana/dashboards/12559/revisions
+        nginx-dashboard:
+          gnetId: 12559
+          revision: 10
+          datasource: Loki
+    sidecar:
+      dashboards:
+        enabled: true
+        searchNamespace: ALL
+      datasources:
+        enabled: true
+        searchNamespace: ALL
     plugins:
       - grafana-worldmap-panel
+      - grafana-image-renderer
 #      - natel-discrete-panel
 #      - pr0ps-trackmap-panel
 #      - grafana-piechart-panel
