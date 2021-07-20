@@ -40,6 +40,6 @@ spec:
 
     persistence:
       data:
-        enabled: false
+        enabled: true
         existingClaim: syncthing-pvc
         mountPath: /var/syncthing
