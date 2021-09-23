@@ -21,6 +21,18 @@ spec:
       repository: sirfragalot/hyperion.ng
       tag: 2.0.0-alpha.10-aarch64
 
+    service:
+      flatbuffer:
+        enabled: true
+        type: NodePort
+        externalTrafficPolicy: Local
+        ports:
+          listen:
+            enabled: true
+            port: 19400
+            protocol: TCP
+            targetPort: 19400
+
     ingress:
       main:
         enabled: true
@@ -37,21 +49,6 @@ spec:
         tls:
           - hosts:
               - "hyperion.${SECRET_DOMAIN}"
-      flatbuffer:
-        enabled: true
-        ingressClassName: "nginx"
-        annotations:
-          nginx.ingress.kubernetes.io/connection-proxy-header: "upgrade"
-        hosts:
-          - host: "hyperion-flatbuffer.${SECRET_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  port: 19445
-        tls:
-          - hosts:
-              - "hyperion-flatbuffer.${SECRET_DOMAIN}"
 
     persistence:
       config:
