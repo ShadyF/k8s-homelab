@@ -40,6 +40,8 @@ spec:
       flatbuffer:
         enabled: true
         ingressClassName: "nginx"
+        annotations:
+          nginx.ingress.kubernetes.io/connection-proxy-header: "upgrade"
         hosts:
           - host: "hyperion-flatbuffer.${SECRET_DOMAIN}"
             paths:
