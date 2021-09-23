@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       # renovate: registryUrl=https://k8s-at-home.com/charts/
-      chart: hyperion
+      chart: hyperion-ng
       version: 5.0.1
       sourceRef:
         kind: HelmRepository
