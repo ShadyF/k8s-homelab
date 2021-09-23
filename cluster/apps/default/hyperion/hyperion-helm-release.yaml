@@ -47,6 +47,7 @@ spec:
                 pathType: Prefix
                 service:
                   name: protobufservice
+                  port: 19445
         tls:
           - hosts:
               - "hyperion-flatbuffer.${SECRET_DOMAIN}"
