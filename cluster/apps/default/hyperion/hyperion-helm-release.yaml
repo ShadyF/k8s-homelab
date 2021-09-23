@@ -46,7 +46,6 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  name: protobufservice
                   port: 19445
         tls:
           - hosts:
