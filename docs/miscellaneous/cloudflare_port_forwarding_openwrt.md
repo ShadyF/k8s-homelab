@@ -4,7 +4,7 @@ Default firewall rules only allow for one source IP to be defined when created a
 you want to create a rule that uses multiple Source IPs:
 
 1. Repeat the firewall multiple times
-2. Use `ipset` (https://openwrt.org/docs/guide-user/firewall/fw3_configurations/fw3_config_ipset)
+2. Use `ipset` (See [here](https://openwrt.org/docs/guide-user/firewall/fw3_configurations/fw3_config_ipset))
 
 We're going with the second option as it's much easier.
 

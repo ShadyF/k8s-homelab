@@ -41,18 +41,8 @@ spec:
         registry: docker.io
         repository: metallb/controller
         tag: v0.10.2
-    #      tolerations:
-    #        - key: "arm"
-    #          operator: "Exists"
     speaker:
       image:
         registry: docker.io
         repository: metallb/speaker
         tag: v0.10.2
-#      tolerations:
-#        - key: "arm"
-#          operator: "Exists"
-#        - key: "armhf"
-#          operator: "Exists"
-#        - key: "node-role.kubernetes.io/master"
-#          operator: "Exists"
