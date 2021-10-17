@@ -22,6 +22,9 @@ spec:
       tag: 1.24.4.5081-e362dc1ee
     env:
       TZ: "Africa/Cairo"
+    envFrom:
+      - secretRef:
+          name: plex-secrets
     podSecurityContext:
       supplementalGroups:
         - 44
