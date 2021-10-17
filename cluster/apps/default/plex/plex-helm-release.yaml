@@ -50,7 +50,7 @@ spec:
     persistence:
       config:
         enabled: true
-        existingClaim: qb-config-pvc
+        existingClaim: plex-config-pvc
       transcode:
         enabled: true
         type: emptyDir
