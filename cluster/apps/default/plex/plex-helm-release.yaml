@@ -17,6 +17,9 @@ spec:
         namespace: flux-system
       interval: 5m
   values:
+    image:
+      repository: plexinc/pms-docker
+      tag: 1.24.4.5081-e362dc1ee
     env:
       TZ: "Africa/Cairo"
     podSecurityContext:
@@ -24,15 +27,15 @@ spec:
         - 44
         - 109
         - 100
-#    service:
-#      main:
-#        type: LoadBalancer
-#        loadBalancerIP: 10.0.6.53
-#        externalTrafficPolicy: Local
-#        annotations:
-#          metallb.universe.tf/allow-shared-ip: plex
-#        port:
-#          port: 32400
+    #    service:
+    #      main:
+    #        type: LoadBalancer
+    #        loadBalancerIP: 10.0.6.53
+    #        externalTrafficPolicy: Local
+    #        annotations:
+    #          metallb.universe.tf/allow-shared-ip: plex
+    #        port:
+    #          port: 32400
     ingress:
       main:
         enabled: true
@@ -75,14 +78,14 @@ spec:
                   operator: In
                   values:
                     - k8-w1
-  #    resources:
-  #      requests:
-  #        gpu.intel.com/i915: 1
-  #        cpu: 1000m
-  #        memory: 1500Mi
-  #      limits:
-  #        gpu.intel.com/i915: 1
-  #        memory: 4900Mi
+    #    resources:
+    #      requests:
+    #        gpu.intel.com/i915: 1
+    #        cpu: 1000m
+    #        memory: 1500Mi
+    #      limits:
+    #        gpu.intel.com/i915: 1
+    #        memory: 4900Mi
     addons:
       promtail:
         enabled: true
