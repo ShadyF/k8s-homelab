@@ -77,6 +77,15 @@
       "commitMessageExtra": "to {{{newValue}}}",
       "separateMinorPatch": true,
     },
+    {
+      "matchDatasources": [
+        "docker"
+      ],
+      "versioning": "loose",
+      "matchPackageNames": [
+        "plexinc/pms-docker"
+      ]
+    },
     // Add labels according to package and update types
     {
       "matchDatasources": [
