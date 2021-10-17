@@ -101,5 +101,6 @@ nav:
   - Apps: 'apps/oauth2-proxy.md'
   - Miscellaneous:
       - Restrict Port Forwarding to only allow Cloudflare IPs using OpenWRT: 'miscellaneous/cloudflare_port_forwarding_openwrt.md'
+      - Enabling Wake on Lan on NIC: 'miscellaneous/enabling_WakeOnLan_on_NIC.md'
       - Tips and Tricks: 'miscellaneous/tips_and_tricks.md'
 
