@@ -68,7 +68,6 @@ spec:
       nfs-media-pvc:
         enabled: true
         existingClaim: nfs-media-downloads-pvc
-        mountPath: /srv/nfs/downloads/Movies
         readOnly: true
 
     # Only run on worker 1
