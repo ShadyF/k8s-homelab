@@ -22,6 +22,8 @@ spec:
       tag: 1.24.4.5081-e362dc1ee
     env:
       TZ: "Africa/Cairo"
+      # See https://www.devwithimagination.com/2019/08/21/plex-docker-and-the-problem-of-always-appearing-as-remote/
+      ADVERTISE_IP: "https://plex.${SECRET_DOMAIN}:443/,http://192.168.1.241:32400/"
     envFrom:
       - secretRef:
           name: plex-secrets
@@ -30,13 +32,13 @@ spec:
         - 44
         - 109
         - 100
-#    service:
-#      main:
-#        type: LoadBalancer
-#        loadBalancerIP: 192.168.1.241
-#        externalTrafficPolicy: Local
-#        annotations:
-#          metallb.universe.tf/allow-shared-ip: plex
+    service:
+      main:
+        type: LoadBalancer
+        loadBalancerIP: 192.168.1.241
+        externalTrafficPolicy: Local
+        annotations:
+          metallb.universe.tf/allow-shared-ip: plex
     ingress:
       main:
         enabled: true
