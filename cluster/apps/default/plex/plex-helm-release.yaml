@@ -81,11 +81,6 @@ spec:
                   operator: In
                   values:
                     - k8-w1
-    resources:
-      requests:
-        amd.com/gpu: 1
-      limits:
-        amd.com/gpu: 1
     addons:
       promtail:
         enabled: true
