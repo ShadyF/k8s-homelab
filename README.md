@@ -197,7 +197,7 @@ https://linuxize.com/post/how-to-mount-an-nfs-share-in-linux/
 
 #### Mounting nfs volume in linux on startup
 
-TLDR, add the following to /et/fstab
+TLDR, add the following to /etc/fstab
 `192.168.1.xxx:/srv/nfs /home/<user>/nfs  nfs      defaults    0       0`
 
 #### Settings up nfs mounting in windows
