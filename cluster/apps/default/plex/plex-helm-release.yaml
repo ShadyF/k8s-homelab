@@ -34,16 +34,20 @@ spec:
         - 100
     service:
       main:
+        # Not sure why this service is needed. See https://www.debontonline.com/2021/01/part-14-deploy-plexserver-yaml-with.html
         type: LoadBalancer
         # Needed since plex only considers clients as local if they're on the same subnet
         loadBalancerIP: 192.168.1.241
         externalTrafficPolicy: Local
+
+        # Needed if sharing UDP and TCP services, not sure if this is actually needed here though
         annotations:
           metallb.universe.tf/allow-shared-ip: plex
     ingress:
       main:
         enabled: true
         annotations:
+          nginx.ingress.kubernetes.io/backend-protocol: "https"
           external-dns/is-public: "true"
           external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
         hosts:
@@ -54,6 +58,10 @@ spec:
         tls:
           - hosts:
               - "plex.${SECRET_DOMAIN}"
+
+    # Enable devices to be discoverable
+    hostNetwork: true
+
     persistence:
       config:
         enabled: true
