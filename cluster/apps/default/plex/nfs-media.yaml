@@ -15,6 +15,7 @@ spec:
     path: /srv/nfs/media
   # Explanation of mount options https://www.thegeekdiary.com/common-nfs-mount-options-in-linux/
   mountOptions:
+    - async
     - auto
     - ro
     - noatime
