@@ -73,6 +73,7 @@ spec:
         type: emptyDir
       nfs-media-pvc:
         enabled: true
+        type: hostPath
         hostPath: "/srv/nfs/media"
         mountPath: "/nfs-media-pvc"
         readOnly: true
