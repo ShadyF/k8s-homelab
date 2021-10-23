@@ -68,6 +68,8 @@ spec:
       config:
         enabled: true
         existingClaim: plex-config-pvc
+      transcode:
+        enabled: true
       nfs-media-pvc:
         enabled: true
         existingClaim: nfs-media-pvc
