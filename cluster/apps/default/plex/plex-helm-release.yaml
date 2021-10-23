@@ -46,6 +46,7 @@ spec:
     ingress:
       main:
         enabled: true
+        ingressClassName: "nginx"
         annotations:
           nginx.ingress.kubernetes.io/backend-protocol: "https"
           external-dns/is-public: "true"

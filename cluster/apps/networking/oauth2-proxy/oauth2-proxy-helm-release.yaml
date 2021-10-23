@@ -40,6 +40,7 @@ spec:
 
     ingress:
       enabled: true
+      className: nginx
       path: /oauth2
       hosts: [ "auth.${SECRET_DOMAIN}" ]
       tls:
