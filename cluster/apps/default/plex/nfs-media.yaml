@@ -15,20 +15,13 @@ spec:
     path: /srv/nfs/media
   # Explanation of mount options https://www.thegeekdiary.com/common-nfs-mount-options-in-linux/
   mountOptions:
-    - async
-    - auto
-    - ro
-    - noatime
-    - nolock
-    - bg
-    - soft
-    - nfsvers=4
+    - sys
     - intr
-    - tcp
-    - timeo=50
-    - retrans=5
-    - actimeo=10
-    - retry=5 0 0
+    - local_lock=posix
+    - ro
+    - vers=3
+    - auto
+    - nofail
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
