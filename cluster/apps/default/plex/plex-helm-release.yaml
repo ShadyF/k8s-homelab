@@ -68,14 +68,6 @@ spec:
       config:
         enabled: true
         existingClaim: plex-config-pvc
-      transcode:
-        enabled: true
-        type: emptyDir
-        medium: Memory
-      tmp:
-        enabled: true
-        type: emptyDir
-        medium: Memory
       nfs-media-pvc:
         enabled: true
         existingClaim: nfs-media-pvc
