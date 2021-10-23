@@ -73,7 +73,8 @@ spec:
         type: emptyDir
       nfs-media-pvc:
         enabled: true
-        existingClaim: nfs-media-pvc
+        hostPath: "/src/nfs/media"
+        mountPath: "/nfs-media-pvc"
         readOnly: true
 
     # Only run on worker 1
