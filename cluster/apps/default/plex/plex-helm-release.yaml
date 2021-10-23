@@ -24,6 +24,7 @@ spec:
       TZ: "Africa/Cairo"
       # See https://www.devwithimagination.com/2019/08/21/plex-docker-and-the-problem-of-always-appearing-as-remote/
       ADVERTISE_IP: "https://plex.${SECRET_DOMAIN}:443/,http://192.168.1.241:32400/"
+      ALLOWED_NETWORKS: "10.0.0.0/8,192.168.1.0/24"
     envFrom:
       - secretRef:
           name: plex-secrets
@@ -61,8 +62,8 @@ spec:
           - hosts:
               - "plex.${SECRET_DOMAIN}"
 
-    # Enable devices to be discoverable
-    hostNetwork: true
+    # Enable devices to be discoverable?
+    # hostNetwork: true
 
     persistence:
       config:
