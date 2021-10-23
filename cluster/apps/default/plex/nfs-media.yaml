@@ -14,13 +14,13 @@ spec:
     server: 192.168.1.201
     path: /srv/nfs/media
   # Explanation of mount options https://www.thegeekdiary.com/common-nfs-mount-options-in-linux/
-  mountOptions:
-    - nfsvers=3
-    - tcp
-    - intr
-    - hard
-    - noatime
-    - nodiratime
+#  mountOptions:
+#    - nfsvers=3
+#    - tcp
+#    - intr
+#    - hard
+#    - noatime
+#    - nodiratime
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
