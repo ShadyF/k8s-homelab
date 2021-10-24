@@ -68,7 +68,7 @@ spec:
     persistence:
       config:
         enabled: true
-        existingClaim: plex-config-pvc
+        existingClaim: plex-csi-config-pvc
       transcode:
         enabled: true
         type: emptyDir
