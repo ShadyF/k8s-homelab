@@ -21,7 +21,6 @@ spec:
     - hard
     - noatime
     - nodiratime
-    - local_lock=posix
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

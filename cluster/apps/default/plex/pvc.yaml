@@ -17,7 +17,8 @@ spec:
     volumeAttributes:
       numberOfReplicas: '2'
       staleReplicaTimeout: '2880'
-    # Need to create this first from UI
+    # Need to create longhorn volume from UI
+    # Will probably need to change permissions on the config folder using chmod 777 /config
     # See https://github.com/longhorn/longhorn/issues/475
     volumeHandle: plex-config-csi
 ---
