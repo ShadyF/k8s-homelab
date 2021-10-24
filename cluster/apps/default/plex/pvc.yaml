@@ -17,7 +17,7 @@ spec:
     volumeAttributes:
       numberOfReplicas: '2'
       staleReplicaTimeout: '2880'
-    volumeHandle: plex-config-ui
+    volumeHandle: plex-config-csi
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
