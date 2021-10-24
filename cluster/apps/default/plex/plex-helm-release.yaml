@@ -104,6 +104,6 @@ spec:
         volumeMounts:
           - name: config
             mountPath: /config
-            readOnly: true
+#            readOnly: true
         securityContext:
           runAsUser: 0

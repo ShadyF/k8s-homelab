@@ -17,6 +17,8 @@ spec:
     volumeAttributes:
       numberOfReplicas: '2'
       staleReplicaTimeout: '2880'
+    # Need to create this first from UI
+    # See https://github.com/longhorn/longhorn/issues/475
     volumeHandle: plex-config-csi
 ---
 apiVersion: v1
