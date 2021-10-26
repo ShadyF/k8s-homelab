@@ -98,6 +98,7 @@ nav:
   - Cluster Setup:
       - Setting up Raspberry Pi for k3s: 'cluster_setup/setting_up_raspberry_pi.md'
       - Installing k3s: 'cluster_setup/installing_k3s.md'
+      - Setting up Flux: 'cluster_setup/setting_up_flux.md'
   - Apps: 'apps/oauth2-proxy.md'
   - Miscellaneous:
       - Restrict Port Forwarding to only allow Cloudflare IPs using OpenWRT: 'miscellaneous/cloudflare_port_forwarding_openwrt.md'

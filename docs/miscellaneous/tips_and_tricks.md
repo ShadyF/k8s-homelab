@@ -7,7 +7,7 @@ Here are some useful tips and tricks that might be of use.
 ### Change kubectl context
 
 ```shell
-kubectl config use-context homelab2 
+kubectl config use-context homelab
 ```
 
 ### Change default shell

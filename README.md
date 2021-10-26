@@ -1,48 +1,6 @@
-#### Kubectl cheatsheet commands
-
-```bash
-# To change context
-kubectl config use-context homelab2 
-```
-
 #### Which templating tool to use?
 
 https://learnk8s.io/templating-yaml-with-code
-
-#### Settings up raspberry pi
-
-https://levelup.gitconnected.com/step-by-step-slow-guide-kubernetes-cluster-on-raspberry-pi-4b-part-1-6e4179c89cbc
-
-We need to setup Linux Control Groups that are used for resource monitoring and isolation that are needed by Kubernetes.
-
-`sudo nano /boot/firmware/cmdline.txt`
-
-Add the following at the end of the line
-
-`cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory`
-
-configure user to execute commands without sudo password
-
-```bash
-sudo visudo
-master ALL=(ALL) NOPASSWD:ALL
-```
-
-install k3sup from https://github.com/alexellis/k3sup
-
-k3sup needs that the user on the node to be able to execture sudo command without password
-
-```bash
-sudo visudo
-master ALL=(ALL) NOPASSWD:ALL
-```
-
-run k3sup from local machine
-`k3sup install --ip 192.168.1.184 --user master --local-path ~/.kube/config --merge --context homelab --ssh-key ~/.ssh/id_ed25519 --k3s-channel latest --no-extras`
-
-To get the kubeconfig, add `--skip-install` at the end
-
-Look into this guy for inspiration https://github.com/billimek/k8s-gitops
 
 #### Flux installation
 
@@ -65,7 +23,7 @@ flux bootstrap github \
 https://blog.sldk.de/2021/03/handling-secrets-in-flux-v2-repositories-with-sops/
 
 To encrypt data
-`sops --encrypt --in-place flux-system/cluster-secrets.yaml `
+`sops --encrypt --in-place flux-system/cluster-secrets.yaml`
 
 #### Get Kubelet config
 
@@ -89,7 +47,6 @@ https://www.docker.com/blog/multi-arch-images/
 ### Create a docker registry secret
 
 `kubectl create secret docker-registry regcred --docker-server="https://index.docker.io/v1/" --docker-username=<username> --docker-password=<password> --docker-email=<email> --dry-run=client -oyaml > regcred.yaml`
-
 
 ### Doing SD backups
 
@@ -135,19 +92,6 @@ See https://cert-manager.io/docs/configuration/acme/dns01/cloudflare/
 https://github.com/k8s-at-home/template-cluster-k3s#cloud-cloudflare-api-token
 
 See https://www.reddit.com/r/selfhosted/comments/ga02px/you_should_probably_know_about_letsencrypt_dns/
-
-### Reconciling using flux
-
-```bash
-# Reconcile gitcontroller (given that flux-system is the name of the gitcontroller)
-flux reconcile source git flux-system
-
-# Reconcile kustomization (given that apps is the name of the kustomization controller)
-flux reconcile kustomization apps
-
-# Reconcile a helm release
-flux reconcile helmrelease oauth2-proxy -n networking
-```
 
 ### Issues regarding raspberry pi 4 freezing after certain amount of time
 
