@@ -1,9 +1,9 @@
 site_name: ShadyF's K8s Homelab
-site_description: The documentation website of my k8s homelab cluster
+site_description: The documentation website of my kubernetes (k3s) homelab cluster
 
 # Repo details
-repo_url: https://github.com/ShadyF/homelab
-repo_name: ShadyF/homelab
+repo_url: https://github.com/ShadyF/k8s-homelab
+repo_name: ShadyF/k8s-homelab
 
 # Hide edit button on pages
 edit_uri: ""
