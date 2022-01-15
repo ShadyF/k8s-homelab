@@ -173,3 +173,7 @@ https://blog.devgenius.io/understanding-kubernetes-probes-5daaff67599a (Great ar
 
 TL/DR: there is no default readiness probe ("should I send this pod traffic?") and the default liveness probe ("should I
 kill this pod?") is just whether the container is still running.
+
+### Issues with PPPoE using OpenWRT
+
+https://www.onetransistor.eu/2017/04/wan-port-openwrt-lede-vlan.html?m=1
