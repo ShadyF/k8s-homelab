@@ -25,6 +25,9 @@ https://blog.sldk.de/2021/03/handling-secrets-in-flux-v2-repositories-with-sops/
 To encrypt data
 `sops --encrypt --in-place flux-system/cluster-secrets.yaml`
 
+#### Exporting gpg key from one machine to another
+https://makandracards.com/makandra-orga/37763-gpg-extract-private-key-and-import-on-different-machine
+
 #### Get Kubelet config
 
 ```bash
