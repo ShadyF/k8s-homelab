@@ -29,6 +29,7 @@ spec:
       - secretRef:
           name: plex-secrets
     podSecurityContext:
+      fsGroup: 1001
       supplementalGroups:
         - 44
         - 109
