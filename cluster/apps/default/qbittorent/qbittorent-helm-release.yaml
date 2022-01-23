@@ -85,7 +85,7 @@ spec:
           - containerPort: 1080
             protocol: TCP
       - name: gluetun
-        image: qmcgaw/gluetun:v3.26.0
+        image: qmcgaw/gluetun:v3.27.0
         imagePullPolicy: IfNotPresent
         securityContext:
           capabilities:
