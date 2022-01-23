@@ -38,8 +38,10 @@ spec:
     env:
       - name: WAIT_FOR_VPN
         value: "true"
-    securityContext:
-      runAsUser: 1001
+    # Permission denied issues in qbittorrent container if podSecurityContext -> fsGroup 1001 is not added
+    # Maybe has to do with qbittorrent's container not running as root?
+    podSecurityContext:
+      fsGroup: 1001
     persistence:
       config:
         enabled: true
