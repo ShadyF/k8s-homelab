@@ -38,7 +38,7 @@ spec:
     env:
       - name: WAIT_FOR_VPN
         value: "true"
-    securityContext:
+    podSecurityContext:
       fsGroup: 1001
     persistence:
       config:
