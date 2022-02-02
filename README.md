@@ -180,3 +180,13 @@ kill this pod?") is just whether the container is still running.
 ### Issues with PPPoE using OpenWRT
 
 https://www.onetransistor.eu/2017/04/wan-port-openwrt-lede-vlan.html?m=1
+
+### Setting up wireguard over wstunnel
+
+https://kirill888.github.io/notes/wireguard-via-websocket/
+
+_NOTE: The script in the above page doesn't use ip route, which won't work on modern linux machine.
+A modified version of wstunnel.sh can be found here https://github.com/jnsgruk/wireguard-over-wss_
+
+Don't forget to download `wstunnel` as a binary and copy it to `/usr/local/bin/wstunnel` and running `sudo chmod +x /usr/local/bin/wstunnel`
+
