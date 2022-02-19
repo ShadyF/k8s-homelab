@@ -77,15 +77,6 @@
       "commitMessageExtra": "to {{{newValue}}}",
       "separateMinorPatch": true,
     },
-    {
-      "matchDatasources": [
-        "docker"
-      ],
-      "versioning": "loose",
-      "matchPackageNames": [
-        "plexinc/pms-docker",
-      ]
-    },
     // Add labels according to package and update types
     {
       "matchDatasources": [
@@ -165,17 +156,26 @@
         "dep/patch"
       ],
     },
-    // version strategies
-    //    {
-    //      "matchDatasources": [
-    //        "docker"
-    //      ],
-    //      "versioning": "loose",
-    //      "matchPackageNames": [
-    //        "ghcr.io/linuxserver/wireguard",
-    //      ],
-    //    }
     // custom version schemes
+    {
+      "matchDatasources": [
+        "docker"
+      ],
+      "versioning": "loose",
+      "matchPackageNames": [
+        "ghcr.io/k8s-at-home/plex",
+        "syncthing/syncthing"
+      ]
+    },
+    {
+      "matchDatasources": [
+        "docker"
+      ],
+      "versioning": "regex:^v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-(?<compatibility>.*)$",
+      "matchPackageNames": [
+        "quay.io/oauth2-proxy/oauth2-proxy"
+      ]
+    },
     {
       "matchDatasources": [
         "docker"
