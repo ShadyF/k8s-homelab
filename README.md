@@ -190,3 +190,6 @@ A modified version of wstunnel.sh can be found here https://github.com/jnsgruk/w
 
 Don't forget to download `wstunnel` as a binary and copy it to `/usr/local/bin/wstunnel` and running `sudo chmod +x /usr/local/bin/wstunnel`
 
+### When helm causes upgrade issues
+https://github.com/fluxcd/helm-controller/issues/149#issuecomment-1000893660
+
