@@ -45,4 +45,4 @@ spec:
       image:
         registry: docker.io
         repository: metallb/speaker
-        tag: v0.10.3
+        tag: v0.12.1
