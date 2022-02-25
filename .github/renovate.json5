@@ -13,8 +13,8 @@
   "rebaseWhen": "conflicted",
   "helm-values": {
     "fileMatch": [
-      "cluster/.+/helm-release\\.yaml$",
-    ],
+      "cluster/.+\\.ya?ml$"
+    ]
   },
   "kubernetes": {
     "fileMatch": [
