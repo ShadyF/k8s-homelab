@@ -34,10 +34,10 @@
       ],
       "datasourceTemplate": "helm"
     },
-    // regexManager to read and process cert-manager CRD's
+    // regexManager to read and process custom CRDs
     {
       "fileMatch": [
-        "cluster/crds/cert-manager/.+\\.yaml$"
+        "cluster/crds/.+\\.yaml$",
       ],
       "matchStrings": [
         "registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*?)\n.*\\/(?<currentValue>.*?)\\/",
