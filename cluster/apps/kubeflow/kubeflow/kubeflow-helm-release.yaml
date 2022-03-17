@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       # renovate: registryUrl=https://getindata.github.io/helm-charts/
-      chart: kubeflow
+      chart: kubeflow-pipelines
       version: 1.6.2
       sourceRef:
         kind: HelmRepository
