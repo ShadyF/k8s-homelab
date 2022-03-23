@@ -21,7 +21,7 @@ spec:
     image:
       registry: k8s.gcr.io
       repository: external-dns/external-dns
-      tag: v0.10.2
+      tag: v0.11.0
     logLevel: debug
     domainFilters:
       - "${SECRET_DOMAIN}"
