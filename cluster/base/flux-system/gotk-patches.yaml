@@ -1,7 +1,7 @@
 # Patches are done so that flux bootstrap does not overwrite them
 # See https://github.com/fluxcd/flux2/issues/524
 # Don't forget to include this file in the kustomization.yaml
-apiVersion: source.toolkit.fluxcd.io/v1beta1
+apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: GitRepository
 metadata:
   name: flux-system
