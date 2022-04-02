@@ -50,10 +50,10 @@ spec:
         enabled: true
         existingClaim: nfs-media-downloads-pvc
       plex-nfs:
-        enable: true
+        enabled: true
         type: pvc
         existingClaim: nfs-media-pvc
-        mountPath: "/media"
+        mountPath: "/downloads/media"
       openvpn-config:
         enabled: true
         type: "custom"
