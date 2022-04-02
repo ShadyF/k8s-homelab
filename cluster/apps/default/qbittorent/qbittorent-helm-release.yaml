@@ -49,6 +49,7 @@ spec:
       downloads:
         enabled: true
         existingClaim: nfs-media-downloads-pvc
+      # Mount plex's nfs so that downloaded movies / series are automatically in the right location
       plex-nfs:
         enabled: true
         type: pvc
