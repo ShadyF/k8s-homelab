@@ -51,7 +51,7 @@ spec:
         existingClaim: nfs-media-downloads-pvc
       plex-nfs:
         enable: true
-        type: "pvc"
+        type: pvc
         existingClaim: nfs-media-pvc
         mountPath: "/downloads/media"
       openvpn-config:
