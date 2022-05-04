@@ -74,7 +74,8 @@ spec:
       nfs-media-pvc:
         enabled: true
         existingClaim: nfs-media-pvc
-        readOnly: true
+        # To be able to delete movies directly from plex
+        readOnly: false
 
     # Only run on worker 1
     affinity:
