@@ -34,6 +34,8 @@ theme:
 extra:
   # https://squidfunk.github.io/mkdocs-material/setup/setting-up-the-footer/?h=social#configuration
   social:
+    - icon: fontawesome/solid/globe
+      link: https://shadyf.com
     - icon: fontawesome/brands/github
       link: https://github.com/shadyf
     - icon: fontawesome/brands/linkedin
@@ -41,7 +43,7 @@ extra:
     - icon: fontawesome/solid/paper-plane
       link: mailto:sssfanous@gmail.com
 
-copyright: Copyright &copy; 2020 - 2021 Shady Fanous
+copyright: Copyright &copy; 2021 - 2022 Shady Fanous
 
 
 plugins:
@@ -89,7 +91,7 @@ markdown_extensions:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
 
-  # Tasks use a custom checkbox (https://facelessuser.github.io/pymdown-extensions/extensions/tasklist/)
+      # Tasks use a custom checkbox (https://facelessuser.github.io/pymdown-extensions/extensions/tasklist/)
   - pymdownx.tasklist:
       custom_checkbox: true
 
@@ -103,5 +105,6 @@ nav:
   - Miscellaneous:
       - Restrict Port Forwarding to only allow Cloudflare IPs using OpenWRT: 'miscellaneous/cloudflare_port_forwarding_openwrt.md'
       - Enabling Wake on Lan on NIC: 'miscellaneous/enabling_WakeOnLan_on_NIC.md'
+      - Getting MetalLB to work on Raspberry Pi 4's Wifi: 'miscellaneous/metallb_not_working_raspberry_wifi.md'
       - Tips and Tricks: 'miscellaneous/tips_and_tricks.md'
 
