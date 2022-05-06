@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "k8s-homelab"
+version = "0.1.0"
+description = "My Kubernetes (k3s) homelab. Synced using Flux v2, automatically updated using Renovate."
+authors = ["Shady Fanous <shadster09@gmail.com>"]
+license = "Apache License 2.0"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+mkdocs-material = "^8.2.13"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
