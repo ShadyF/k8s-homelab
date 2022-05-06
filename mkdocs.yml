@@ -26,6 +26,7 @@ theme:
         icon: material/weather-night
         name: Switch to light mode
   logo: https://raw.githubusercontent.com/ShadyF/shadyf.github.io/master/favicon.ico
+  favicon: https://raw.githubusercontent.com/ShadyF/shadyf.github.io/master/favicon.ico
   features:
     - navigation.instant
     - navigation.top
