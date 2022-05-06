@@ -43,6 +43,9 @@ extra:
       link: https://www.linkedin.com/in/ssfanous/
     - icon: fontawesome/solid/paper-plane
       link: mailto:sssfanous@gmail.com
+  analytics:
+    provider: google
+    property: G-EYY1E6KXTP
 
 copyright: Copyright &copy; 2021 - 2022 Shady Fanous
 
@@ -102,7 +105,7 @@ nav:
       - Setting up Raspberry Pi for k3s: 'cluster_setup/setting_up_raspberry_pi.md'
       - Installing k3s: 'cluster_setup/installing_k3s.md'
       - Setting up Flux: 'cluster_setup/setting_up_flux.md'
-#      - Adding SOPS support to Flux: 'cluster_setup/adding_sops_support_to_flux.md'
+  #      - Adding SOPS support to Flux: 'cluster_setup/adding_sops_support_to_flux.md'
   - Apps: 'apps/oauth2-proxy.md'
   - Miscellaneous:
       - Restrict Port Forwarding to only allow Cloudflare IPs using OpenWRT: 'miscellaneous/cloudflare_port_forwarding_openwrt.md'
