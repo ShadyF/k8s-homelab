@@ -1,10 +1,15 @@
 # Adapted from https://squidfunk.github.io/mkdocs-material/publishing-your-site/
-name: Deploy MkDocs
+name: Deploy MkDocs to Github Pages
 on:
   push:
     branches:
       - master
       - main
+    # Only run when docs specific files have been changed
+    paths:
+      - ".github/workflows/mkdocs.yaml"
+      - "mkdocs.yaml"
+      - "docs/**"
 
 jobs:
   deploy:
