@@ -2,7 +2,7 @@
 title: Tips and Tricks
 ---
 
-Here are some useful tips and tricks that might be of use.
+Here are some tips and tricks that might be of use.
 
 ### Change kubectl context
 
