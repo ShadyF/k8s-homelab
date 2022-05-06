@@ -1,27 +1,13 @@
 ---
-title: My Document
-summary: A brief description of my document.
-authors:
-    - Waylan Limberg
-    - Tom Christie
-date: 2018-07-10
-some_url: https://example.com
+title: Welcome!
 ---
-# Welcome to MkDocs
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+# Welcome!
 
-## Commands
+Hey there! :wave:
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+This website serves as **documentation** for my k8s homelab.
 
-## Project layout
-```python
-from abc import x
+Here, you'll find _guides_, useful _links_ and _solutions_ to any issues I might have faced.
 
-if __name__ == "__main__":
-    print x
-```
+If you have any questions or just want to chat, feel free to hit me up on any of my socials located in the footer! :point_down:

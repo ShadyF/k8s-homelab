@@ -80,9 +80,9 @@ preserve_hostname: true
 
 ## Securing SSH access
 
-!!! note 
-    This section assumes that you're familiar with Key-Based authentication and that you already have a public /
-    private key pair.
+!!! note
+This section assumes that you're familiar with Key-Based authentication and that you already have a public /
+private key pair.
 
     If not, you can generate one using the following instructions found
     in [this link](https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key)
@@ -147,7 +147,7 @@ cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory
 ## Adding password-less `sudo` to our user
 
 !!! note
-    We need our user to have password-less `sudo` so that `k3sup` would work correctly in the next step
+We need our user to have password-less `sudo` so that `k3sup` would work correctly in the next step
 
 ```
 # Run the following from your shell
@@ -187,5 +187,14 @@ Finally, apply the new netplan for it to take effect
 ```shell
 sudo netplan apply
 ```
+
+## (Optional) Using a SSD with your RPI
+
+If you're planning on using a SSD with your RPI, it might be useful to follow the instructions found in
+this [article](https://jamesachambers.com/raspberry-pi-4-usb-boot-config-guide-for-ssd-flash-drives/) since
+there's some quirks regarding which USB adapters work properly and some fixes that can be applied.
+
+You might also want to look at enabling [TRIM](https://wiki.archlinux.org/title/Solid_state_drive#TRIM). This is OS dependent
+so I'll leave it up to you to find the appropriate guide.
 
 [^1]: [https://itsfoss.com/connect-wifi-terminal-ubuntu/](https://itsfoss.com/connect-wifi-terminal-ubuntu/)
