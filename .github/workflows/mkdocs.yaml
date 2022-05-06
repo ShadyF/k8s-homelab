@@ -8,7 +8,7 @@ on:
     # Only run when docs specific files have been changed
     paths:
       - ".github/workflows/mkdocs.yaml"
-      - "mkdocs.yaml"
+      - "mkdocs.yml"
       - "docs/**"
 
 jobs:
