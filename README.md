@@ -4,7 +4,7 @@
 
 ### My K8s Homelab :computer:
 
-##### Synced Using Flux <img src="https://avatars.githubusercontent.com/u/52158677?s=200&v=4" width="18px"> Updated using Renovate <img src="https://docs.renovatebot.com/assets/images/logo.png" width="18px">
+### Synced Using Flux <img src="https://avatars.githubusercontent.com/u/52158677?s=200&v=4" width="18px"> Updated using Renovate <img src="https://docs.renovatebot.com/assets/images/logo.png" width="18px">
 
 [![k3s](https://img.shields.io/badge/k3s-v1.22.7-brightgreen?style=for-the-badge&logo=kubernetes&logoColor=white)](https://k3s.io/)
 [![Website](https://img.shields.io/website?down_message=offline&label=homelab.shadyf.com&logo=readthedocs&logoColor=white&style=for-the-badge&up_message=online&url=https%3A%2F%2Fhomelab.shadyf.com)](https://homelab.shadyf.com)
@@ -18,7 +18,7 @@ This repository contains the kubernetes manifests of my homelab, synced using [F
 
 [Renovate](https://docs.renovatebot.com/) also scans this repo and create PRs whenever it finds a dependency update.
 
-## :floppy_disk:Software
+## :floppy_disk: Software
 
 My homelab uses [k3s](https://k3s.io/) on top of bare-metal hardware running Ubuntu Server 21.04. Hardware specs can be
 found below.
@@ -68,7 +68,7 @@ My k3s cluster currently has the following hardware
 - 1x Old Computer I had laying around with the following specs
 
   | Component    | Details |
-  |--------|---------------------------------------------|
+      |--------|---------------------------------------------|
   | CPU    | Intel Core i5-2500K (Overclocked to **4.5GHz**) |
   | Cooler | Cooler Master Hyper 212 EVO                 |
   | RAM    | 8GB DDR3                                    |
