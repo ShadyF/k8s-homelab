@@ -80,9 +80,9 @@ preserve_hostname: true
 
 ## Securing SSH access
 
-!!! note
-This section assumes that you're familiar with Key-Based authentication and that you already have a public /
-private key pair.
+!!! note 
+    This section assumes that you're familiar with Key-Based authentication and that you already have a public /
+    private key pair.
 
     If not, you can generate one using the following instructions found
     in [this link](https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key)
