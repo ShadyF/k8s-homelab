@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: v-rising-saves-pvc
+  name: v-rising-saves-pvc-v2
   namespace: default
 spec:
   accessModes:
@@ -9,4 +9,4 @@ spec:
   storageClassName: longhorn
   resources:
     requests:
-      storage: 50Mi
+      storage: 500Mi
