@@ -19,6 +19,7 @@ spec:
     spec:
       containers:
         - name: v-rising
+          # https://hub.docker.com/r/mephi00/v-rising-wine
           image: mephi00/v-rising-wine
           imagePullPolicy: IfNotPresent
           ports:
@@ -35,12 +36,18 @@ spec:
               value: "true"
             - name: V_RISING_GAME_MODE
               value: "PvE"
+            - name: V_RISING_MAX_USER
+              value: "4"
           envFrom:
             - secretRef:
                 name: v-rising-secrets
           volumeMounts:
             - mountPath: "/saves"
               name: v-rising-volume
+          resources:
+            requests:
+              memory: 2048Mi
+              cpu: 500m
       volumes:
         - name: v-rising-volume
           persistentVolumeClaim:
@@ -55,9 +62,8 @@ spec:
                     operator: In
                     values:
                       - k8-w1
+      # id of "steam" user in image
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
-
-
