@@ -44,7 +44,7 @@ spec:
       volumes:
         - name: v-rising-volume
           persistentVolumeClaim:
-            claimName: v-rising-saves-pvc-v2
+            claimName: v-rising-saves-pvc-v3
       # Only run on k8-w1, non ARM
       affinity:
         nodeAffinity:
