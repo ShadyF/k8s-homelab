@@ -12,13 +12,15 @@ spec:
   type: LoadBalancer
   # Needed since plex only considers clients as local if they're on the same subnet
   loadBalancerIP: 192.168.1.241
-  externalTrafficPolicy: Local
+  externalTrafficPolicy: Cluster
   selector:
     app: v-rising
   ports:
     - name: udp1
       protocol: UDP
       port: 9876
+      targetPort: 9876
     - name: udp2
       protocol: UDP
       port: 9877
+      targetPort: 9877
