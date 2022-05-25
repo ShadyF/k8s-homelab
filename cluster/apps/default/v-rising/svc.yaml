@@ -8,7 +8,9 @@ spec:
   selector:
     app: v-rising
   ports:
-    - protocol: UDP
+    - name: udp1
+      protocol: UDP
       port: 9876
-    - protocol: UDP
+    - name: udp2
+      protocol: UDP
       port: 9877

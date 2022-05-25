@@ -45,5 +45,15 @@ spec:
         - name: v-rising-volume
           persistentVolumeClaim:
             claimName: v-rising-saves-pvc
+      # Only run on k8-w1, non ARM
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - k8-w1
 
 
