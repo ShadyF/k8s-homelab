@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: v-rising-svc
+  namespace: default
+spec:
+  type: ClusterIP
+  selector:
+    app: v-rising
+  ports:
+    - protocol: UDP
+      port: 9876
+    - protocol: UDP
+      port: 9877

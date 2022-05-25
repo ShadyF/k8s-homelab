@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: v-rising-deployment
+  namespace: default
+  labels:
+    app: v-rising
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: v-rising
+  template:
+    metadata:
+      labels:
+        app: v-rising
+    spec:
+      containers:
+        - name: v-rising
+          image: mephi00/v-rising-wine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - protocol: UDP
+              containerPort: 9876
+            - protocol: UDP
+              containerPort: 9877
+          env:
+            - name: V_RISING_NAME
+              value: "Orange Red Yellow"
+            - name: V_RISING_SAVE_NAME
+              value: "save1"
+            - name: V_RISING_PUBLIC_LIST
+              value: "false"
+            - name: V_RISING_GAME_MODE
+              value: "PvE"
+          envFrom:
+            - secretRef:
+                name: v-rising-secrets
+          volumeMounts:
+            - mountPath: "/saves"
+              name: v-rising-volume
+      volumes:
+        - name: v-rising-volume
+          persistentVolumeClaim:
+            claimName: v-rising-saves-pvc
+
+
