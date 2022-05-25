@@ -32,7 +32,7 @@ spec:
             - name: V_RISING_SAVE_NAME
               value: "save1"
             - name: V_RISING_PUBLIC_LIST
-              value: "false"
+              value: "true"
             - name: V_RISING_GAME_MODE
               value: "PvE"
           envFrom:
