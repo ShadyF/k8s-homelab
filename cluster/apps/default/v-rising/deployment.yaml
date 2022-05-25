@@ -44,7 +44,7 @@ spec:
       volumes:
         - name: v-rising-volume
           persistentVolumeClaim:
-            claimName: v-rising-saves-pvc
+            claimName: v-rising-saves-pvc-v2
       # Only run on k8-w1, non ARM
       affinity:
         nodeAffinity:
@@ -55,5 +55,9 @@ spec:
                     operator: In
                     values:
                       - k8-w1
+      securityContext:
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
 
 
