@@ -55,5 +55,7 @@ spec:
                     operator: In
                     values:
                       - k8-w1
+      securityContext:
+        runAsUser: 0
 
 
