@@ -54,7 +54,7 @@ spec:
         enabled: true
         type: pvc
         existingClaim: nfs-media-pvc
-        mountPath: "/media_nfs"
+        mountPath: "/downloads/media"
       openvpn-config:
         enabled: true
         type: "custom"
