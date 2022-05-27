@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: v-rising-host-settings
+data:
+  ServerHostSetting.templ: |-
+    {
+      "Name": "${V_RISING_NAME}",
+      "Description": "${V_RISING_DESC}",
+      "Port": ${V_RISING_PORT},
+      "QueryPort": ${V_RISING_QUERY_PORT},
+      "MaxConnectedUsers": ${V_RISING_MAX_USER},
+      "MaxConnectedAdmins": ${V_RISING_MAX_ADMIN},
+      "ServerFps": 30,
+      "SaveName": "${V_RISING_SAVE_NAME}",
+      "Password": "${V_RISING_PASSW}",
+      "Secure": true,
+      "ListOnMasterServer": ${V_RISING_PUBLIC_LIST},
+      "AutoSaveCount": "${V_RISING_AUTOSAVE_COUNT}",
+      "AutoSaveInterval": "${V_RISING_AUTOSAVE_INTERVAL}",
+      "GameSettingsPreset": "${V_RISING_SETTING_PRESET}",
+      "AdminOnlyDebugEvents": true,
+      "DisableDebugEvents": false
+    }

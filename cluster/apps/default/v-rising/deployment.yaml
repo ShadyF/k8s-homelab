@@ -38,12 +38,19 @@ spec:
               value: "PvE"
             - name: V_RISING_MAX_USER
               value: "4"
+            - name: V_RISING_AUTOSAVE_COUNT
+              value: "15"
+            - name: V_RISING_AUTOSAVE_INTERVAL
+              value: "120"
           envFrom:
             - secretRef:
                 name: v-rising-secrets
           volumeMounts:
             - mountPath: "/saves"
               name: v-rising-volume
+            - name: v-rising-host-settings-volume
+              mountPath: /templates/ServerHostSetting.templ
+              subPath: ServerHostSetting.templ
           resources:
             requests:
               memory: 2048Mi
@@ -52,6 +59,9 @@ spec:
         - name: v-rising-volume
           persistentVolumeClaim:
             claimName: v-rising-saves-pvc-v3
+        - name: v-rising-host-settings-volume
+          configMap:
+            name: v-rising-host-settings
       # Only run on k8-w1, non ARM
       affinity:
         nodeAffinity:
