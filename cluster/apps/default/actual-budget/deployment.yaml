@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: actual-budget
+  namespace: default
+  labels:
+    app: actual-budget
+spec:
+  replicas: 0
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: actual-budget
+  template:
+    metadata:
+      labels:
+        app: actual-budget
+    spec:
+      containers:
+        - name: actual-budget
+          # https://hub.docker.com/r/mephi00/v-rising-wine
+          image: jlongster/actual-server:1.0.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5006
+#          volumeMounts:
+#            - mountPath: "/data"
+#              name: v-rising-volume
+#          resources:
+#            requests:
+#              memory: 2048Mi
+#              cpu: 500m
+#      volumes:
+#        - name: v-rising-volume
+#          persistentVolumeClaim:
+#            claimName: v-rising-saves-pvc-v3
+      # Only run on k8-w1, non ARM
+#      affinity:
+#        nodeAffinity:
+#          requiredDuringSchedulingIgnoredDuringExecution:
+#            nodeSelectorTerms:
+#              - matchExpressions:
+#                  - key: kubernetes.io/hostname
+#                    operator: In
+#                    values:
+#                      - k8-w1
+      # id of "steam" user in image
+#      securityContext:
+#        runAsUser: 1000
+#        runAsGroup: 1000
+#        fsGroup: 1000

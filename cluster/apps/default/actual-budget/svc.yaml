@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: actual-budget-svc
+  namespace: default
+spec:
+  selector:
+    app: actual-budget
+  ports:
+    - protocol: TCP
+      port: 5006
+      name: http
+  clusterIP: None
+  type: ClusterIP
