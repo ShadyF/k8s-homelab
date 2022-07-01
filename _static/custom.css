@@ -1,0 +1,35 @@
+[data-md-color-scheme="default"] {
+    --md-typeset-a-color: var(--md-accent-fg-color)
+}
+
+/*
+text rgb(167, 167, 168)
+background rgb(33, 33, 33)
+*/
+[data-md-color-scheme="slate"] {
+
+    --md-hue: 0;
+
+    --md-default-fg-color: hsla(var(--md-hue), 0%, 80%, 1);
+    --md-default-fg-color--light: hsla(var(--md-hue), 0%, 80%, 0.62);
+    --md-default-fg-color--lighter: hsla(var(--md-hue), 0%, 80%, 0.32);
+    --md-default-fg-color--lightest: hsla(var(--md-hue), 0%, 80%, 0.12);
+
+
+    --md-default-bg-color: hsla(var(--md-hue), 0%, 12%, 1);
+    --md-default-bg-color--light: hsla(var(--md-hue), 0%, 12%, 0.54);
+    --md-default-bg-color--lighter: hsla(var(--md-hue), 0%, 12%, 0.26);
+    --md-default-bg-color--lightest: hsla(var(--md-hue), 0%, 12%, 0.07);
+
+    /* Code Blocks Color Shades */
+    --md-code-fg-color: rgb(191, 199, 213);
+    --md-code-bg-color: hsl(0, 0%, 18%);
+
+    --md-typeset-mark-color: hsla(13, 74%, 100%, 0.3);
+
+    --md-typeset-a-color: var(--md-accent-fg-color) !important;
+
+    /* Footer Color Shades */
+    --md-footer-bg-color: hsla(var(--md-hue), 0%, 12%, 0.87);
+    --md-footer-bg-color--dark: hsla(var(--md-hue), 0%, 10%, 1);
+}
