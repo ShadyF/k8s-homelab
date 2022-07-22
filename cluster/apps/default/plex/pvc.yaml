@@ -20,6 +20,9 @@ spec:
     # Need to create longhorn volume from UI
     # Will probably need to change permissions on the config folder using chmod 777 /config
     # See https://github.com/longhorn/longhorn/issues/475
+
+    # Create a new volume in longhorn's UI with the following name (Don't forget to set it as a block storage).
+    # After that, everything should be taken care of automatically
     volumeHandle: plex-config-csi
 ---
 apiVersion: v1
