@@ -6,7 +6,7 @@
 
 #### Synced Using Flux <img src="https://avatars.githubusercontent.com/u/52158677?s=200&v=4" width="18px"> Updated using Renovate <img src="https://docs.renovatebot.com/assets/images/logo.png" width="18px">
 
-[![k3s](https://img.shields.io/badge/k3s-v1.22.7-brightgreen?style=for-the-badge&logo=kubernetes&logoColor=white)](https://k3s.io/)
+[![k3s](https://img.shields.io/badge/k3s-v1.24.3+k3s1-brightgreen?style=for-the-badge&logo=kubernetes&logoColor=white)](https://k3s.io/)
 [![Website](https://img.shields.io/website?down_message=offline&label=homelab.shadyf.com&logo=readthedocs&logoColor=white&style=for-the-badge&up_message=online&url=https%3A%2F%2Fhomelab.shadyf.com)](https://homelab.shadyf.com)
 ![GitHub last commit](https://img.shields.io/github/last-commit/shadyf/k8s-homelab?logo=github&style=for-the-badge)
 ![Lines of code](https://img.shields.io/tokei/lines/github/ShadyF/k8s-homelab?label=lines&logo=codefactor&logoColor=white&style=for-the-badge)
