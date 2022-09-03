@@ -66,6 +66,7 @@ spec:
       initialDelaySeconds: 60
     readinessProbe:
       initialDelaySeconds: 60
-# Enable when prometheus is installed
-#    serviceMonitor:
-#      enabled: true
+    # Enable when prometheus is installed
+    # https://github.com/grafana/loki/blob/main/production/helm/loki/values.yaml#L518
+    serviceMonitor:
+      enabled: false
