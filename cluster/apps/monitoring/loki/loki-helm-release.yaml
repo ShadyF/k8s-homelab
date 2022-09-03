@@ -62,11 +62,25 @@ spec:
         filesystem:
           directory: /data/loki/chunks
 
+    # Enable when prometheus is installed
+    # https://github.com/grafana/loki/blob/main/production/helm/loki/values.yaml#L518
+    monitoring:
+      dashboards:
+        # -- If enabled, create configmap with dashboards for monitoring Loki
+        enabled: false
+      rules:
+        # -- If enabled, create PrometheusRule resource with Loki recording rules
+        enabled: false
+      alerts:
+        # -- If enabled, create PrometheusRule resource with Loki alerting rules
+        enabled: false
+      serviceMonitor:
+        # -- If enabled, ServiceMonitor resources for Prometheus Operator are created
+        enabled: false
+      selfMonitoring:
+        enabled: false
+
     livenessProbe:
       initialDelaySeconds: 60
     readinessProbe:
       initialDelaySeconds: 60
-    # Enable when prometheus is installed
-    # https://github.com/grafana/loki/blob/main/production/helm/loki/values.yaml#L518
-    serviceMonitor:
-      enabled: false
