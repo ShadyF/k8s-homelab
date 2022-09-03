@@ -24,6 +24,10 @@ spec:
       enabled: true
       existingClaim: loki-pvc
 
+    # Needed for version 3 of the helm chart, see https://github.com/grafana/loki/tree/main/production/helm/loki#upgrading-from-grafanaloki
+    commonConfig:
+      replication_factor: 1
+
     # https://grafana.com/docs/loki/latest/storage/
     config:
       auth_enabled: false
