@@ -77,6 +77,18 @@ My k3s cluster currently has the following hardware
 
 - 1x Raspberry Pi 4 (8GB RAM)
 
+## Uptime Monitoring
+Uptime monitoring is done via [UptimeRobot](https://stats.uptimerobot.com/DAmr6ToN03).
+
+UptimeRobot essentially ping / send requests to each externally exposed service I have configured and
+sends out a push notification to my mobile whenever a service goes down.
+
+Quite useful!
+
+Link to the status page is [here](https://stats.uptimerobot.com/DAmr6ToN03).
+
+![Status Page](https://user-images.githubusercontent.com/6564442/190654435-718f1a03-8134-4ec8-86f1-38817228e73e.png)
+
 ## :book: Documentation
 
 Documentation for this repo is done using [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) and is
