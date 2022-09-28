@@ -67,22 +67,26 @@ spec:
       data:
         enabled: true
         mountPath: /usr/src/paperless/data
-        existingClaim: "nfs-media-downloads-pvc"
+        type: nfs
+        server: 192.168.1.200
         path: "/srv/nfs/Docs/paperless/data"
       media:
         enabled: true
         mountPath: /usr/src/paperless/media
-        existingClaim: "nfs-media-downloads-pvc"
+        type: nfs
+        server: 192.168.1.200
         path: "/srv/nfs/Docs/paperless/media"
       consume:
         enabled: true
         mountPath: /usr/src/paperless/consume
-        existingClaim: "nfs-media-downloads-pvc"
+        type: nfs
+        server: 192.168.1.200
         path: "/srv/nfs/Docs/paperless/incoming"
       export:
         enabled: true
         mountPath: /usr/src/paperless/export
-        existingClaim: "nfs-media-downloads-pvc"
+        type: nfs
+        server: 192.168.1.200
         path: "/srv/nfs/Docs/paperless/export"
 
     resources:
