@@ -1,9 +1,9 @@
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
-  name: k8s-at-home-charts
+  name: bjw-s
   namespace: flux-system
 spec:
   interval: 30m
-  url: https://k8s-at-home.com/charts/
+  url: https://bjw-s.github.io/helm-charts/
   timeout: 3m
