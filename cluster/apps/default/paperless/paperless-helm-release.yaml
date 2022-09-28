@@ -27,13 +27,15 @@ spec:
       PAPERLESS_CONSUMER_RECURSIVE: "true"
       PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS: "true"
       PAPERLESS_ENABLE_HTTP_REMOTE_USER: "false"
-      PAPERLESS_OCR_LANGUAGES: en ara
+      PAPERLESS_OCR_LANGUAGES: ara
       PAPERLESS_OCR_LANGUAGE: en+ara
       PAPERLESS_PORT: 8000
       PAPERLESS_REDIS: redis://paperless-redis.default.svc.cluster.local:6379
       PAPERLESS_TASK_WORKERS: 1
       PAPERLESS_TIME_ZONE: "Africa/Cairo"
       PAPERLESS_URL: https://paperless.${INGRESS_DOMAIN}
+      USERMAP_UID: 1002
+      USERMAP_GID: 1002
 
     envFrom:
       - secretRef:
