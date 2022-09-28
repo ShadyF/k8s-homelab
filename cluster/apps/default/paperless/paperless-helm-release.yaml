@@ -33,7 +33,7 @@ spec:
       PAPERLESS_REDIS: redis://paperless-redis.default.svc.cluster.local:6379
       PAPERLESS_TASK_WORKERS: 1
       PAPERLESS_TIME_ZONE: "Africa/Cairo"
-      PAPERLESS_URL: https://paperless.${INGRESS_DOMAIN}
+      PAPERLESS_URL: "https://paperless.${SECRET_DOMAIN}"
       USERMAP_UID: 1002
       USERMAP_GID: 1002
 
