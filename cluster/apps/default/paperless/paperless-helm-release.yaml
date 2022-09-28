@@ -64,12 +64,30 @@ spec:
               - "paperless.${SECRET_DOMAIN}"
 
     persistence:
-      paperless:
+      data:
         enabled: true
-        mountPath: /usr/src/paperless
+        mountPath: /usr/src/paperless/data
         type: nfs
         server: 192.168.1.200
-        path: "/srv/nfs/Docs/paperless"
+        path: "/srv/nfs/Docs/paperless/data"
+      media:
+        enabled: true
+        mountPath: /usr/src/paperless/media
+        type: nfs
+        server: 192.168.1.200
+        path: "/srv/nfs/Docs/paperless/media"
+      consume:
+        enabled: true
+        mountPath: /usr/src/paperless/consume
+        type: nfs
+        server: 192.168.1.200
+        path: "/srv/nfs/Docs/paperless/incoming"
+      export:
+        enabled: true
+        mountPath: /usr/src/paperless/export
+        type: nfs
+        server: 192.168.1.200
+        path: "/srv/nfs/Docs/paperless/export"
 
     resources:
       requests:
