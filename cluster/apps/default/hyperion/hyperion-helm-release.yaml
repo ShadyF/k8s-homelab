@@ -24,7 +24,8 @@ spec:
     service:
       flatbuffer:
         enabled: true
-        type: NodePort
+        type: LoadBalancer
+        loadBalancerIP: 192.168.1.243
         externalTrafficPolicy: Local
         ports:
           listen:
