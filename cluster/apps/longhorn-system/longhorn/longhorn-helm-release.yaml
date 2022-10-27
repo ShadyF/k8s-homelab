@@ -17,6 +17,9 @@ spec:
         namespace: flux-system
       interval: 5m
   values:
+    # https://github.com/longhorn/longhorn/issues/1861#issuecomment-716459507
+    csi:
+      kubeletRootDir: /var/lib/kubelet
     persistence:
       defaultClassReplicaCount: 2
     defaultSettings:
