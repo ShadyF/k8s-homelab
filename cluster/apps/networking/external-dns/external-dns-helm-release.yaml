@@ -10,7 +10,7 @@ spec:
     spec:
       # renovate: registryUrl=https://charts.bitnami.com/bitnami
       chart: external-dns
-      version: 6.10.2
+      version: 6.11.2
       sourceRef:
         kind: HelmRepository
         name: bitnami-charts
@@ -21,7 +21,7 @@ spec:
     image:
       registry: k8s.gcr.io
       repository: external-dns/external-dns
-      tag: v0.12.2
+      tag: v0.13.1
     logLevel: debug
     domainFilters:
       - "${SECRET_DOMAIN}"
