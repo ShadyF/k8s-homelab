@@ -19,7 +19,7 @@ spec:
   values:
     image:
       repository: ghcr.io/k8s-at-home/plex
-      tag: v1.29.1.6316-f4cdfea9c
+      tag: v1.29.2.6364-6d72b0cf6
     env:
       TZ: "Africa/Cairo"
       # See https://www.devwithimagination.com/2019/08/21/plex-docker-and-the-problem-of-always-appearing-as-remote/
