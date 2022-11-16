@@ -23,7 +23,7 @@ spec:
       - name: FLOOD_OPTION_AUTH
         value: "none"
       - name: FLOOD_OPTION_QBURL
-        value: "http://qbittorrent:8080"
+        value: "http://qbittorrent.default.svc.cluster.local:8080"
       - name: FLOOD_OPTION_RUNDIR
         value: "/config"
       - name: FLOOD_OPTION_QBUSER
