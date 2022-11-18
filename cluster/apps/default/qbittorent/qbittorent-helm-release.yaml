@@ -17,8 +17,8 @@ spec:
       interval: 5m
   values:
     image:
-      repository: linuxserver/qbittorrent
-      tag: libtorrentv1-version-release-4.4.5_v1.2.18
+      repository: ghcr.io/onedr0p/qbittorrent
+      tag: 4.4.5
     ingress:
       main:
         enabled: true
@@ -41,9 +41,6 @@ spec:
     env:
       - name: WAIT_FOR_VPN
         value: "true"
-    securityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
     # Permission denied issues in qbittorrent container if podSecurityContext -> fsGroup 1001 is not added
     # Maybe has to do with qbittorrent's container not running as root?
     podSecurityContext:
