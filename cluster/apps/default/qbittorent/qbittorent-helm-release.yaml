@@ -17,8 +17,8 @@ spec:
       interval: 5m
   values:
     image:
-      repository: nevinee/qbittorrent
-      tag: 4.5.0beta1
+      repository: linuxserver/qbittorrent
+      tag: libtorrentv1-version-release-4.4.5_v1.2.18
     ingress:
       main:
         enabled: true
@@ -49,13 +49,6 @@ spec:
       config:
         enabled: true
         existingClaim: qb-config-pvc
-        mountPath: /data/config
-        subPath: qBittorrent
-      qbittorrent-data:
-        enabled: true
-        existingClaim: qb-config-pvc
-        mountPath: /data/data
-        subPath: qBittorrent
       downloads:
         enabled: true
         existingClaim: nfs-media-downloads-pvc
