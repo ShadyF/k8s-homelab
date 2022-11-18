@@ -17,8 +17,8 @@ spec:
       interval: 5m
   values:
     image:
-      repository: ghcr.io/k8s-at-home/qbittorrent
-      tag: v4.4.2
+      repository: nevinee/qbittorrent
+      tag: 4.5.0beta1
     ingress:
       main:
         enabled: true
