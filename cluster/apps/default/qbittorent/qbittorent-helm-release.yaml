@@ -50,6 +50,12 @@ spec:
         enabled: true
         existingClaim: qb-config-pvc
         mountPath: /data/config
+        subPath: /qBittorrent
+      qbittorrent-data:
+        enabled: true
+        existingClaim: qb-config-pvc
+        mountPath: /data/data
+        subPath: /qBittorrent
       downloads:
         enabled: true
         existingClaim: nfs-media-downloads-pvc
