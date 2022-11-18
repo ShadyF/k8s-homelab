@@ -105,6 +105,10 @@ spec:
           capabilities:
             add: [ "NET_ADMIN" ]
         env:
+          - name: VPN_SERVICE_PROVIDER
+            value: "custom"
+          - name: OPENVPN_CUSTOM_CONFIG
+            value: "/gluetun/custom/mullvad_de_fra.conf"
           - name: OPENVPN_USER
             valueFrom:
               secretKeyRef:
@@ -115,8 +119,6 @@ spec:
               secretKeyRef:
                 name: openvpn-secrets
                 key: OPENVPN_PASSWORD
-          - name: OPENVPN_CUSTOM_CONFIG
-            value: "/gluetun/custom/mullvad_de_fra.conf"
           # Should be the same as the shadowsocks bridge server
           - name: FIREWALL_OUTBOUND_SUBNETS
             value: "185.213.154.117/32"
