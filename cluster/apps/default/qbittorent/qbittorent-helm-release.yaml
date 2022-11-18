@@ -17,8 +17,8 @@ spec:
       interval: 5m
   values:
     image:
-      repository: ghcr.io/onedr0p/qbittorrent
-      tag: 4.4.5
+      repository: ghcr.io/k8s-at-home/qbittorrent
+      tag: v4.4.2
     ingress:
       main:
         enabled: true
@@ -99,7 +99,7 @@ spec:
           - containerPort: 1080
             protocol: TCP
       - name: gluetun
-        image: qmcgaw/gluetun:v3.31.1
+        image: qmcgaw/gluetun:v3.32.0
         imagePullPolicy: IfNotPresent
         securityContext:
           capabilities:
