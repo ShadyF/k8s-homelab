@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: qb-config-pvc
+  name: qb-config-pvc2
   namespace: default
 spec:
   accessModes:
