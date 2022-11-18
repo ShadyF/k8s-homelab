@@ -44,6 +44,8 @@ spec:
     # Permission denied issues in qbittorrent container if podSecurityContext -> fsGroup 1001 is not added
     # Maybe has to do with qbittorrent's container not running as root?
     podSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
       fsGroup: 1000
     persistence:
       config:
