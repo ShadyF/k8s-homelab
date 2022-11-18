@@ -49,6 +49,7 @@ spec:
       config:
         enabled: true
         existingClaim: qb-config-pvc
+        mountPath: /data/config
       downloads:
         enabled: true
         existingClaim: nfs-media-downloads-pvc
