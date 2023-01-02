@@ -52,6 +52,7 @@ spec:
 
     # TODO: Check if --reverse-proxy flag is useful or not
     extraArgs:
+      api-route: "^/ready"
       provider: google
       provider-display-name: "an authenticated email"
       skip-provider-button: "false"
