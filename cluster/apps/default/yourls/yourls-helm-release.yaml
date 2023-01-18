@@ -26,8 +26,8 @@ spec:
     replicaCount: 1
 
     yourls:
-      domain: "${SECRET_DOMAIN}"
-      scheme: https
+      domain: "yourls.${SECRET_DOMAIN}"
+      scheme: http
       existingSecret: yourls-secrets
 
     ingress:
