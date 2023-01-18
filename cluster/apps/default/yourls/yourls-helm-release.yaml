@@ -55,7 +55,7 @@ spec:
       auth:
         database: yourls
         username: yourls
-        existingSecret: yourls-mariadb-secrets
+        existingSecret: yourls-mariadb
       primary:
         persistence:
           enabled: true
