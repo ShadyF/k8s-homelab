@@ -17,7 +17,7 @@ spec:
         namespace: flux-system
       interval: 5m
   values:
-
+    # https://github.com/YOURLS/charts/blob/main/charts/yourls/values.yaml
     image:
       registry: ghcr.io
       repository: yourls/yourls
@@ -29,7 +29,7 @@ spec:
 
     yourls:
       domain: "yourls.${SECRET_DOMAIN}"
-      scheme: http
+      scheme: https
       existingSecret: yourls-secrets
 
     ingress:
@@ -54,6 +54,7 @@ spec:
       size: 10Gi
 
     mariadb:
+      # https://github.com/bitnami/charts/blob/master/bitnami/mariadb/values.yaml
       auth:
         database: yourls
         username: yourls
