@@ -24,6 +24,8 @@ spec:
       tag: 1.9.1
 
     replicaCount: 1
+    updateStrategy:
+      type: Recreate
 
     yourls:
       domain: "yourls.${SECRET_DOMAIN}"
