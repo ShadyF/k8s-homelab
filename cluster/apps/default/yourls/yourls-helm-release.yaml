@@ -52,11 +52,6 @@ spec:
       size: 10Gi
 
     mariadb:
-      auth:
-        rootPassword: ""
-        database: yourls
-        username: yourls
-        password: ""
       primary:
         persistence:
           enabled: true
