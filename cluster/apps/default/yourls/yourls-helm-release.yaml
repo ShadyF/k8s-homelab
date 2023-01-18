@@ -52,6 +52,10 @@ spec:
       size: 10Gi
 
     mariadb:
+      auth:
+        database: yourls
+        username: yourls
+        existingSecret: yourls-mariadb-secrets
       primary:
         persistence:
           enabled: true
