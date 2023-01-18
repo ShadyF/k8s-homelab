@@ -30,7 +30,7 @@ spec:
 
     yourls:
       domain: "yourls.${SECRET_DOMAIN}"
-      scheme: https
+      scheme: http
       existingSecret: yourls-secrets
 
     ingress:
