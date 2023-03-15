@@ -21,7 +21,7 @@ spec:
     image:
       registry: ghcr.io
       repository: yourls/yourls
-      tag: 1.9.1
+      tag: 1.9.2
 
     replicaCount: 1
     updateStrategy:
