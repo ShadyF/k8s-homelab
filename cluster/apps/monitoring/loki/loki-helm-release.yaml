@@ -56,10 +56,7 @@ spec:
 
         common:
           replication_factor: 1
-          storage:
-            filesystem:
-              chunks_directory: /var/loki/chunks
-              rules_directory: /var/loki/rules
+          storage: filesystem
 
         schema_config:
           configs:
