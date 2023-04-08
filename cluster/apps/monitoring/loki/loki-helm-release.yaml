@@ -89,62 +89,62 @@ spec:
         analytics:
           reporting_enabled: false
 
-      gateway:
+    gateway:
+      enabled: true
+      replicas: 1
+      ingress:
         enabled: true
-        replicas: 1
-        ingress:
-          enabled: true
-          ingressClassName: "nginx"
-          hosts:
-            - host: "loki.${SECRET_DOMAIN}"
-              paths:
-                - path: /
-                  pathType: Prefix
-          tls:
-            - hosts:
-                - "loki.${SECRET_DOMAIN}"
-      read:
-        replicas: 1
-        persistence:
-          size: 10Gi
-          storageClass: longhorn
-        extraVolumeMounts:
-          - name: rules
-            mountPath: /rules
-        extraVolumes:
-          - name: rules
-            emptyDir: { }
-      write:
-        replicas: 1
-        persistence:
-          size: 10Gi
-          storageClass: longhorn
-      backend:
-        replicas: 1
-        persistence:
-          size: 10Gi
-          storageClass: longhorn
-        extraVolumeMounts:
-          - name: rules
-            mountPath: /rules/fake
-          - name: scratch
-            mountPath: /tmp/scratch
-        extraVolumes:
-          - name: rules
-            configMap:
-              name: loki-alerting-rules
-          - name: scratch
-            emptyDir: { }
-      monitoring:
-        serviceMonitor:
-          enabled: false
-          metricsInstance:
-            enabled: false
-        selfMonitoring:
-          enabled: false
-          grafanaAgent:
-            installOperator: false
-        lokiCanary:
-          enabled: false
-      test:
+        ingressClassName: "nginx"
+        hosts:
+          - host: "loki.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - hosts:
+              - "loki.${SECRET_DOMAIN}"
+    read:
+      replicas: 1
+      persistence:
+        size: 10Gi
+        storageClass: longhorn
+      extraVolumeMounts:
+        - name: rules
+          mountPath: /rules
+      extraVolumes:
+        - name: rules
+          emptyDir: { }
+    write:
+      replicas: 1
+      persistence:
+        size: 10Gi
+        storageClass: longhorn
+    backend:
+      replicas: 1
+      persistence:
+        size: 10Gi
+        storageClass: longhorn
+      extraVolumeMounts:
+        - name: rules
+          mountPath: /rules/fake
+        - name: scratch
+          mountPath: /tmp/scratch
+      extraVolumes:
+        - name: rules
+          configMap:
+            name: loki-alerting-rules
+        - name: scratch
+          emptyDir: { }
+    monitoring:
+      serviceMonitor:
         enabled: false
+        metricsInstance:
+          enabled: false
+      selfMonitoring:
+        enabled: false
+        grafanaAgent:
+          installOperator: false
+      lokiCanary:
+        enabled: false
+    test:
+      enabled: false
