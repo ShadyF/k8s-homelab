@@ -16,79 +16,134 @@ spec:
         namespace: flux-system
       interval: 5m
   values:
-    # https://github.com/grafana/helm-charts/blob/main/charts/loki/values.yaml
-    replicas: 1
+    loki:
+      structuredConfig:
+        auth_enabled: false
+        server:
+          log_level: info
+          http_listen_port: 3100
+          grpc_listen_port: 9095
 
-    # PVC is mounted to /data
-    persistence:
-      enabled: true
-      existingClaim: loki-pvc
+        memberlist:
+          join_members: [ "loki-memberlist" ]
 
-    # Needed for version 3 of the helm chart, see https://github.com/grafana/loki/tree/main/production/helm/loki#upgrading-from-grafanaloki
-    commonConfig:
-      replication_factor: 1
-    storage:
-      type: "filesystem"
+        limits_config:
+          retention_period: 60d
+          enforce_metric_name: false
+          reject_old_samples: true
+          reject_old_samples_max_age: 168h
+          max_cache_freshness_per_query: 10m
+          split_queries_by_interval: 15m
+          ingestion_rate_mb: 8
+          ingestion_burst_size_mb: 16
+          shard_streams:
+            enabled: true
 
-    # https://grafana.com/docs/loki/latest/storage/
-    config:
-      auth_enabled: false
-      server:
-        http_listen_port: 3100
+        # Fix for too many outstanding requests, adapte from https://github.com/grafana/loki/issues/4613#issuecomment-1045993131
+        query_scheduler:
+          max_outstanding_requests_per_tenant: 2048
 
-      # Fix for too many outstanding requests, adapte from https://github.com/grafana/loki/issues/4613#issuecomment-1045993131
-      query_scheduler:
-        max_outstanding_requests_per_tenant: 2048
+        query_range:
+          parallelise_shardable_queries: false
+          split_queries_by_interval: 0
 
-      query_range:
-        parallelise_shardable_queries: false
-        split_queries_by_interval: 0
+        commonConfig:
+          replication_factor: 1
+        storage:
+          type: "filesystem"
 
-      # TODO: Use S3 / Minio instead of filesystem
-      schema_config:
-        configs:
-          - from: "2020-10-24"
-            store: boltdb-shipper
-            object_store: filesystem
-            schema: v11
-            index:
-              prefix: index_
-              period: 24h
+        schema_config:
+          configs:
+            - from: "2021-08-01"
+              store: boltdb-shipper
+              object_store: filesystem
+              schema: v11
+              index:
+                prefix: loki_index_
+                period: 24h
 
-      storage_config:
-        boltdb_shipper:
-          active_index_directory: /data/loki/boltdb-shipper-active
-          cache_location: /data/loki/boltdb-shipper-cache
-          cache_ttl: 24h         # Can be increased for faster performance over longer query periods, uses more disk space
-          shared_store: filesystem
-        filesystem:
-          directory: /data/loki/chunks
+        storage_config:
+          boltdb_shipper:
+            active_index_directory: /data/loki/boltdb-shipper-active
+            cache_location: /data/loki/boltdb-shipper-cache
+            cache_ttl: 24h         # Can be increased for faster performance over longer query periods, uses more disk space
+            shared_store: filesystem
+          filesystem:
+            directory: /data/loki/chunks
 
-    # Enable when prometheus is installed
-    # https://github.com/grafana/loki/blob/main/production/helm/loki/values.yaml#L518
-    monitoring:
-      dashboards:
-        # -- If enabled, create configmap with dashboards for monitoring Loki
+        compactor:
+          working_directory: /var/loki/boltdb-shipper-compactor
+          shared_store: s3
+          compaction_interval: 10m
+          retention_enabled: true
+          retention_delete_delay: 2h
+          retention_delete_worker_count: 150
+
+        ingester:
+          max_chunk_age: 1h
+          lifecycler:
+            ring:
+              kvstore:
+                store: memberlist
+        analytics:
+          reporting_enabled: false
+
+      gateway:
+        enabled: true
+        replicas: 1
+        ingress:
+          enabled: true
+          ingressClassName: "nginx"
+          hosts:
+            - host: "loki.${SECRET_DOMAIN}"
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - hosts:
+                - "loki.${SECRET_DOMAIN}"
+      read:
+        replicas: 1
+        persistence:
+          size: 10Gi
+          storageClass: longhorn
+        extraVolumeMounts:
+          - name: rules
+            mountPath: /rules
+        extraVolumes:
+          - name: rules
+            emptyDir: { }
+      write:
+        replicas: 1
+        persistence:
+          size: 10Gi
+          storageClass: longhorn
+      backend:
+        replicas: 3
+        persistence:
+          size: 10Gi
+          storageClass: longhorn
+        extraVolumeMounts:
+          - name: rules
+            mountPath: /rules/fake
+          - name: scratch
+            mountPath: /tmp/scratch
+        extraVolumes:
+          - name: rules
+            configMap:
+              name: loki-alerting-rules
+          - name: scratch
+            emptyDir: { }
+      monitoring:
+        serviceMonitor:
+          enabled: false
+          metricsInstance:
+            enabled: false
+        selfMonitoring:
+          enabled: false
+          grafanaAgent:
+            installOperator: false
+        lokiCanary:
+          enabled: false
+      test:
         enabled: false
-      rules:
-        # -- If enabled, create PrometheusRule resource with Loki recording rules
-        enabled: false
-      alerts:
-        # -- If enabled, create PrometheusRule resource with Loki alerting rules
-        enabled: false
-      serviceMonitor:
-        # -- If enabled, ServiceMonitor resources for Prometheus Operator are created
-        enabled: false
-      selfMonitoring:
-        enabled: false
-        # Grafana Agent configuration
-        grafanaAgent:
-          # -- Controls whether to install the Grafana Agent Operator and its CRDs.
-          # Note that helm will not install CRDs if this flag is enabled during an upgrade.
-          # In that case install the CRDs manually from https://github.com/grafana/agent/tree/main/production/operator/crds
-          installOperator: false
-
-    livenessProbe:
-      initialDelaySeconds: 60
-    readinessProbe:
-      initialDelaySeconds: 60
