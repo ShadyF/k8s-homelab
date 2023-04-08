@@ -16,6 +16,13 @@ spec:
         name: longhorn-charts
         namespace: flux-system
       interval: 5m
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
   values:
     # https://github.com/longhorn/longhorn/issues/1861#issuecomment-716459507
     csi:
