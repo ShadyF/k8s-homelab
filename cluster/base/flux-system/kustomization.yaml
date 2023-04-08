@@ -3,5 +3,23 @@ kind: Kustomization
 resources:
   - gotk-components.yaml
   - gotk-sync.yaml
+# https://fluxcd.io/flux/cheatsheets/bootstrap/#enable-helm-near-oom-detection
+patches:
+  - patch: |
+      # Enable OOM watch feature
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: --feature-gates=OOMWatch=true
+      # Threshold at which to trigger a graceful shutdown (optional, default 95%)
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: --oom-watch-memory-threshold=95
+      # Interval at which to check memory usage (optional, default 500ms)
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: --oom-watch-interval=500ms
+    target:
+      kind: Deployment
+      name: helm-controller
 patchesStrategicMerge:
   - gotk-patches.yaml
