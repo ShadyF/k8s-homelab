@@ -24,8 +24,8 @@ spec:
           http_listen_port: 3100
           grpc_listen_port: 9095
 
-        memberlist:
-          join_members: [ "loki-memberlist" ]
+#        memberlist:
+#          join_members: [ "loki-memberlist" ]
 
         limits_config:
           retention_period: 60d
@@ -47,10 +47,10 @@ spec:
           parallelise_shardable_queries: false
           split_queries_by_interval: 0
 
-        commonConfig:
+        common:
           replication_factor: 1
-        storage:
-          type: "filesystem"
+          storage:
+            type: "filesystem"
 
         schema_config:
           configs:
@@ -62,18 +62,10 @@ spec:
                 prefix: loki_index_
                 period: 24h
 
-        storage_config:
-          boltdb_shipper:
-            active_index_directory: /data/loki/boltdb-shipper-active
-            cache_location: /data/loki/boltdb-shipper-cache
-            cache_ttl: 24h         # Can be increased for faster performance over longer query periods, uses more disk space
-            shared_store: filesystem
-          filesystem:
-            directory: /data/loki/chunks
 
         compactor:
           working_directory: /var/loki/boltdb-shipper-compactor
-          shared_store: s3
+          shared_store: filesystem
           compaction_interval: 10m
           retention_enabled: true
           retention_delete_delay: 2h
@@ -119,7 +111,7 @@ spec:
           size: 10Gi
           storageClass: longhorn
       backend:
-        replicas: 3
+        replicas: 1
         persistence:
           size: 10Gi
           storageClass: longhorn
