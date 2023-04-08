@@ -15,6 +15,13 @@ spec:
         name: grafana-charts
         namespace: flux-system
       interval: 5m
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
   values:
     loki:
       structuredConfig:
@@ -24,8 +31,8 @@ spec:
           http_listen_port: 3100
           grpc_listen_port: 9095
 
-#        memberlist:
-#          join_members: [ "loki-memberlist" ]
+        #        memberlist:
+        #          join_members: [ "loki-memberlist" ]
 
         limits_config:
           retention_period: 60d
