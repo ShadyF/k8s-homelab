@@ -23,6 +23,7 @@ spec:
     remediation:
       retries: 3
   values:
+    # https://grafana.com/docs/loki/latest/configuration/#configuration-file-reference
     loki:
       structuredConfig:
         auth_enabled: false
@@ -55,11 +56,11 @@ spec:
           split_queries_by_interval: 0
 
         common:
+          path_prefix: /tmp/loki
           replication_factor: 1
-          storage:
-            filesystem:
-              chunks_directory: /var/loki/chunks
-              rules_directory: /var/loki/rules
+          ring:
+            kvstore:
+              store: inmemory
 
         schema_config:
           configs:
@@ -82,10 +83,6 @@ spec:
 
         ingester:
           max_chunk_age: 1h
-          lifecycler:
-            ring:
-              kvstore:
-                store: memberlist
         analytics:
           reporting_enabled: false
 
