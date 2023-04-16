@@ -55,12 +55,16 @@ spec:
           parallelise_shardable_queries: false
           split_queries_by_interval: 0
 
-        common:
-          path_prefix: /tmp/loki
-          replication_factor: 1
-          ring:
-            kvstore:
-              store: inmemory
+      common:
+        path_prefix: /tmp/loki
+        storage:
+          filesystem:
+            chunks_directory: /tmp/loki/chunks
+            rules_directory: /tmp/loki/rules
+        replication_factor: 1
+        ring:
+          kvstore:
+            store: inmemory
 
         schema_config:
           configs:
@@ -69,7 +73,7 @@ spec:
               object_store: filesystem
               schema: v11
               index:
-                prefix: loki_index_
+                prefix: index_
                 period: 24h
 
 
