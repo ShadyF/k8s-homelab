@@ -17,7 +17,7 @@ spec:
       interval: 5m
   values:
     config:
-      lokiAddress: http://loki:3100/loki/api/v1/push
+      lokiAddress: https://loki.${SECRET_DOMAIN}/loki/api/v1/push
 # TODO: Look into syslog
 #      extraScrapeConfigs:
 #      - job_name: syslog
