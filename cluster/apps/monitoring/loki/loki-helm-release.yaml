@@ -55,11 +55,11 @@ spec:
         split_queries_by_interval: 0
 
       commonConfig:
-        path_prefix: /tmp/loki
+        path_prefix: /var/loki
         storage:
           filesystem:
-            chunks_directory: /tmp/loki/chunks
-            rules_directory: /tmp/loki/rules
+            chunks_directory: /var/loki/chunks
+            rules_directory: /var/loki/rules
         replication_factor: 1
         ring:
           kvstore:
