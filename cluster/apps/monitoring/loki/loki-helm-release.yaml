@@ -66,44 +66,43 @@ spec:
             kvstore:
               store: inmemory
 
-          schema_config:
-            configs:
-              - from: "2021-08-01"
-                store: boltdb-shipper
-                object_store: filesystem
-                schema: v11
-                index:
-                  prefix: index_
-                  period: 24h
+        schema_config:
+          configs:
+            - from: "2021-08-01"
+              store: boltdb-shipper
+              object_store: filesystem
+              schema: v11
+              index:
+                prefix: index_
+                period: 24h
 
+        compactor:
+          working_directory: /var/loki/boltdb-shipper-compactor
+          shared_store: filesystem
+          compaction_interval: 10m
+          retention_enabled: true
+          retention_delete_delay: 2h
+          retention_delete_worker_count: 150
 
-          compactor:
-            working_directory: /var/loki/boltdb-shipper-compactor
-            shared_store: filesystem
-            compaction_interval: 10m
-            retention_enabled: true
-            retention_delete_delay: 2h
-            retention_delete_worker_count: 150
-
-          ingester:
-            max_chunk_age: 1h
-          analytics:
-            reporting_enabled: false
+        ingester:
+          max_chunk_age: 1h
+        analytics:
+          reporting_enabled: false
 
     gateway:
       enabled: true
       replicas: 1
-#      ingress:
-#        enabled: true
-#        ingressClassName: "nginx"
-#        hosts:
-#          - host: "loki.${SECRET_DOMAIN}"
-#            paths:
-#              - path: /
-#                pathType: Prefix
-#        tls:
-#          - hosts:
-#              - "loki.${SECRET_DOMAIN}"
+    #      ingress:
+    #        enabled: true
+    #        ingressClassName: "nginx"
+    #        hosts:
+    #          - host: "loki.${SECRET_DOMAIN}"
+    #            paths:
+    #              - path: /
+    #                pathType: Prefix
+    #        tls:
+    #          - hosts:
+    #              - "loki.${SECRET_DOMAIN}"
     read:
       replicas: 1
       persistence:
