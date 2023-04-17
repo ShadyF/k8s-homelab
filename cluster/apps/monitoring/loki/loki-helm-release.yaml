@@ -34,25 +34,25 @@ spec:
       #        memberlist:
       #          join_members: [ "loki-memberlist" ]
 
-        limits_config:
-          retention_period: 60d
-          enforce_metric_name: false
-          reject_old_samples: true
-          reject_old_samples_max_age: 168h
-          max_cache_freshness_per_query: 10m
-          split_queries_by_interval: 15m
-          ingestion_rate_mb: 8
-          ingestion_burst_size_mb: 16
-          shard_streams:
-            enabled: true
+      limits_config:
+        retention_period: 60d
+        enforce_metric_name: false
+        reject_old_samples: true
+        reject_old_samples_max_age: 168h
+        max_cache_freshness_per_query: 10m
+        split_queries_by_interval: 15m
+        ingestion_rate_mb: 8
+        ingestion_burst_size_mb: 16
+        shard_streams:
+          enabled: true
 
-        # Fix for too many outstanding requests, adapte from https://github.com/grafana/loki/issues/4613#issuecomment-1045993131
-        query_scheduler:
-          max_outstanding_requests_per_tenant: 2048
+      # Fix for too many outstanding requests, adapte from https://github.com/grafana/loki/issues/4613#issuecomment-1045993131
+      query_scheduler:
+        max_outstanding_requests_per_tenant: 2048
 
-        query_range:
-          parallelise_shardable_queries: false
-          split_queries_by_interval: 0
+      query_range:
+        parallelise_shardable_queries: false
+        split_queries_by_interval: 0
 
       common:
         path_prefix: /tmp/loki
