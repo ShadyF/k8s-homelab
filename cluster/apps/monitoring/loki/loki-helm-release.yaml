@@ -25,69 +25,68 @@ spec:
   values:
     # https://grafana.com/docs/loki/latest/configuration/#configuration-file-reference
     loki:
-      structuredConfig:
-        auth_enabled: false
-        server:
-          log_level: info
-          http_listen_port: 3100
-          grpc_listen_port: 9095
+      auth_enabled: false
+      server:
+        log_level: info
+        http_listen_port: 3100
+        grpc_listen_port: 9095
 
-        memberlist:
-          join_members: [ "loki-memberlist" ]
+      memberlist:
+        join_members: [ "loki-memberlist" ]
 
-        limits_config:
-          retention_period: 60d
-          enforce_metric_name: false
-          reject_old_samples: true
-          reject_old_samples_max_age: 168h
-          max_cache_freshness_per_query: 10m
-          split_queries_by_interval: 15m
-          ingestion_rate_mb: 8
-          ingestion_burst_size_mb: 16
-          shard_streams:
-            enabled: true
+      limits_config:
+        retention_period: 60d
+        enforce_metric_name: false
+        reject_old_samples: true
+        reject_old_samples_max_age: 168h
+        max_cache_freshness_per_query: 10m
+        split_queries_by_interval: 15m
+        ingestion_rate_mb: 8
+        ingestion_burst_size_mb: 16
+        shard_streams:
+          enabled: true
 
-        # Fix for too many outstanding requests, adapte from https://github.com/grafana/loki/issues/4613#issuecomment-1045993131
-        query_scheduler:
-          max_outstanding_requests_per_tenant: 2048
+      # Fix for too many outstanding requests, adapte from https://github.com/grafana/loki/issues/4613#issuecomment-1045993131
+      query_scheduler:
+        max_outstanding_requests_per_tenant: 2048
 
-        query_range:
-          parallelise_shardable_queries: false
-          split_queries_by_interval: 0
+      query_range:
+        parallelise_shardable_queries: false
+        split_queries_by_interval: 0
 
-        common:
-          path_prefix: /tmp/loki
-          storage:
-            filesystem:
-              chunks_directory: /tmp/loki/chunks
-              rules_directory: /tmp/loki/rules
-          replication_factor: 1
-          ring:
-            kvstore:
-              store: inmemory
+      commonConfig:
+        path_prefix: /tmp/loki
+        storage:
+          filesystem:
+            chunks_directory: /tmp/loki/chunks
+            rules_directory: /tmp/loki/rules
+        replication_factor: 1
+        ring:
+          kvstore:
+            store: inmemory
 
-        schema_config:
-          configs:
-            - from: "2021-08-01"
-              store: boltdb-shipper
-              object_store: filesystem
-              schema: v11
-              index:
-                prefix: index_
-                period: 24h
+      schemaConfig:
+        configs:
+          - from: "2021-08-01"
+            store: boltdb-shipper
+            object_store: filesystem
+            schema: v11
+            index:
+              prefix: index_
+              period: 24h
 
-        compactor:
-          working_directory: /var/loki/boltdb-shipper-compactor
-          shared_store: filesystem
-          compaction_interval: 10m
-          retention_enabled: true
-          retention_delete_delay: 2h
-          retention_delete_worker_count: 150
+      compactor:
+        working_directory: /var/loki/boltdb-shipper-compactor
+        shared_store: filesystem
+        compaction_interval: 10m
+        retention_enabled: true
+        retention_delete_delay: 2h
+        retention_delete_worker_count: 150
 
-        ingester:
-          max_chunk_age: 1h
-        analytics:
-          reporting_enabled: false
+      ingester:
+        max_chunk_age: 1h
+      analytics:
+        reporting_enabled: false
 
     gateway:
       enabled: true
