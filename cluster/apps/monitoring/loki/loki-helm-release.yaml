@@ -56,14 +56,15 @@ spec:
 
       commonConfig:
         path_prefix: /var/loki
-        storage:
-          filesystem:
-            chunks_directory: /var/loki/chunks
-            rules_directory: /var/loki/rules
         replication_factor: 1
         ring:
           kvstore:
             store: inmemory
+      storage:
+        type: filesystem
+        filesystem:
+          chunks_directory: /var/loki/chunks
+          rules_directory: /var/loki/rules
 
       schemaConfig:
         configs:
