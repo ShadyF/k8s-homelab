@@ -93,17 +93,17 @@ spec:
     gateway:
       enabled: true
       replicas: 1
-      ingress:
-        enabled: true
-        ingressClassName: "nginx"
-        hosts:
-          - host: "loki.${SECRET_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-        tls:
-          - hosts:
-              - "loki.${SECRET_DOMAIN}"
+#      ingress:
+#        enabled: true
+#        ingressClassName: "nginx"
+#        hosts:
+#          - host: "loki.${SECRET_DOMAIN}"
+#            paths:
+#              - path: /
+#                pathType: Prefix
+#        tls:
+#          - hosts:
+#              - "loki.${SECRET_DOMAIN}"
     read:
       replicas: 1
       persistence:

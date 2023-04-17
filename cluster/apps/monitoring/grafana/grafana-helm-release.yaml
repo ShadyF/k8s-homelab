@@ -74,7 +74,7 @@ spec:
           - name: Loki
             type: loki
             access: proxy
-            url: https://loki.${SECRET_DOMAIN}/loki/api/v1/push
+            url: http://loki-gateway.monitoring.svc.cluster.local
     #          - name: Prometheus
     #            type: prometheus
     #            access: proxy
