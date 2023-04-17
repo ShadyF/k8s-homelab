@@ -1,3 +1,4 @@
+# https://metallb.universe.tf/configuration/
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
@@ -15,8 +16,9 @@ spec:
     - 192.168.1.240-192.168.1.249
 ---
 # Protocol can be used to select how the announcement is done.
+# Setting no IPAddressPool selector in an L2Advertisement instance is interpreted as that instance being associated to all the IPAddressPools available.
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
 metadata:
-  name: L2Advertiser
+  name: metallb-l2advertiser
   namespace: networking
