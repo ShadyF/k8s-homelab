@@ -39,10 +39,10 @@ spec:
     controller:
       image:
         registry: docker.io
-        repository: metallb/controller
+        repository: bitnami/metallb-controller
         tag: v0.12.1
     speaker:
       image:
         registry: docker.io
-        repository: metallb/speaker
+        repository: bitnami/metallb-speaker
         tag: v0.12.1
