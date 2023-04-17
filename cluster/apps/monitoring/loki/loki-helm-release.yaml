@@ -25,15 +25,14 @@ spec:
   values:
     # https://grafana.com/docs/loki/latest/configuration/#configuration-file-reference
     loki:
-      structuredConfig:
-        auth_enabled: false
-        server:
-          log_level: info
-          http_listen_port: 3100
-          grpc_listen_port: 9095
+      auth_enabled: false
+      server:
+        log_level: info
+        http_listen_port: 3100
+        grpc_listen_port: 9095
 
-        #        memberlist:
-        #          join_members: [ "loki-memberlist" ]
+      #        memberlist:
+      #          join_members: [ "loki-memberlist" ]
 
         limits_config:
           retention_period: 60d
