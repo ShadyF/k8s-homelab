@@ -20,7 +20,7 @@ spec:
       containers:
         - name: actual-budget
           # https://hub.docker.com/r/mephi00/v-rising-wine
-          image: jlongster/actual-server:23.3.2
+          image: jlongster/actual-server:23.4.1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5006
