@@ -19,7 +19,7 @@ spec:
   values:
     image:
       repository: ghcr.io/onedr0p/plex
-      tag: 1.32.0.6973-a787c5a8e
+      tag: 1.32.1.6999-91e1e2e2c
     env:
       TZ: "Africa/Cairo"
       # See https://www.devwithimagination.com/2019/08/21/plex-docker-and-the-problem-of-always-appearing-as-remote/
