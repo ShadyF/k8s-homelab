@@ -31,10 +31,10 @@ spec:
       persistence:
         enabled: true
         storageClass: longhorn
-        size: 8Gi
+        size: 2Gi
       resources:
         requests:
-          memory: 100Mi
+          memory: 50Mi
           cpu: 25m
         limits:
-          memory: 250Mi
+          memory: 150Mi

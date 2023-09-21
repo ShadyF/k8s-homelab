@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mb-scheduler-backend-deployment
+  name: mb-scheduler-backend
   namespace: mb-scheduler
   labels:
     app: mb-scheduler-backend
@@ -18,7 +18,7 @@ spec:
         app: mb-scheduler-backend
     spec:
       containers:
-        - name: django-gunicorn
+        - name: django
           image: ghcr.io/shadyf/mb-backend:v1.0.0
           imagePullPolicy: IfNotPresent
           ports:
