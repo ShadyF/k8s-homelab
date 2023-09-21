@@ -57,8 +57,5 @@ spec:
         - name: nginx-config
           configMap:
             name: mb-scheduler-backend-nginx-conf
-            items:
-              - key: log_level
-                path: log_level
 
 
