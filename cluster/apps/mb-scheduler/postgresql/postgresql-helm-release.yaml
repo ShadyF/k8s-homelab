@@ -26,7 +26,6 @@ spec:
       username: mb-scheduler
       existingSecret: postgresql-secrets
     primary:
-      name: mb-scheduler
       persistence:
         enabled: true
         storageClass: longhorn
