@@ -45,7 +45,7 @@ spec:
             - name: static-folder
               mountPath: /static/
             - name: nginx-config
-              mountPath: etc/nginx/sites-available/default
+              mountPath: etc/nginx/test
               subPath: default
 
       imagePullSecrets:
