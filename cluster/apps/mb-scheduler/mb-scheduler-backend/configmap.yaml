@@ -5,7 +5,7 @@ metadata:
   namespace: mb-scheduler
 data:
   default.conf: |-
-    upstream django {
+    upstream mb-scheduler-backend {
         server django:8000;
     }
     
@@ -19,5 +19,5 @@ data:
                 alias /static/;
             }
     
-            proxy_pass http://django;
+            proxy_pass http://mb-scheduler-backend;
     }
