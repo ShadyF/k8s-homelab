@@ -45,8 +45,7 @@ spec:
             - name: static-folder
               mountPath: /static/
             - name: nginx-config
-              mountPath: /etc/nginx/conf.d/default.conf
-              subPath: default.conf
+              mountPath: /etc/nginx/conf.d/
 
       imagePullSecrets:
         - name: ghcr-login-secret
