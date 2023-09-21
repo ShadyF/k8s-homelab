@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: django
-          image: ghcr.io/shadyf/mb-backend:v1.0.0
+          image: ghcr.io/shadyf/mb-backend:v1.0.1
           imagePullPolicy: IfNotPresent
           ports:
             - protocol: TCP
