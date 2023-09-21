@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mb-scheduler-backend-nginx-conf
+  namespace: mb-scheduler
+data:
+  nginx.conf: |-
+    upstream django {
+        server django:8000;
+    }
+    
+    server {
+            listen 80;
+            listen [::]:80;
+            server_name _;
+    
+            location /static {
+                #autoindex on;
+                alias /static/;
+            }
+    
+            proxy_pass http://django;
+    }

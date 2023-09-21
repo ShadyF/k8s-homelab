@@ -27,10 +27,38 @@ spec:
           env:
             - name: DEBUG
               value: "False"
+            - name: CELERY_BROKER_URL
+              value: redis://redis.mb-scheduler.svc.cluster.local:6379
           envFrom:
             - secretRef:
                 name: mb-scheduler-backend-secrets
+          volumeMounts:
+            - name: static-folder
+              mountPath: /static/
+        # NGINX container to server static files
+        - name: nginx
+          image: nginx:1.25.2
+          ports:
+            - protocol: TCP
+              containerPort: 80
+          volumeMounts:
+            - name: static-folder
+              mountPath: /static/
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+
       imagePullSecrets:
         - name: ghcr-login-secret
+      volumes:
+        - name: static-folder
+          emptyDir:
+            sizeLimit: 500Mi
+        - name: nginx-config
+          configMap:
+            name: mb-scheduler-backend-nginx-conf
+            items:
+              - key: log_level
+                path: log_level
 
 

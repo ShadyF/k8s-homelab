@@ -10,4 +10,4 @@ spec:
     app: mb-scheduler-backend
   ports:
     - protocol: TCP
-      port: 8000
+      port: 80
