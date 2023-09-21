@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mb-scheduler-backend-deployment
+  namespace: mb-scheduler
+  labels:
+    app: mb-scheduler-backend
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: mb-scheduler-backend
+  template:
+    metadata:
+      labels:
+        app: mb-scheduler-backend
+    spec:
+      containers:
+        - name: django-gunicorn
+          image: ghcr.io/shadyf/mb-backend:v1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - protocol: TCP
+              containerPort: 8000
+          env:
+            - name: DEBUG
+              value: "False"
+          envFrom:
+            - secretRef:
+                name: mb-scheduler-backend-secrets
+      imagePullSecrets:
+        - name: ghcr-login-secret
+
+

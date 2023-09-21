@@ -1,0 +1,40 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: postgresql
+  namespace: mb-scheduler
+spec:
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://charts.bitnami.com/bitnami
+      chart: postgresql
+      version: 12.12.4
+      sourceRef:
+        kind: HelmRepository
+        name: bitnami-charts
+        namespace: flux-system
+      interval: 5m
+  # https://github.com/bitnami/charts/blob/main/bitnami/postgresql/values.yaml
+  values:
+    image:
+      repository: bitnami/postgresql
+      tag: 15.4.0-debian-11-r39
+    auth:
+      enablePostgresUser: false
+      existingSecret: postgresql-secrets
+    containerPorts:
+      postgresql: 5432
+    primary:
+      name: mb-scheduler
+      persistence:
+        enabled: true
+        storageClass: longhorn
+        size: 8Gi
+      resources:
+        requests:
+          memory: 100Mi
+          cpu: 25m
+        limits:
+          memory: 250Mi
