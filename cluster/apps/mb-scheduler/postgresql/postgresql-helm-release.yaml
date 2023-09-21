@@ -23,9 +23,8 @@ spec:
       tag: 15.4.0-debian-11-r39
     auth:
       enablePostgresUser: false
+      username: mb-scheduler
       existingSecret: postgresql-secrets
-    containerPorts:
-      postgresql: 5432
     primary:
       name: mb-scheduler
       persistence:
