@@ -17,13 +17,25 @@ spec:
       labels:
         app: mb-scheduler-backend
     spec:
+      initContainers:
+        - name: wait-for-database
+          image: ghcr.io/shadyf/mb-backend:v1.0.2
+          env:
+            - name: DEBUG
+              value: "False"
+            - name: CELERY_BROKER_URL
+              value: redis://redis.mb-scheduler.svc.cluster.local:6379
+          envFrom:
+            - secretRef:
+                name: mb-scheduler-backend-secrets
+          command: [ 'python', 'manage.py', 'wait_for_database' ]
       containers:
         - name: django
-          image: ghcr.io/shadyf/mb-backend:v1.0.1
+          image: ghcr.io/shadyf/mb-backend:v1.0.2
           imagePullPolicy: IfNotPresent
-#          ports:
-#            - protocol: TCP
-#              containerPort: 8000
+          #          ports:
+          #            - protocol: TCP
+          #              containerPort: 8000
           env:
             - name: DEBUG
               value: "False"
