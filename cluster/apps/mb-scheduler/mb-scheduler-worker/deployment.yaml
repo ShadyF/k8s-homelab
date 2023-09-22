@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mb-scheduler-worker
+  namespace: mb-scheduler
+  labels:
+    app: mb-scheduler-worker
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: mb-scheduler-worker
+  template:
+    metadata:
+      labels:
+        app: mb-scheduler-worker
+    spec:
+      initContainers:
+        - name: wait-for-database
+          image: ghcr.io/shadyf/mb-backend:v1.0.2
+          env:
+            - name: DEBUG
+              value: "False"
+            - name: CELERY_BROKER_URL
+              value: redis://redis.mb-scheduler.svc.cluster.local:6379
+          envFrom:
+            - secretRef:
+                name: mb-scheduler-backend-secrets
+          command: [ 'python', 'manage.py', 'wait_for_database' ]
+      containers:
+        - name: celery-worker
+          image: ghcr.io/shadyf/mb-backend:v1.0.2
+          imagePullPolicy: IfNotPresent
+          command: [ 'celery',  '-A', 'mb_heba_backend', 'worker' , '--loglevel=INFO' ]
+          env:
+            - name: DEBUG
+              value: "False"
+            - name: CELERY_BROKER_URL
+              value: redis://redis.mb-scheduler.svc.cluster.local:6379
+          envFrom:
+            - secretRef:
+                name: mb-scheduler-backend-secrets
+        - name: celery-beat
+          image: ghcr.io/shadyf/mb-backend:v1.0.2
+          imagePullPolicy: IfNotPresent
+          command: [ 'celery', '-A' ,'mb_heba_backend','beat','-l','INFO', '--scheduler','django_celery_beat.schedulers:DatabaseScheduler' ]
+          env:
+            - name: DEBUG
+              value: "False"
+            - name: CELERY_BROKER_URL
+              value: redis://redis.mb-scheduler.svc.cluster.local:6379
+          envFrom:
+            - secretRef:
+                name: mb-scheduler-backend-secrets
+
+      imagePullSecrets:
+        - name: ghcr-login-secret
+
+
