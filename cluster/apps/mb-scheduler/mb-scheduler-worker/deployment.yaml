@@ -25,6 +25,8 @@ spec:
                 name: mb-scheduler-backend-secrets
           command: [ 'python', 'manage.py', 'wait_for_database' ]
       containers:
+        # By default, this will run 4 workers in the same pod. Use the --concurrency flag to reduce that to 1 and scale
+        # using kubernetes
         - name: celery-worker
           image: ghcr.io/shadyf/mb-backend:v1.0.2
           imagePullPolicy: IfNotPresent
@@ -37,6 +39,7 @@ spec:
           envFrom:
             - secretRef:
                 name: mb-scheduler-backend-secrets
+        # Consider using redbeat if going to scale workers and want a highly available celery-beat
         - name: celery-beat
           image: ghcr.io/shadyf/mb-backend:v1.0.2
           imagePullPolicy: IfNotPresent
