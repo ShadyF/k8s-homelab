@@ -20,11 +20,6 @@ spec:
       initContainers:
         - name: wait-for-database
           image: ghcr.io/shadyf/mb-backend:v1.0.2
-          env:
-            - name: DEBUG
-              value: "False"
-            - name: CELERY_BROKER_URL
-              value: redis://redis.mb-scheduler.svc.cluster.local:6379
           envFrom:
             - secretRef:
                 name: mb-scheduler-backend-secrets
@@ -39,8 +34,6 @@ spec:
           env:
             - name: DEBUG
               value: "False"
-            - name: CELERY_BROKER_URL
-              value: redis://redis.mb-scheduler.svc.cluster.local:6379
           envFrom:
             - secretRef:
                 name: mb-scheduler-backend-secrets
