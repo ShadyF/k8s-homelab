@@ -2,7 +2,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: "mb-scheduler-${SECRET_DOMAIN/./-}"
-  namespace: networking
+  namespace: mb-scheduler
 spec:
   secretName: "mb-scheduler-${SECRET_DOMAIN/./-}-tls"
   issuerRef:
