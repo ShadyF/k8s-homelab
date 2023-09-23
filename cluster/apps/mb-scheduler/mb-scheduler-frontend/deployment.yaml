@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mb-scheduler-frontend
+  namespace: mb-scheduler
+  labels:
+    app: mb-scheduler-frontend
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: mb-scheduler-frontend
+  template:
+    metadata:
+      labels:
+        app: mb-scheduler-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: ghcr.io/shadyf/mb-frontend:v1.0.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - protocol: TCP
+              containerPort: 80
+      imagePullSecrets:
+        - name: ghcr-login-secret

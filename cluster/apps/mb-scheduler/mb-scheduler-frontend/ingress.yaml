@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mb-scheduler-frontend-ingress
+  namespace: mb-scheduler
+  annotations:
+    external-dns/is-public: "false"
+    external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
+spec:
+  ingressClassName: "nginx"
+  rules:
+    - host: "app.mb-scheduler.${SECRET_DOMAIN}"
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: mb-scheduler-frontend-svc
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - "app.mb-scheduler.${SECRET_DOMAIN}"
