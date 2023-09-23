@@ -11,3 +11,4 @@ spec:
   commonName: "*.mb-scheduler.${SECRET_DOMAIN}"
   dnsNames:
     - "*.mb-scheduler.${SECRET_DOMAIN}"
+    - "mb-scheduler.${SECRET_DOMAIN}"
