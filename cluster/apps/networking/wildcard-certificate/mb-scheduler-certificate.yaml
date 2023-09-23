@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: "mb-scheduler-${SECRET_DOMAIN/./-}"
+  namespace: networking
+spec:
+  secretName: "mb-scheduler-${SECRET_DOMAIN/./-}-tls"
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  commonName: "*.mb-scheduler.${SECRET_DOMAIN}"
+  dnsNames:
+    - "*.mb-scheduler.${SECRET_DOMAIN}"
