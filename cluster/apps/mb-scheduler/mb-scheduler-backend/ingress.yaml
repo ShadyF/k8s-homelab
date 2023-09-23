@@ -22,3 +22,4 @@ spec:
   tls:
     - hosts:
         - "api.mb-scheduler.${SECRET_DOMAIN}"
+    - secretName: "mb-scheduler-${SECRET_DOMAIN/./-}-tls"
