@@ -17,8 +17,6 @@ spec:
 
   values:
     config:
-      database:
-        type: postgresdb
       generic:
         timezone: Africa/Cairo
       executions:
