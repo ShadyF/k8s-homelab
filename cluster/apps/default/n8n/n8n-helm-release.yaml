@@ -61,11 +61,10 @@ spec:
 
     resources:
       limits:
-        cpu: 300m
         memory: 256Mi
       requests:
-        cpu: 100m
-        memory: 128Mi
+        cpu: 300m
+        memory: 256Mi
 
     scaling:
       enabled: false
