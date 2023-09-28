@@ -97,7 +97,7 @@ spec:
         # Ref: https://grafana.com/grafana/dashboards/12559/revisions
         nginx-dashboard:
           gnetId: 12559
-          revision: 10
+          revision: 14
           datasource: Loki
 #    sidecar:
 #      dashboards:
