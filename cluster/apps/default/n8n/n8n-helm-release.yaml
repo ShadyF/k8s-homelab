@@ -16,22 +16,6 @@ spec:
         namespace: flux-system
 
   values:
-    config:
-      generic:
-        timezone: Africa/Cairo
-      executions:
-        pruneData: "true" # prune executions by default
-        pruneDataMaxAge: 3760 # Per defaut we store 1 year of history
-      ai:
-        enabled: true
-
-    # existingSecret and secret are exclusive, with existingSecret taking priority.
-    # existingSecret: "" # Use an existing Kubernetes secret, e.g created by hand or Vault operator.
-    existingSecret: n8n-secrets
-
-    # Set additional environment variables on the Deployment
-    replicaCount: 1
-
     image:
       repository: n8nio/n8n
       pullPolicy: IfNotPresent
@@ -40,6 +24,7 @@ spec:
     deploymentStrategy:
       type: "Recreate"
 
+    replicaCount: 1
 
     ingress:
       enabled: true
@@ -57,6 +42,34 @@ spec:
       tls:
         - hosts:
             - "n8n.${SECRET_DOMAIN}"
+
+    config:
+      database:
+        type: postgresdb
+      generic:
+        timezone: Africa/Cairo
+      executions:
+        pruneData: "true" # prune executions by default
+        pruneDataMaxAge: 3760 # Per defaut we store 1 year of history
+      ai:
+        enabled: true
+
+    extraEnvSecrets:
+      DB_POSTGRESDB_USER:
+        name: n8n-secrets
+        key: DB_POSTGRESDB_USER
+      DB_POSTGRESDB_PASSWORD:
+        name: n8n-secrets
+        key: DB_POSTGRESDB_PASSWORD
+      DB_POSTGRESDB_DATABASE:
+        name: n8n-secrets
+        key: DB_POSTGRESDB_DATABASE
+      DB_POSTGRESDB_HOST:
+        name: n8n-secrets
+        key: DB_POSTGRESDB_HOST
+      DB_POSTGRESDB_SCHEMA:
+        name: n8n-secrets
+        key: DB_POSTGRESDB_SCHEMA
 
     persistence:
       enabled: true
