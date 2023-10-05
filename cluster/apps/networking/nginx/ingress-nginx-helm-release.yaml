@@ -111,6 +111,10 @@ spec:
                   key: CROWDSEC_API_KEY
             - name: BOUNCER_CONFIG
               value: "/crowdsec/crowdsec-bouncer.conf"
+            - name: MODE
+              value: "stream"
+            - name: BOUNCER_CONFIG
+              value: "/crowdsec/crowdsec-bouncer.conf"
             - name: CAPTCHA_PROVIDER
               value: "recaptcha" # valid providers are recaptcha, hcaptcha, turnstile
 #            - name: SECRET_KEY
