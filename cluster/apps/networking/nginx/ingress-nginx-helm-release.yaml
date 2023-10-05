@@ -93,13 +93,22 @@ spec:
           emptyDir: { }
       extraInitContainers:
         - name: init-clone-crowdsec-bouncer
-          image: crowdsecurity/lua-bouncer-plugin
-          tag: v1.0.0
+          image: crowdsecurity/lua-bouncer-plugin:v1.0.0
           imagePullPolicy: IfNotPresent
           envFrom:
             - secretRef:
                 name: crowdsec-secrets
           env:
+            - name: API_URL
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-secrets
+                  key: CROWDSEC_API_URL
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-secrets
+                  key: CROWDSEC_API_KEY
             - name: BOUNCER_CONFIG
               value: "/crowdsec/crowdsec-bouncer.conf"
 #            - name: CAPTCHA_PROVIDER
