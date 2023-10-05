@@ -70,6 +70,15 @@ spec:
       DB_POSTGRESDB_SCHEMA:
         name: n8n-secrets
         key: DB_POSTGRESDB_SCHEMA
+      N8N_HOST:
+        name: n8n-secrets
+        key: N8N_HOST
+      N8N_PORT:
+        name: n8n-secrets
+        key: N8N_PORT
+      N8N_PROTOCOL:
+        name: n8n-secrets
+        key: N8N_PROTOCOL
 
     persistence:
       enabled: true
