@@ -73,6 +73,11 @@ spec:
           "http_cf_ray": "$http_cf_ray",
           "geoip_country_code": "$geoip_country_code"
         }'
+        # Needed for crowdsec
+        plugins: "crowdsec"
+        lua-shared-dicts: "crowdsec_cache: 50m"
+        server-snippet: |
+          resolver local=on ipv6=off;
       # Enable when grafana / prometheus is added
       metrics:
         enabled: false
@@ -81,3 +86,37 @@ spec:
       # Wildcare certificate so we don't have to define a certificate for each ingress we create
       extraArgs:
         default-ssl-certificate: "networking/${SECRET_DOMAIN/./-}-tls"
+
+      # Needed for crowdsec
+      extraVolumes:
+        - name: crowdsec-bouncer-plugin
+          emptyDir: { }
+      extraInitContainers:
+        - name: init-clone-crowdsec-bouncer
+          image: crowdsecurity/lua-bouncer-plugin
+          tag: v1.0.0
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef:
+                name: crowdsec-secrets
+          env:
+            - name: BOUNCER_CONFIG
+              value: "/crowdsec/crowdsec-bouncer.conf"
+#            - name: CAPTCHA_PROVIDER
+#              value: "recaptcha" # valid providers are recaptcha, hcaptcha, turnstile
+#            - name: SECRET_KEY
+#              value: "<your-captcha-secret-key>" # If you want captcha support otherwise remove this ENV VAR
+#            - name: SITE_KEY
+#              value: "<your-captcha-site-key>" # If you want captcha support otherwise remove this ENV VAR
+            - name: BAN_TEMPLATE_PATH
+              value: /etc/nginx/lua/plugins/crowdsec/templates/ban.html
+#            - name: CAPTCHA_TEMPLATE_PATH
+#              value: /etc/nginx/lua/plugins/crowdsec/templates/captcha.html
+          command: [ 'sh', '-c', "sh /docker_start.sh; mkdir -p /lua_plugins/crowdsec/; cp -R /crowdsec/* /lua_plugins/crowdsec/" ]
+          volumeMounts:
+            - name: crowdsec-bouncer-plugin
+              mountPath: /lua_plugins
+      extraVolumeMounts:
+        - name: crowdsec-bouncer-plugin
+          mountPath: /etc/nginx/lua/plugins/crowdsec
+          subPath: crowdsec
