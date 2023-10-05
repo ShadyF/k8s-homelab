@@ -53,6 +53,9 @@ spec:
         pruneDataMaxAge: 3760 # Per defaut we store 1 year of history
       ai:
         enabled: true
+      port: 443
+      protocol: https
+
 
     extraEnvSecrets:
       DB_POSTGRESDB_USER:
@@ -73,12 +76,6 @@ spec:
       N8N_HOST:
         name: n8n-secrets
         key: N8N_HOST
-      N8N_PORT:
-        name: n8n-secrets
-        key: N8N_PORT
-      N8N_PROTOCOL:
-        name: n8n-secrets
-        key: N8N_PROTOCOL
 
     persistence:
       enabled: true
