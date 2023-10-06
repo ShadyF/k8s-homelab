@@ -88,50 +88,50 @@ spec:
         default-ssl-certificate: "networking/${SECRET_DOMAIN/./-}-tls"
 
       # Needed for crowdsec
-#      extraVolumes:
-#        - name: crowdsec-bouncer-plugin
-#          emptyDir: { }
-#      extraInitContainers:
-#        - name: init-clone-crowdsec-bouncer
-#          image: crowdsecurity/lua-bouncer-plugin:v1.0.0
-#          imagePullPolicy: IfNotPresent
-#          envFrom:
-#            - secretRef:
-#                name: crowdsec-secrets
-#          env:
-#            - name: API_URL
-#              valueFrom:
-#                secretKeyRef:
-#                  name: crowdsec-secrets
-#                  key: CROWDSEC_API_URL
-#            - name: API_KEY
-#              valueFrom:
-#                secretKeyRef:
-#                  name: crowdsec-secrets
-#                  key: CROWDSEC_API_KEY
-#            - name: BOUNCER_CONFIG
-#              value: "/crowdsec/crowdsec-bouncer.conf"
-#            - name: MODE
-#              value: "stream"
-#            - name: UPDATE_FREQUENCY
-#              value: "10" # 10 seconds
-#            - name: BOUNCER_CONFIG
-#              value: "/crowdsec/crowdsec-bouncer.conf"
-#            - name: CAPTCHA_PROVIDER
-#              value: "recaptcha" # valid providers are recaptcha, hcaptcha, turnstile
-##            - name: SECRET_KEY
-##              value: "<your-captcha-secret-key>" # If you want captcha support otherwise remove this ENV VAR
-##            - name: SITE_KEY
-##              value: "<your-captcha-site-key>" # If you want captcha support otherwise remove this ENV VAR
-#            - name: BAN_TEMPLATE_PATH
-#              value: /etc/nginx/lua/plugins/crowdsec/templates/ban.html
-#            - name: CAPTCHA_TEMPLATE_PATH
-#              value: /etc/nginx/lua/plugins/crowdsec/templates/captcha.html
-#          command: [ 'sh', '-c', "sh /docker_start.sh; mkdir -p /lua_plugins/crowdsec/; cp -R /crowdsec/* /lua_plugins/crowdsec/" ]
-#          volumeMounts:
-#            - name: crowdsec-bouncer-plugin
-#              mountPath: /lua_plugins
-#      extraVolumeMounts:
-#        - name: crowdsec-bouncer-plugin
-#          mountPath: /etc/nginx/lua/plugins/crowdsec
-#          subPath: crowdsec
+      extraVolumes:
+        - name: crowdsec-bouncer-plugin
+          emptyDir: { }
+      extraInitContainers:
+        - name: init-clone-crowdsec-bouncer
+          image: crowdsecurity/lua-bouncer-plugin:v1.0.0
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef:
+                name: crowdsec-secrets
+          env:
+            - name: API_URL
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-secrets
+                  key: CROWDSEC_API_URL
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-secrets
+                  key: CROWDSEC_API_KEY
+            - name: BOUNCER_CONFIG
+              value: "/crowdsec/crowdsec-bouncer.conf"
+            - name: MODE
+              value: "stream"
+            - name: UPDATE_FREQUENCY
+              value: "10" # 10 seconds
+            - name: BOUNCER_CONFIG
+              value: "/crowdsec/crowdsec-bouncer.conf"
+            - name: CAPTCHA_PROVIDER
+              value: "recaptcha" # valid providers are recaptcha, hcaptcha, turnstile
+#            - name: SECRET_KEY
+#              value: "<your-captcha-secret-key>" # If you want captcha support otherwise remove this ENV VAR
+#            - name: SITE_KEY
+#              value: "<your-captcha-site-key>" # If you want captcha support otherwise remove this ENV VAR
+            - name: BAN_TEMPLATE_PATH
+              value: /etc/nginx/lua/plugins/crowdsec/templates/ban.html
+            - name: CAPTCHA_TEMPLATE_PATH
+              value: /etc/nginx/lua/plugins/crowdsec/templates/captcha.html
+          command: [ 'sh', '-c', "sh /docker_start.sh; mkdir -p /lua_plugins/crowdsec/; cp -R /crowdsec/* /lua_plugins/crowdsec/" ]
+          volumeMounts:
+            - name: crowdsec-bouncer-plugin
+              mountPath: /lua_plugins
+      extraVolumeMounts:
+        - name: crowdsec-bouncer-plugin
+          mountPath: /etc/nginx/lua/plugins/crowdsec
+          subPath: crowdsec
