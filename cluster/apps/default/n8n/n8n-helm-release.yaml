@@ -14,7 +14,13 @@ spec:
         kind: HelmRepository
         name: open-8gears-charts
         namespace: flux-system
-
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
   values:
     image:
       repository: n8nio/n8n

@@ -17,6 +17,13 @@ spec:
         name: oauth2-proxy-charts
         namespace: flux-system
       interval: 5m
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
   values:
     image:
       repository: "quay.io/oauth2-proxy/oauth2-proxy"
