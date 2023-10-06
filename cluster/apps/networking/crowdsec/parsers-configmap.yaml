@@ -46,6 +46,12 @@ data:
         expression: JsonExtract(evt.Line.Raw, "status")
       - parsed: full_request
         expression: JsonExtract(evt.Line.Raw, "request")
+    nodes:
+      - filter: "evt.Meta.service == 'http' && evt.Meta.log_type in ['http_access-log', 'http_error-log']"
+        grok:
+          pattern: '%{WORD:method} %{URIPATHPARAM:request} HTTP/%{NUMBER:http_version}'
+          apply_on: full_request
+
   nginx-json-logs.yaml: |
     filter: "evt.Meta.service == 'http' && evt.Meta.log_type in ['http_access-log', 'http_error-log']"
     onsuccess: next_stage
