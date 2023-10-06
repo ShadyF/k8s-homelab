@@ -24,6 +24,8 @@ spec:
           image: crowdsecurity/crowdsec:v1.5.2
           imagePullPolicy: IfNotPresent
           env:
+            - name: COLLECTIONS
+              value: "crowdsecurity/nginx"
             - name: DISABLE_LOCAL_API
               value: "true"
             - name: DISABLE_ONLINE_API
