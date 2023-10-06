@@ -10,5 +10,4 @@ data:
     force_inotify: true
     poll_without_inotify: false
     labels:
-        type: docker
-        program: nginx
+      type: nginx-json

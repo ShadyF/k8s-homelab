@@ -25,7 +25,9 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: COLLECTIONS
-              value: "crowdsecurity/nginx"
+              value: "crowdsecurity/base-http-scenarios"
+            - name: SCENARIOS
+              value: "crowdsecurity/nginx-req-limit-exceeded"
             - name: DISABLE_LOCAL_API
               value: "true"
             - name: DISABLE_ONLINE_API
@@ -52,17 +54,12 @@ spec:
               cpu: 150m
               memory: 100Mi
           volumeMounts:
-            #          {{ if (include "parsersIsNotEmpty" .) }}
-            #          {{- range $stage, $stageConfig := .Values.config.parsers -}}
-            #          {{- if $stageConfig -}}
-            #          {{ range $fileName, $content := $stageConfig -}}
-            #          - name: {{ printf "crowdsec-parsers-%s-%s" $stage (trimSuffix ".yaml" $fileName) }}
-            #            mountPath: {{ printf "%s/parsers/%s/%s" $crowdsecConfig $stage $fileName }}
-            #            subPath: {{ $fileName }}
-            #          {{ end }}
-            #          {{- end }}
-            #          {{- end }}
-            #          {{- end }}
+            - name: s00-nginx-json-parser
+              mountPath: /etc/crowdsec/parsers/s00-raw/nginx-json.yaml
+              subPath: nginx-json.yaml
+            - name: s01-nginx-json-parser
+              mountPath: /etc/crowdsec/parsers/s01-parse/nginx-json-logs.yaml
+              subPath: nginx-json-logs.yaml
             - name: acquis-config-volume
               mountPath: /etc/crowdsec/acquis.yaml
               subPath: acquis.yaml
@@ -83,17 +80,15 @@ spec:
         - name: varlibdockercontainers
           hostPath:
             path: /var/lib/docker/containers
-#      {{ if (include "parsersIsNotEmpty" .) }}
-#      {{- range $stage, $stageConfig := .Values.config.parsers -}}
-#      {{- if $stageConfig -}}
-#      {{ range $fileName, $content := $stageConfig -}}
-#      - name: {{ printf "crowdsec-parsers-%s-%s" $stage (trimSuffix ".yaml" $fileName) }}
-#        configMap:
-#          name: {{ printf "crowdsec-parsers-%s" $stage }}
-#          items:
-#          - key: {{ $fileName }}
-#            path: {{ $fileName }}
-#      {{ end }}
-#      {{- end }}
-#      {{- end }}
-#      {{- end }}
+        - name: s00-nginx-json-parser
+          configMap:
+            name: crowdsec-parsers-confimap
+            items:
+              - key: nginx-json.yaml
+                path: nginx-json.yaml
+        - name: s01-nginx-json-parser
+          configMap:
+            name: crowdsec-parsers-confimap
+            items:
+              - key: nginx-json-logs.yaml
+                path: nginx-json-logs.yaml
