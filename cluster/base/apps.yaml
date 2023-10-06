@@ -20,7 +20,10 @@ spec:
   postBuild:
     substitute: { }
     substituteFrom:
-#      - kind: ConfigMap
-#        name: cluster-settings
+      #      - kind: ConfigMap
+      #        name: cluster-settings
       - kind: Secret
         name: cluster-secrets
+      # Needed because of no way to set secrets in crowdsec helm chart
+      - kind: Secret
+        name: crowdsec-secrets

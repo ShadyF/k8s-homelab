@@ -28,6 +28,9 @@ spec:
       pullPolicy: IfNotPresent
       tag: v1.5.2
     agent:
+      secrets:
+        username: ${CROWDSEC_AGENT_USERNAME}
+        password: ${CROWDSEC_AGENT_PASSWORD}
       strategy:
         type: Recreate
       acquisition:
@@ -42,16 +45,6 @@ spec:
         #          value: "true"
         - name: DISABLE_LOCAL_API
           value: "true"
-        - name: AGENT_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: crowdsec-secrets
-              key: CROWDSEC_AGENT_USERNAME
-        - name: AGENT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: crowdsec-secrets
-              key: CROWDSEC_AGENT_PASSWORD
         - name: LOCAL_API_URL
           valueFrom:
             secretKeyRef:
