@@ -6,7 +6,7 @@ metadata:
 # JSON formatting of parsers adapted from https://discourse.crowdsec.net/t/nginx-logs-in-gelf-json-format/53/14
 data:
   nginx-json.yaml: |
-    filter: "evt.Line.Labels.type == 'nginx-json'"
+    filter: "evt.Parsed.program == 'nginx'"
     onsuccess: next_stage
     #debug: true
     name: crowdsecurity/nginx-logs

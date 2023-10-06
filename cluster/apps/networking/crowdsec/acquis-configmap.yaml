@@ -10,4 +10,5 @@ data:
     force_inotify: true
     poll_without_inotify: false
     labels:
-      type: nginx-json
+      type: containerd
+      program: nginx
