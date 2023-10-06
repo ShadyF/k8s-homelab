@@ -98,3 +98,4 @@ data:
         grok:
           pattern: '%{WORD:method} %{URIPATHPARAM:request} HTTP/%{NUMBER:http_version}'
           apply_on: full_request
+          
