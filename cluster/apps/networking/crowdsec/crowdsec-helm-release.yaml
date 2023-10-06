@@ -42,6 +42,16 @@ spec:
         #          value: "true"
         - name: DISABLE_LOCAL_API
           value: "true"
+        - name: AGENT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: crowdsec-secrets
+              key: CROWDSEC_AGENT_USERNAME
+        - name: AGENT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: crowdsec-secrets
+              key: CROWDSEC_AGENT_PASSWORD
         - name: LOCAL_API_URL
           valueFrom:
             secretKeyRef:
@@ -54,6 +64,8 @@ spec:
       strategy:
         type: Recreate
       env:
+        - name: DISABLE_ONLINE_API
+          value: "true"
         - name: DISABLE_LOCAL_API
           value: "true"
         - name: LOCAL_API_URL
