@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-acquis-configmap
+  namespace: networking
+data:
+  acquis.yaml: |
+    filenames:
+    - /var/log/containers/ingress-nginx-controller-*_ingress-nginx_*.log
+    force_inotify: true
+    poll_without_inotify: false
+    labels:
+        type: docker
+        program: nginx
