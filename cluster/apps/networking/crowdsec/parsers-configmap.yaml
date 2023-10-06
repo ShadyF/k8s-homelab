@@ -7,7 +7,7 @@ metadata:
 data:
   nginx-json-logs.yaml: |
     filter: "evt.Parsed.program == 'nginx'"
-    debug: true
+    #debug: true
     name: crowdsecurity/nginx-logs
     description: "Parse nginx access and error logs"
     statics:
@@ -48,7 +48,7 @@ data:
     ---
     filter: "evt.Meta.service == 'http' && evt.Meta.log_type in ['http_access-log', 'http_error-log']"
     onsuccess: next_stage
-    debug: true
+    # debug: true
     name: local/nginx-json
     grok:
       pattern: '%{WORD:method} %{URIPATHPARAM:request} HTTP/%{NUMBER:http_version}'
