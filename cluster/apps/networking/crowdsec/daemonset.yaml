@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: crowdsec-agent
+  namespace: networking
   labels:
     k8s-app: crowdsec
     type: agent
