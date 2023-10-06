@@ -56,7 +56,7 @@ data:
     filter: "evt.Parsed.program == 'nginx'"
     onsuccess: next_stage
     #debug: true
-    name: crowdsecurity/nginx-logs
+    name: crowdsecurity/nginx-json-logs
     description: "Parse nginx access and error logs"
     statics:
       - target: evt.StrTime
