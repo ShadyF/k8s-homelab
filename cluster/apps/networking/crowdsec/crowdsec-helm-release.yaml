@@ -59,8 +59,8 @@ spec:
       env:
         - name: DISABLE_ONLINE_API
           value: "true"
-        - name: DISABLE_LOCAL_API
-          value: "true"
+#        - name: DISABLE_LOCAL_API
+#          value: "true"
         - name: LOCAL_API_URL
           valueFrom:
             secretKeyRef:
