@@ -6,7 +6,7 @@ metadata:
 data:
   acquis.yaml: |
     filenames:
-      - /var/log/containers/ingress-nginx-controller-*_ingress-nginx_*.log
+      - /var/log/containers/ingress-nginx-controller-*_networking_*.log
     force_inotify: true
     poll_without_inotify: false
     labels:
