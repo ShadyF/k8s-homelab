@@ -7,7 +7,7 @@ metadata:
 data:
   nginx-json-logs.yaml: |
     filter: "evt.Line.Labels.type == 'containerd'"
-    #debug: true
+    debug: true
     name: crowdsecurity/nginx-logs
     description: "Parse nginx access and error logs"
     nodes:
