@@ -10,47 +10,46 @@ data:
     debug: true
     name: crowdsecurity/nginx-logs
     description: "Parse nginx access and error logs"
-    nodes:
-      - filter: "1 == 1"
-        statics:
-          - target: evt.StrTime
-            expression: JsonExtract(evt.Line.Raw, "time_iso8601")
-          - parsed: "logsource"
-            value: "nginx-json"
-          - parsed: remote_addr
-            expression: JsonExtract(evt.Line.Raw, "remote_addr")
-          - parsed: remote_user
-            expression: JsonExtract(evt.Line.Raw, "remote_user")
-          - meta: source_ip
-            expression: JsonExtract(evt.Line.Raw, "remote_addr")
-          - meta: http_status
-            expression: JsonExtract(evt.Line.Raw, "status")
-          - meta: http_path
-            expression: JsonExtract(evt.Line.Raw, "request")
-          - meta: log_type
-            value: http_access-log
-          - meta: service
-            value: http
-          - parsed: http_user_agent
-            expression: JsonExtract(evt.Line.Raw, "http_user_agent")
-          - parsed: http_referer
-            expression: JsonExtract(evt.Line.Raw, "http_referrer")
-          - parsed: target_fqdn
-            expression: JsonExtract(evt.Line.Raw, "http_host")
-          - parsed: method
-            expression: JsonExtract(evt.Line.Raw, "request_method")
-          - parsed: body_bytes_sent
-            expression: JsonExtract(evt.Line.Raw, "body_bytes_sent")
-          - parsed: http_version
-            expression: JsonExtract(evt.Line.Raw, "server_protocol")
-          - parsed: status
-            expression: JsonExtract(evt.Line.Raw, "status")
-          - parsed: full_request
-            expression: JsonExtract(evt.Line.Raw, "request")
-        nodes:
-          - filter: "evt.Meta.service == 'http' && evt.Meta.log_type in ['http_access-log', 'http_error-log']"
-            onsuccess: next_stage
-            name: local/nginx-json
-            grok:
-              pattern: '%{WORD:method} %{URIPATHPARAM:request} HTTP/%{NUMBER:http_version}'
-              apply_on: full_request
+    statics:
+      - target: evt.StrTime
+        expression: JsonExtract(evt.Line.Raw, "time_iso8601")
+      - parsed: "logsource"
+        value: "nginx-json"
+      - parsed: remote_addr
+        expression: JsonExtract(evt.Line.Raw, "remote_addr")
+      - parsed: remote_user
+        expression: JsonExtract(evt.Line.Raw, "remote_user")
+      - meta: source_ip
+        expression: JsonExtract(evt.Line.Raw, "remote_addr")
+      - meta: http_status
+        expression: JsonExtract(evt.Line.Raw, "status")
+      - meta: http_path
+        expression: JsonExtract(evt.Line.Raw, "request")
+      - meta: log_type
+        value: http_access-log
+      - meta: service
+        value: http
+      - parsed: http_user_agent
+        expression: JsonExtract(evt.Line.Raw, "http_user_agent")
+      - parsed: http_referer
+        expression: JsonExtract(evt.Line.Raw, "http_referrer")
+      - parsed: target_fqdn
+        expression: JsonExtract(evt.Line.Raw, "http_host")
+      - parsed: method
+        expression: JsonExtract(evt.Line.Raw, "request_method")
+      - parsed: body_bytes_sent
+        expression: JsonExtract(evt.Line.Raw, "body_bytes_sent")
+      - parsed: http_version
+        expression: JsonExtract(evt.Line.Raw, "server_protocol")
+      - parsed: status
+        expression: JsonExtract(evt.Line.Raw, "status")
+      - parsed: full_request
+        expression: JsonExtract(evt.Line.Raw, "request")
+    ---
+    filter: "evt.Meta.service == 'http' && evt.Meta.log_type in ['http_access-log', 'http_error-log']"
+    onsuccess: next_stage
+    name: local/nginx-json
+    grok:
+      pattern: '%{WORD:method} %{URIPATHPARAM:request} HTTP/%{NUMBER:http_version}'
+      apply_on: full_request
+    
