@@ -28,4 +28,3 @@ spec:
   tls:
     - hosts:
         - "actual.${SECRET_DOMAIN}"
-  #      secretName: wstunnel-tls
