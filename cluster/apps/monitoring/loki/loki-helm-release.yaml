@@ -43,6 +43,8 @@ spec:
         log_level: info
         http_listen_port: 3100
         grpc_listen_port: 9095
+        http_server_read_timeout: 120s
+        http_server_write_timeout: 120s
 
       #      memberlist:
       #        join_members: [ "loki-memberlist" ]
