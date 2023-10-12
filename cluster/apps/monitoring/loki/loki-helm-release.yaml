@@ -26,7 +26,16 @@ spec:
     # https://grafana.com/docs/loki/latest/configuration/#configuration-file-reference
     singleBinary:
       replicas: 1
-
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              preference:
+                matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - k8-w1
     loki:
       auth_enabled: false
 
@@ -61,9 +70,9 @@ spec:
       commonConfig:
         path_prefix: /var/loki
         replication_factor: 1
-#        ring:
-#          kvstore:
-#            store: inmemory
+      #        ring:
+      #          kvstore:
+      #            store: inmemory
       storage:
         type: filesystem
         filesystem:
