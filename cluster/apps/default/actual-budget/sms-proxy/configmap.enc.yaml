@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: actual-budget-sms-proxy-configmap
+    namespace: default
+data:
+    config.json: ENC[AES256_GCM,data:OuYQBoWppSEXyvGl9jlfw1TC+0n+gPZlMwhnoooKIAeDciq1OMfv2l5soxqGWkr17pjBhhBJXmtVUTdR94QJBx+6Qqfgd6LU6EuushOO2Tg1LpzInI2BMexQndhS45/Hh03iG7aIfrnjDRhDKqnpNNufxdmurapMr/0SJNKAIt+rd1muOsVq4S8DI5z6AC6MBZID83jy4lXTuX8yekrcTpMXKX/KfEg2gx3tgXxWY9143WrZHyCMmHfb/eOSXu4qJ0rSNMQasZbOg2g0lZ0TLv7klYMfBVO/owcoH3Kq1PvWx92TlVXWEErZJmrhhDdGqrI0/c+8tZiUyrdsWEKM1+t1X2qaCDAQ5PbBtJdZAKH7eE4kRf20RhWgEOvcxZvPia9ShB6XiV7YnGunwlhnFyyOqafojdNz/j50ygliHSltOChYRQBe0vQeobMe4GsGKlkibXc=,iv:kGUtDwbCMU5JICXYuPY4PtSJI7F0Zv76lyn6WYqm/D4=,tag:kgwDrPLzPIrpEiOUkpYe8A==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age: []
+    lastmodified: "2023-10-14T12:54:13Z"
+    mac: ENC[AES256_GCM,data:r8IXL3VqpyU3quouSeeDsjTrIOZzVnBeTVvWdQ8FYEVCdZMTdoEKmCeGYl5gSbFyNS1NdWYQ92LZ8T5fI81YWAfxaaq4BoW7ol2que5AqK0lRNs3DVIefVEz6/3BgV9XWVJimFV4/HYaGQKdaAP5Sbznb89G9gnQtJcJLAKWgiM=,iv:69XL6E5rhF03SdxbaxU2/HdxMW2RGBItM7h0De1QOMI=,tag:xzJJQwUTMMY7ap9QbDFI1Q==,type:str]
+    pgp:
+        - created_at: "2023-10-14T12:54:13Z"
+          enc: |-
+            -----BEGIN PGP MESSAGE-----
+
+            hQGMA71EESEn7N2iAQv/SeAa9igkGEYIVhyf+Jbs1WJ6qPK/LI2VicIQtG0Ni+0R
+            N//Lnc4Ox33Nt7YybGkbW8OVq89KU7RKhxloiZHeEHt0l2t0ekgBdsrmgod7/HYW
+            ex7KNNdq17Z5TKSGr9exPToDHj3VG+skKxj9CSWmZkaWI9qNR74oZGqwjT0FmsdA
+            fxgN9YjR28KuqnBHvYUp71R+MD2v3KW1GHtH8QxLINuU87tKZ+rL98YrNghywqwA
+            VmXNzxZGUoi2h71buB8nDlIiV38YGg9/F7xo5gZtDPPRRCruKxHh7Ay8JARIgGMZ
+            u2fBooSbAZqR96I6L3Dcpv7pmT6//eRCHKEYakxcJhQYj5vMCQLTdUjVmnTp6VCl
+            HJpJsPVwZ5a/117U3tlv4Q+C0Q55cBhT1VkP6iEXNc8P3gEhD8m1Jhhol4VgId/y
+            IPMTKXPJdVGPZYBxF1oTHHgnAlJCYKYKxAddHckw+pY/SZCbRW+umuEm09AKFppp
+            hZaqI4sGnbALJSJaW6ob0l4BhqntSdzf/6Rwxg9DMVuAfNINL5/gY1spvT7EM2qo
+            Wq8DaqU1xFoqAjA3BJnm4uuD4kYa4UStt2GFf78X8Ymyeam7GENsShIG+YLsi0aD
+            2Eg+tFmHi+wFOtxkXSqY
+            =Jyjb
+            -----END PGP MESSAGE-----
+          fp: 2D47B9C25AAD87860CC1778F7022B8F414F4AEED
+    encrypted_regex: ^(data|stringData)$
+    version: 3.8.0

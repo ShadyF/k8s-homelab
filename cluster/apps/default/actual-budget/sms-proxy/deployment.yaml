@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: actual-budget-sms-proxy
+  namespace: default
+  labels:
+    app: actual-budget-sms-proxy
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: actual-budget-sms-proxy
+  template:
+    metadata:
+      labels:
+        app: actual-budget-sms-proxy
+    spec:
+      # TODO: Add requests and limits
+      containers:
+        - name: proxy
+          image: ghcr.io/shadyf/actual-budget-sms-proxy:v1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ACTUAL_SERVER_PROCTOCOL
+              value: "http"
+            - name: ACTUAL_SERVER_HOST
+              value: "actual-budget-svc.default.svc.cluster.local"
+            - name: ACTUAL_SERVER_PORT
+              value: "5006"
+            - name: FOREIGN_CURRENCY_FACTOR
+              value: "1.1"
+          envFrom:
+            - secretRef:
+                name: actual-budget-sms-proxy-secrets
+          volumeMounts:
+            - name: config-volume
+              mountPath: /usr/src/app/config.json
+              subPath: config.json
+      volumes:
+        - name: config-volume
+          configMap:
+            name: actual-budget-sms-proxy-configmap
+            items:
+              - key: config.json
+                path: config.json
