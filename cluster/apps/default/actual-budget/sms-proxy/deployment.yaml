@@ -28,6 +28,8 @@ spec:
           env:
             - name: NODE_ENV
               value: "production"
+            - name: SERVER_PORT
+              value: "8080"
             - name: ACTUAL_SERVER_PROCTOCOL
               value: "http"
             - name: ACTUAL_SERVER_HOST
