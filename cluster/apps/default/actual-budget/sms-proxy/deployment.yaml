@@ -18,6 +18,7 @@ spec:
         app: actual-budget-sms-proxy
     spec:
       # TODO: Add requests and limits
+      # TODO: Add readiness and liveness probes
       containers:
         - name: proxy
           image: ghcr.io/shadyf/actual-budget-sms-proxy:v1.0.0
