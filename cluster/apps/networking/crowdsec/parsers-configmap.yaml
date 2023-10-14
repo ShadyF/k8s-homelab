@@ -55,11 +55,8 @@ data:
       apply_on: full_request
   whitelist.yaml: |
     name: crowdsecurity/whitelists
-    description: "Whitelist events from local network"
+    description: "Whitelist events actual budget"
     whitelist:
-      reason: "my ipv4 ranges"
-      ip:
-        - "192.168.1.100"
-        - "192.168.1.101"
-        - "192.168.1.102"
-        - "192.168.1.103"
+      reason: "actual budget"
+      expression:
+        - evt.Parsed.target_fqdn == 'actual.${SECRET_DOMAIN}'
