@@ -54,9 +54,9 @@ spec:
               cpu: 150m
               memory: 100Mi
           volumeMounts:
-#            - name: s00-nginx-json-parser
-#              mountPath: /etc/crowdsec/parsers/s00-raw/nginx-json.yaml
-#              subPath: nginx-json.yaml
+            - name: s02-whitelist
+              mountPath: /etc/crowdsec/parsers/s02-enrich/whitelist.yaml
+              subPath: whitelist.yaml
             - name: s01-nginx-json-parser
               mountPath: /etc/crowdsec/parsers/s01-parse/nginx-json-logs.yaml
               subPath: nginx-json-logs.yaml
@@ -80,12 +80,12 @@ spec:
         - name: varlibdockercontainers
           hostPath:
             path: /var/lib/docker/containers
-#        - name: s00-nginx-json-parser
-#          configMap:
-#            name: crowdsec-parsers-confimap
-#            items:
-#              - key: nginx-json.yaml
-#                path: nginx-json.yaml
+        - name: s02-whitelist
+          configMap:
+            name: crowdsec-parsers-confimap
+            items:
+              - key: whitelist.yaml
+                path: whitelist.yaml
         - name: s01-nginx-json-parser
           configMap:
             name: crowdsec-parsers-confimap
