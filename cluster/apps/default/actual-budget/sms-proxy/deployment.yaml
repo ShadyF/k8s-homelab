@@ -25,6 +25,8 @@ spec:
           ports:
             - containerPort: 8080
           env:
+            - name: NODE_ENV
+              value: "production"
             - name: ACTUAL_SERVER_PROCTOCOL
               value: "http"
             - name: ACTUAL_SERVER_HOST
