@@ -184,6 +184,17 @@
       "matchPackageNames": [
         "ghcr.io/linuxserver/wireguard"
       ],
+    },
+    // Disable renovate for mb-frontend and mb-backend.
+    {
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackagePatterns": [
+        "ghcr.io/shadyf/mb-frontend",
+        "ghcr.io/shadyf/mb-backend"
+      ],
+      "enabled": false
     }
   ]
 }
