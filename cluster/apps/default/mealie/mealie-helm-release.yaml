@@ -35,8 +35,6 @@ spec:
               tag: v1.0.0-RC1.1
               pullPolicy: IfNotPresent
 
-            # -- environment variables.
-            # See [image docs](https://github.com/dani-garcia/vaultwarden/blob/main/.env.template) for more details.
             env:
               BASE_URL: https://mealie.${SECRET_DOMAIN}
               ALLOW_SIGNUP: false
