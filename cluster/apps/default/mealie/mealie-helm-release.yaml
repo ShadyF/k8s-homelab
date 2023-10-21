@@ -46,13 +46,13 @@ spec:
               WORKERS_PER_CORE: 1
               MAX_WORKERS: 1
               WEB_CONCURRENCY: 1
-#            resources:
-#              limits:
-#                cpu: 100m
-#                memory: 128Mi
-#              requests:
-#                cpu: 100m
-#                memory: 128Mi
+    #            resources:
+    #              limits:
+    #                cpu: 100m
+    #                memory: 128Mi
+    #              requests:
+    #                cpu: 100m
+    #                memory: 128Mi
 
     service:
       main:
@@ -74,6 +74,9 @@ spec:
             paths:
               - path: /
                 pathType: Prefix
+                service:
+                  name: main
+                  port: http
         tls:
           - hosts:
               - "mealie.${SECRET_DOMAIN}"
