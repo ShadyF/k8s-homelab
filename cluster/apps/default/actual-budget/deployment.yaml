@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: actual-budget
-          image: jlongster/actual-server:23.10.0@sha256:43f321864f98e7b9759507853e0e64908bb844305bbe72a3ffc893c42b962495
+          image: jlongster/actual-server:23.11.0
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5006
