@@ -34,8 +34,7 @@ spec:
               repository: binwiederhier/ntfy
               tag: v1.28.0
               pullPolicy: IfNotPresent
-            command: [ "/bin/bash", "-c", "--" ]
-            args: [ "while true; do sleep 30; done;" ]
+            args: [ "serve" ]
 
             env:
               TZ: Africa/Cairo
