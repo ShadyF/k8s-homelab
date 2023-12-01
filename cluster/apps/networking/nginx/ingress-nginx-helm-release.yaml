@@ -33,6 +33,14 @@ spec:
         # Also see https://metallb.universe.tf/usage/#traffic-policies for what happens when used
         # in conjuction with MetalLB
         externalTrafficPolicy: Local
+        ports:
+          http: 80
+          https: 443
+          smtp: 25
+        targetPorts:
+          http: http
+          https: https
+          smtp: smtp
       config:
         ssl-protocols: "TLSv1.3 TLSv1.2"
         # Same size defined in cloudflare
@@ -142,7 +150,9 @@ spec:
         - name: crowdsec-bouncer-plugin
           mountPath: /etc/nginx/lua/plugins/crowdsec
           subPath: crowdsec
-      # Needed to allow SMTP routing
+
+      # Needed to allow SMTP routing. mainly for ntfy
+      # https://stackoverflow.com/questions/69802098/nginx-ingress-helm-deployment-tcp-services-configmap-argument-not-found
       # https://github.com/kubernetes-sigs/kustomize/issues/3446
       tcp:
         "25": "default/ntfy:25"
