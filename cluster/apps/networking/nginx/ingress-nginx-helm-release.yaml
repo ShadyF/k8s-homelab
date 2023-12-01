@@ -142,5 +142,7 @@ spec:
         - name: crowdsec-bouncer-plugin
           mountPath: /etc/nginx/lua/plugins/crowdsec
           subPath: crowdsec
+      # Needed to allow SMTP routing
+      # https://github.com/kubernetes-sigs/kustomize/issues/3446
       tcp:
-        25: default/ntfy:25
+        "25": "default/ntfy:25"
