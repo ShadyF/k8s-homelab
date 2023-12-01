@@ -142,3 +142,5 @@ spec:
         - name: crowdsec-bouncer-plugin
           mountPath: /etc/nginx/lua/plugins/crowdsec
           subPath: crowdsec
+      tcp:
+        25: default/ntfy:25
