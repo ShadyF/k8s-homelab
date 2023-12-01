@@ -17,6 +17,7 @@ data:
     cert   = /conf/ssl/tls.crt
     key    = /conf/ssl/tls.key
     sslVersionMin = ALL
+    securityLevel = 1
     
     [service-tls-tcp]
     accept = 0.0.0.0:587
