@@ -54,6 +54,8 @@ spec:
           http:
             port: 80
           smtp:
+            type: LoadBalancer
+            externalTrafficPolicy: Local
             port: 25
             primary: false
             protocol: TCP
