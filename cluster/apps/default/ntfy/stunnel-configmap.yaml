@@ -18,6 +18,7 @@ data:
     key    = /conf/ssl/tls.key
     
     [service-tls-tcp]
+    options = -NO_SSLv3
     sslVersionMin = all
     securityLevel = 2
     accept = 0.0.0.0:587
