@@ -38,8 +38,8 @@ spec:
 
             env:
               TZ: Africa/Cairo
-              NTFY_DEBUG: false
-              NTFY_LOG_LEVEL: INFO
+              NTFY_DEBUG: true
+              NTFY_LOG_LEVEL: DEBUG
             resources:
               limits:
                 memory: 300Mi
