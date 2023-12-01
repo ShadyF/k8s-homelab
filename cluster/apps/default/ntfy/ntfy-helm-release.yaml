@@ -53,6 +53,10 @@ spec:
         ports:
           http:
             port: 80
+          smtp:
+            port: 25
+            primary: false
+            protocol: TCP
 #      smtp:
 #        controller: main
 #        primary: false
