@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ntfy-configmap
+  namespace: default
+data:
+  server.yml: |-
+    behind-proxy: true
+    base-url: "https://ntfy.${SECRET_DOMAIN}"
+    listen-http: ":80"
+    cache-file: "/var/cache/ntfy/cache.db"
+    attachment-cache-dir: "/var/cache/ntfy/attachments"
+    auth-file: "/var/lib/ntfy/user.db"
+    auth-default-access: "deny-all"
+    
