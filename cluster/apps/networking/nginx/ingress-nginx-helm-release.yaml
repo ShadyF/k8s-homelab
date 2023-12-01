@@ -142,8 +142,3 @@ spec:
         - name: crowdsec-bouncer-plugin
           mountPath: /etc/nginx/lua/plugins/crowdsec
           subPath: crowdsec
-
-    # Needed to expose TCP services via ingress
-    # See https://kubernetes.github.io/ingress-nginx/user-guide/exposing-tcp-udp-services/
-    tcp:
-      25: "default//ntfy:25"
