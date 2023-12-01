@@ -94,3 +94,11 @@ spec:
           main: # the controller with the "main" identifier
             main: # the container with the "main" identifier
               - path: /var/cache/ntfy
+      auth:
+        enable: true
+        type: persistentVolumeClaim
+        existingClaim: ntfy-auth-pvc
+        advancedMounts:
+          main: # the controller with the "main" identifier
+            main: # the container with the "main" identifier
+              - path: /var/lib/ntfy
