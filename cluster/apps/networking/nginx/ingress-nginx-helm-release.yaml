@@ -90,7 +90,7 @@ spec:
         enabled: false
         serviceMonitor:
           enabled: false
-      # Wildcare certificate so we don't have to define a certificate for each ingress we create
+      # Wildcare certificate, so we don't have to define a certificate for each ingress we create
       extraArgs:
         default-ssl-certificate: "networking/${SECRET_DOMAIN/./-}-tls"
 
@@ -146,4 +146,4 @@ spec:
     # Needed to expose TCP services via ingress
     # See https://kubernetes.github.io/ingress-nginx/user-guide/exposing-tcp-udp-services/
     tcp:
-      25: default/ntfy:25
+      25: "default//ntfy:25"
