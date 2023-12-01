@@ -27,7 +27,7 @@ data:
     TIMEOUTidle    = 300
     socket = l:SO_LINGER=1:60
     retry = no
-    
+    EOF
     
     echo 'Starting Stunnel TLS termination for TCP Services...'
     stunnel /etc/stunnel/stunnel.conf
