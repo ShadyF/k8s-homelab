@@ -12,8 +12,6 @@ data:
     cat << EOF > /etc/stunnel/stunnel.conf
     options = NO_SSLv2
     options = NO_SSLv3
-    options = NO_TLSv1
-    options = NO_TLSv1.1
     CApath = /conf/ssl/
     pid = /var/run/stunnel.pid
     foreground = yes
@@ -21,7 +19,7 @@ data:
     [service-tls-tcp]
     cert   = /conf/ssl/tls.crt
     key    = /conf/ssl/tls.key
-    sslVersionMin = TLSv1.2
+    sslVersionMin = TLSv1
     accept = 0.0.0.0:587
     connect = 127.0.0.1:25
     TIMEOUTbusy    = 300
