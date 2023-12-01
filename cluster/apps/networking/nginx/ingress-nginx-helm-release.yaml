@@ -155,4 +155,4 @@ spec:
     # https://stackoverflow.com/questions/69802098/nginx-ingress-helm-deployment-tcp-services-configmap-argument-not-found
     # https://github.com/kubernetes-sigs/kustomize/issues/3446
     tcp:
-      "587": "default/ntfy:25:PROXY"
+      "587": "default/ntfy:25"
