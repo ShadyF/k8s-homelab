@@ -80,7 +80,7 @@ spec:
       config:
         enabled: true
         type: configMap
-        existingClaim: ntfy-configmap
+        name: ntfy-configmap
         advancedMounts:
           main: # the controller with the "main" identifier
             main: # the container with the "main" identifier
