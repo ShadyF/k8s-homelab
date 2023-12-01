@@ -13,11 +13,12 @@ data:
     CApath = /conf/ssl/
     pid = /var/run/stunnel.pid
     foreground = yes
-    debug = 5
-    [service-tls-tcp]
+    debug = 7
     cert   = /conf/ssl/tls.crt
     key    = /conf/ssl/tls.key
-    sslVersionMin = SSLv3
+    sslVersionMin = ALL
+    
+    [service-tls-tcp]
     accept = 0.0.0.0:587
     connect = 127.0.0.1:25
     TIMEOUTbusy    = 300
@@ -26,7 +27,7 @@ data:
     TIMEOUTidle    = 300
     socket = l:SO_LINGER=1:60
     retry = no
-    EOF
+    
     
     echo 'Starting Stunnel TLS termination for TCP Services...'
     stunnel /etc/stunnel/stunnel.conf
