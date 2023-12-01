@@ -60,7 +60,7 @@ spec:
         ports:
           http:
             port: 80
-      ssmtp:
+      smtps:
         controller: main
         primary: false
         type: LoadBalancer
@@ -68,7 +68,7 @@ spec:
         annotations:
           metallb.universe.tf/loadBalancerIPs: 192.168.1.244
         ports:
-          ssmtp:
+          smtps:
             port: 587
             primary: false
             protocol: TCP
