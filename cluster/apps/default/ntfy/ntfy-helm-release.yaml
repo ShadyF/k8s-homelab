@@ -128,7 +128,7 @@ spec:
             main: # the container with the "main" identifier
               - path: /var/lib/ntfy
 
-      stunnel-config:
+      stunnel-tls:
         enabled: true
         type: secret
         name: ntfy-stunnel-${SECRET_DOMAIN/./-}-tls
@@ -136,3 +136,13 @@ spec:
           main: # the controller with the "main" identifier
             stunnel: # the container with the "main" identifier
               - path: /conf/ssl
+
+      stunnel-config:
+        enabled: true
+        type: configMap
+        name: stunnel-configmap
+        advancedMounts:
+          main: # the controller with the "main" identifier
+            stunnel: # the container with the "main" identifier
+              - path: /opt/start.sh
+                subPath: start.sh
