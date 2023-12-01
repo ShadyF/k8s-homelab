@@ -60,22 +60,18 @@ spec:
         ports:
           http:
             port: 80
-          smtp:
-            port: 25
+      ssmtp:
+        controller: main
+        primary: false
+        type: LoadBalancer
+        externalTrafficPolicy: Local
+        annotations:
+          metallb.universe.tf/loadBalancerIPs: 192.168.1.244
+        ports:
+          ssmtp:
+            port: 587
             primary: false
             protocol: TCP
-    #      smtp:
-    #        controller: main
-    #        primary: false
-    #        type: LoadBalancer
-    #        externalTrafficPolicy: Local
-    #        annotations:
-    #          metallb.universe.tf/loadBalancerIPs: 192.168.1.244
-    #        ports:
-    #          smtp:
-    #            port: 25
-    #            primary: false
-    #            protocol: TCP
 
 
     ingress:
