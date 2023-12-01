@@ -40,7 +40,6 @@ spec:
               TZ: Africa/Cairo
               NTFY_DEBUG: false
               NTFY_LOG_LEVEL: INFO
-              NTFY_BASE_URL: "ntfy.${SECRET_DOMAIN}"
             resources:
               limits:
                 memory: 300Mi
@@ -60,8 +59,8 @@ spec:
         enabled: true
         className: "nginx"
         annotations:
-#          nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.networking.svc.cluster.local/oauth2/auth"
-#          nginx.ingress.kubernetes.io/auth-signin: "https://auth.${SECRET_DOMAIN}/oauth2/sign_in"
+          #          nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.networking.svc.cluster.local/oauth2/auth"
+          #          nginx.ingress.kubernetes.io/auth-signin: "https://auth.${SECRET_DOMAIN}/oauth2/sign_in"
           external-dns/is-public: "true"
           external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
         hosts:
