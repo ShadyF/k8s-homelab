@@ -54,6 +54,7 @@ spec:
           http:
             port: 80
       smtp:
+        controller: main
         type: LoadBalancer
         externalTrafficPolicy: Local
         annotations:
