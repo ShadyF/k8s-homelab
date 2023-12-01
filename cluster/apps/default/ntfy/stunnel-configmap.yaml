@@ -19,6 +19,7 @@ data:
     
     [service-tls-tcp]
     options = -NO_SSLv3
+    options = -NO_SSLv2
     sslVersionMin = all
     securityLevel = 2
     accept = 0.0.0.0:587
