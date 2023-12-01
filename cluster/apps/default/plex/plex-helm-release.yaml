@@ -45,6 +45,7 @@ spec:
         # Needed if sharing UDP and TCP services, not sure if this is actually needed here though
         annotations:
           metallb.universe.tf/allow-shared-ip: plex
+          metallb.universe.tf/loadBalancerIPs: 192.168.1.241
     ingress:
       main:
         enabled: true
