@@ -47,6 +47,13 @@ spec:
               requests:
                 cpu: 150m
                 memory: 150Mi
+          # Adapted from https://github.com/kubernetes/ingress-nginx/issues/636#issuecomment-1462523521
+          stunnel:
+            image:
+              repository: alpine
+              tag: 3.14.0
+              pullPolicy: IfNotPresent
+            command: [ "sh", "/opt/start.sh" ]
 
     service:
       main:
@@ -57,18 +64,18 @@ spec:
             port: 25
             primary: false
             protocol: TCP
-#      smtp:
-#        controller: main
-#        primary: false
-#        type: LoadBalancer
-#        externalTrafficPolicy: Local
-#        annotations:
-#          metallb.universe.tf/loadBalancerIPs: 192.168.1.244
-#        ports:
-#          smtp:
-#            port: 25
-#            primary: false
-#            protocol: TCP
+    #      smtp:
+    #        controller: main
+    #        primary: false
+    #        type: LoadBalancer
+    #        externalTrafficPolicy: Local
+    #        annotations:
+    #          metallb.universe.tf/loadBalancerIPs: 192.168.1.244
+    #        ports:
+    #          smtp:
+    #            port: 25
+    #            primary: false
+    #            protocol: TCP
 
 
     ingress:
@@ -120,3 +127,12 @@ spec:
           main: # the controller with the "main" identifier
             main: # the container with the "main" identifier
               - path: /var/lib/ntfy
+
+      stunnel-config:
+        enabled: true
+        type: secret
+        name: ntfy-stunnel-${SECRET_DOMAIN/./-}-tls
+        advancedMounts:
+          main: # the controller with the "main" identifier
+            stunnel: # the container with the "main" identifier
+              - path: /conf/ssl
