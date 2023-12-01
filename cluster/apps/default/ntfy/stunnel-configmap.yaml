@@ -16,10 +16,10 @@ data:
     debug = 7
     cert   = /conf/ssl/tls.crt
     key    = /conf/ssl/tls.key
-    sslVersionMin = ALL
-    securityLevel = 0
     
     [service-tls-tcp]
+    sslVersionMin = all
+    securityLevel = 2
     accept = 0.0.0.0:587
     connect = 127.0.0.1:25
     TIMEOUTbusy    = 300
