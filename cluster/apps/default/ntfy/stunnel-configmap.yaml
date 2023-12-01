@@ -13,15 +13,12 @@ data:
     CApath = /conf/ssl/
     pid = /var/run/stunnel.pid
     foreground = yes
-    debug = 7
+    debug = 2
     cert   = /conf/ssl/tls.crt
     key    = /conf/ssl/tls.key
     
     [service-tls-tcp]
-    options = -NO_SSLv3
-    options = -NO_SSLv2
-    sslVersionMin = all
-    securityLevel = 2
+    sslVersionMin = TLSv1.1
     accept = 0.0.0.0:587
     connect = 127.0.0.1:25
     TIMEOUTbusy    = 300
