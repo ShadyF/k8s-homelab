@@ -15,7 +15,7 @@ data:
     CApath = /conf/ssl/
     pid = /var/run/stunnel.pid
     foreground = yes
-    debug = 2
+    debug = 7
     [service-tls-tcp]
     cert   = /conf/ssl/tls.crt
     key    = /conf/ssl/tls.key
