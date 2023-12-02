@@ -1,0 +1,38 @@
+# Does not work, works locally only
+---
+- name: Prepare System
+  hosts: testing
+  gather_facts: true
+  any_errors_fatal: true
+  vars:
+    local_user: shadyf
+    server_user: master
+  pre_tasks:
+    - name: Pausing for 2 seconds...
+      ansible.builtin.pause:
+        seconds: 2
+  roles:
+    - role: vandot.k3sup.k3sup
+  tasks:
+    - name: Install Python
+      become: true
+      block:
+        - name: Packages | Install
+          apt:
+            name: python3,python-is-python3
+            install_recommends: false
+
+- name: Install k3s agent on k3s-agents
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Install k3s on agent
+      become: false
+      vandot.k3sup.k3sup:
+        action: agent
+        ip: "{{ ansible_host }}"
+        user: "{{ local_user }}"
+        server_user: "{{ server_user }}"
+        server_ip: 192.168.1.200
+        ssh_key: "~/.ssh/id_ed25519"
+        k3s_channel: "latest"

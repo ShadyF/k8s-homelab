@@ -1,0 +1,126 @@
+# Adapted from the following sources:
+# https://www.redhat.com/sysadmin/harden-new-system-ansible
+# https://github.com/onedr0p/home-ops/blob/main/ansible/main/playbooks/cluster-prepare.yaml
+---
+- name: Prepare System
+  hosts: testing
+  become: true
+  gather_facts: true
+  any_errors_fatal: true
+  vars:
+    new_user: shadyf
+    unnecessary_services:
+      - postfix
+      - telnet
+    unnecessary_software:
+      - tcpdump
+      - nmap-ncat
+      - wpa_supplicant
+      - snapd
+  pre_tasks:
+    - name: Pausing for 2 seconds...
+      ansible.builtin.pause:
+        seconds: 2
+  tasks:
+    - name: Packages
+      block:
+        - name: Packages | Update and Upgrade
+          apt:
+            update_cache: true
+            upgrade: true
+            cache_valid_time: 86400 #One day
+        - name: Packages | Install
+          apt:
+            name: htop,ncdu,neofetch,lm-sensors,gnupg,fish,curl,apt-transport-https,ca-certificates,nfs-common
+            install_recommends: false
+
+    - name: User Configuration
+      block:
+        - name: Add admin group
+          group:
+            name: admin
+            state: present
+        - name: Add local user
+          user:
+            name: "{{ new_user }}"
+            group: admin
+            shell: /bin/bash
+            home: "/home/{{ new_user }}"
+            create_home: yes
+            state: present
+        - name: Add SSH public key for user
+          authorized_key:
+            user: "{{ new_user }}"
+            key: "https://github.com/{{ github_username }}.keys"
+            state: present
+        - name: Add sudoer rule for local user
+          copy:
+            content: "{{ new_user }} ALL=(ALL:ALL) NOPASSWD:ALL"
+            dest: "/etc/sudoers.d/{{ new_user }}"
+            owner: root
+            group: root
+            mode: 0440
+            validate: /usr/sbin/visudo -csf %s
+
+    - name: Disable unused software and services
+      block:
+        - name: Disable unused software and services | Remove undesirable packages
+          package:
+            name: "{{ unnecessary_software }}"
+            state: absent
+        - name: Disable unused software and services | Stop and disable unnecessary services
+          service:
+            name: "{{ item }}"
+            state: stopped
+            enabled: no
+          with_items: "{{ unnecessary_services }}"
+          ignore_errors: yes
+
+    - name: System Configuration
+      block:
+        # https://longhorn.io/kb/troubleshooting-volume-with-multipath/
+        - name: System Configuration | Adjust Multipath (For longhorn)
+          copy:
+            content: |
+              defaults {
+                  user_friendly_names yes
+              }
+
+              blacklist {
+                  devnode "^sd[a-z0-9]+"
+              }
+            dest: /etc/multipath.conf
+            mode: "preserve"
+        - name: System Configuration | Disable swap
+          mount:
+            name: "{{ item }}"
+            fstype: swap
+            state: absent
+          loop: [ "none", "swap" ]
+        - name: System Configuration | Add hardened SSH config
+          notify: Reload SSH
+          copy:
+            content:
+            src: files/sshd_config
+            dest: /etc/ssh/sshd_config
+            owner: root
+            group: root
+            mode: "0600"
+
+    - name: Network Configuration
+      notify: Reboot
+      block:
+        - name: Network Configuration | Set hostname
+          hostname:
+            name: "{{ inventory_hostname }}"
+
+
+  handlers:
+    - name: Reboot
+      reboot:
+        msg: Rebooting nodes
+        reboot_timeout: 3600
+    - name: Reload SSH
+      service:
+        name: sshd
+        state: reloaded
