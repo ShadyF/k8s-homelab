@@ -51,6 +51,16 @@ spec:
             nodeFit: true
         LowNodeUtilization:
           enabled: true
+          params:
+            nodeResourceUtilizationThresholds:
+              thresholds:
+                cpu: 30
+                memory: 30
+                pods: 20
+              targetThresholds:
+                cpu: 60
+                memory: 60
+                pods: 40
         RemoveFailedPods:
           enabled: true
           params:
