@@ -8,7 +8,7 @@
   gather_facts: true
   any_errors_fatal: true
   vars:
-    new_user: shadyf
+    new_user: worker
     unnecessary_services:
       - postfix
       - telnet
@@ -31,7 +31,7 @@
             cache_valid_time: 86400 #One day
         - name: Packages | Install
           apt:
-            name: htop,ncdu,neofetch,lm-sensors,gnupg,fish,curl,apt-transport-https,ca-certificates,nfs-common
+            name: htop,ncdu,neofetch,lm-sensors,gnupg,fish,curl,apt-transport-https,ca-certificates,nfs-common,open-iscsi
             install_recommends: false
 
     - name: User Configuration

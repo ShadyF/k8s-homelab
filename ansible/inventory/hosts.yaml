@@ -1,7 +1,7 @@
 ---
 kubernetes:
   vars:
-    ansible_user: master
+    ansible_user: worker
     ansible_ssh_port: 22
     github_username: ShadyF
   children:
@@ -13,7 +13,5 @@ kubernetes:
       hosts:
         k8-w1:
           ansible_host: 192.168.1.201
-    testing:
-      hosts:
         k8-w2:
-          ansible_host: 192.168.1.214
+          ansible_host: 192.168.1.202
