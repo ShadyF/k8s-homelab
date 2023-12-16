@@ -26,6 +26,11 @@ spec:
       retries: 3
   uninstall:
     keepHistory: false
+  dependsOn:
+    - name: local-path-provisioner
+      namespace: kube-system
+    - name: longhorn
+      namespace: longhorn-system
   # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
   values:
     crds:
@@ -183,12 +188,12 @@ spec:
     #        port: 2381
     #        targetPort: 2381
 
-#    prometheusOperator:
-#      createCustomResource: true
-#      prometheusConfigReloader:
-#        resources:
-#          limits:
-#            cpu: 200m
+    #    prometheusOperator:
+    #      createCustomResource: true
+    #      prometheusConfigReloader:
+    #        resources:
+    #          limits:
+    #            cpu: 200m
 
     prometheus:
       ingress:
