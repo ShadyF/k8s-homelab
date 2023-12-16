@@ -73,20 +73,35 @@ spec:
       dashboards:
         enabled: true
         searchNamespace: ALL
+    serviceMonitor:
+      enabled: true
     # Grafana Datatsources (https://grafana.com/docs/grafana/latest/administration/provisioning/#datasources)
     datasources:
       datasources.yaml:
         apiVersion: 1
         datasources:
+          - name: Prometheus
+            type: prometheus
+            uid: prometheus
+            access: proxy
+            url: http://prometheus-operated.monitoring.svc.cluster.local:9090
+            isDefault: true
+            jsonData:
+              implementation: prometheus
           - name: Loki
             type: loki
+            uid: loki
             access: proxy
             url: http://loki-gateway.monitoring.svc.cluster.local
-    #          - name: Prometheus
-    #            type: prometheus
-    #            access: proxy
-    #            url: http://thanos-query:9090/
-    #            isDefault: true
+            jsonData:
+              maxLines: 250
+          - name: Alertmanager
+            type: alertmanager
+            uid: alertmanager
+            access: proxy
+            url: http://alertmanager-operated.monitoring.svc.cluster.local:9093
+            jsonData:
+              implementation: prometheus
     dashboardProviders:
       dashboardproviders.yaml:
         apiVersion: 1
