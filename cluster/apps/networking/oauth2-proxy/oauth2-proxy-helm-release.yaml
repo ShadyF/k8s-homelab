@@ -67,12 +67,12 @@ spec:
       whitelist-domain: ".${SECRET_DOMAIN}"
       exclude-logging-path: "/ping"
 
-    affinity:
-      nodeAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          nodeSelectorTerms:
-            - matchExpressions:
-                - key: beta.kubernetes.io/arch
-                  operator: In
-                  values:
-                    - arm64
+#    affinity:
+#      nodeAffinity:
+#        requiredDuringSchedulingIgnoredDuringExecution:
+#          nodeSelectorTerms:
+#            - matchExpressions:
+#                - key: beta.kubernetes.io/arch
+#                  operator: In
+#                  values:
+#                    - arm64

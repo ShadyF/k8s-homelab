@@ -26,16 +26,16 @@ spec:
     # https://grafana.com/docs/loki/latest/configuration/#configuration-file-reference
     singleBinary:
       replicas: 1
-      affinity: |
-        nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 1
-              preference:
-                matchExpressions:
-                  - key: kubernetes.io/hostname
-                    operator: In
-                    values:
-                      - k8-w1
+#      affinity: |
+#        nodeAffinity:
+#          preferredDuringSchedulingIgnoredDuringExecution:
+#            - weight: 1
+#              preference:
+#                matchExpressions:
+#                  - key: kubernetes.io/hostname
+#                    operator: In
+#                    values:
+#                      - k8-w1
     loki:
       auth_enabled: false
 
