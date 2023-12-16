@@ -183,20 +183,12 @@ spec:
     #        port: 2381
     #        targetPort: 2381
 
-    prometheusOperator:
-      createCustomResource: true
-      # prometheusConfigReloaderImage:
-      #   repository: quay.io/coreos/prometheus-config-reloader
-      #   tag: v0.39.0
-      # configmapReloadImage:
-      #   repository: jimmidyson/configmap-reload
-      #   tag: v0.4.0
-      prometheusConfigReloader:
-        resources:
-          limits:
-            cpu: 200m
-#      admissionWebhooks:
-#        enabled: false
+#    prometheusOperator:
+#      createCustomResource: true
+#      prometheusConfigReloader:
+#        resources:
+#          limits:
+#            cpu: 200m
 
     prometheus:
       ingress:
