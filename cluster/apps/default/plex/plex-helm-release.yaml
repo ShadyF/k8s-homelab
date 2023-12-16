@@ -77,16 +77,16 @@ spec:
         # To be able to delete movies directly from plex
         readOnly: false
 
-    # Only run on worker 1
+    # Disallow running on arm64
     affinity:
       nodeAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
           nodeSelectorTerms:
             - matchExpressions:
-                - key: kubernetes.io/hostname
-                  operator: In
+                - key: kubernetes.io/arch
+                  operator: NotIn
                   values:
-                    - k8-w1
+                    - arm64
     addons:
       promtail:
         enabled: true
