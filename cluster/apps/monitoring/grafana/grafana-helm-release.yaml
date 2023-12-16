@@ -21,7 +21,6 @@ spec:
       # Env vars can be found here https://grafana.com/docs/grafana/latest/administration/configuration/
       GF_EXPLORE_ENABLED: true
       GF_PANELS_DISABLE_SANITIZE_HTML: true
-      GF_LOG_FILTERS: rendering:debug
       GF_DATE_FORMATS_USE_BROWSER_LOCALE: true
       GF_DATE_FORMATS_FULL_DATE: "MMM Do, YYYY hh:mm:ss a"
       GF_DATE_FORMATS_INTERVAL_SECOND: "hh:mm:ss a"
@@ -59,13 +58,21 @@ spec:
       annotations:
         nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.networking.svc.cluster.local/oauth2/auth"
         nginx.ingress.kubernetes.io/auth-signin: "https://auth.${SECRET_DOMAIN}/oauth2/sign_in"
-        external-dns/is-public: "true"
+        external-dns/is-public: "false"
         external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
       hosts:
         - "grafana.${SECRET_DOMAIN}"
       tls:
         - hosts:
             - "grafana.${SECRET_DOMAIN}"
+    sidecar:
+      datasources:
+        enabled: true
+        searchNamespace: ALL
+        # defaultDatasourceEnabled: false
+      dashboards:
+        enabled: true
+        searchNamespace: ALL
     # Grafana Datatsources (https://grafana.com/docs/grafana/latest/administration/provisioning/#datasources)
     datasources:
       datasources.yaml:
@@ -99,13 +106,13 @@ spec:
           gnetId: 12559
           revision: 14
           datasource: Loki
-#    sidecar:
-#      dashboards:
-#        enabled: true
-#        searchNamespace: ALL
-#      datasources:
-#        enabled: true
-#        searchNamespace: ALL
+    #    sidecar:
+    #      dashboards:
+    #        enabled: true
+    #        searchNamespace: ALL
+    #      datasources:
+    #        enabled: true
+    #        searchNamespace: ALL
     plugins:
       - grafana-worldmap-panel
 #      - natel-discrete-panel
