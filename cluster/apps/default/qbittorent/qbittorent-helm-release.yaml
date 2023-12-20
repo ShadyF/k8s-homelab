@@ -15,6 +15,9 @@ spec:
         name: k8s-at-home-charts
         namespace: flux-system
       interval: 5m
+  dependsOn:
+    - name: longhorn
+      namespace: longhorn-system
   values:
     image:
       repository: ghcr.io/onedr0p/qbittorrent
@@ -78,15 +81,15 @@ spec:
       limits:
         memory: 5000Mi
     # Only schedule on RPI since intel rig has faulty ram that causes integrity issues when downloading torrents
-#    affinity:
-#      nodeAffinity:
-#        requiredDuringSchedulingIgnoredDuringExecution:
-#          nodeSelectorTerms:
-#            - matchExpressions:
-#                - key: beta.kubernetes.io/arch
-#                  operator: In
-#                  values:
-#                    - arm64
+    #    affinity:
+    #      nodeAffinity:
+    #        requiredDuringSchedulingIgnoredDuringExecution:
+    #          nodeSelectorTerms:
+    #            - matchExpressions:
+    #                - key: beta.kubernetes.io/arch
+    #                  operator: In
+    #                  values:
+    #                    - arm64
     additionalContainers:
       - name: shadowsocks
         image: shadowsocks/shadowsocks-libev:v3.3.5

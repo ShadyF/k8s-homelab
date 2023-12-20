@@ -15,6 +15,9 @@ spec:
         name: k8s-at-home-charts
         namespace: flux-system
       interval: 5m
+  dependsOn:
+    - name: longhorn
+      namespace: longhorn-system
   values:
     image:
       repository: jesec/flood

@@ -21,6 +21,9 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
+  dependsOn:
+    - name: longhorn
+      namespace: longhorn-system
   values:
     image:
       repository: n8nio/n8n

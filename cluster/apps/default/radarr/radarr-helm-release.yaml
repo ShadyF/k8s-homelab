@@ -22,6 +22,9 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
+  dependsOn:
+    - name: longhorn
+      namespace: longhorn-system
   values:
     # https://github.com/bjw-s/helm-charts/blob/main/charts/library/common/values.yaml
     controllers:
