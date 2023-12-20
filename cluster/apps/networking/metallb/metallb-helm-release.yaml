@@ -9,10 +9,10 @@ spec:
     spec:
       # renovate: registryUrl=https://charts.bitnami.com/bitnami
       chart: metallb
-      version: 4.8.0
+      version: 0.13.12
       sourceRef:
         kind: HelmRepository
-        name: bitnami-charts
+        name: metallb-charts
         namespace: flux-system
       interval: 5m
   install:
@@ -22,8 +22,14 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
-  # https://github.com/bitnami/charts/blob/main/bitnami/metallb/values.yaml
+  # https://github.com/metallb/metallb/blob/main/charts/metallb/values.yaml
   values:
-    installCRDs: true
-    psp:
-      create: false
+    crds:
+      enabled: true
+    prometheus:
+      namespace: monitoring
+      serviceAccount: kube-prometheus-stack-prometheus
+      podMonitor:
+        enabled: true
+      prometheusRule:
+        enabled: true
