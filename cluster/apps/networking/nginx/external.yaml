@@ -27,6 +27,8 @@ spec:
     fullnameOverride: nginx-external
     controller:
       replicaCount: 2
+      # https://kubernetes.github.io/ingress-nginx/user-guide/multiple-ingress/
+      electionID: external-ingress-controller-leader
       ingressClassResource:
         name: external
         default: false
