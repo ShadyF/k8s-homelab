@@ -55,7 +55,7 @@ spec:
     persistence:
       config:
         enabled: true
-        existingClaim: flood-config-pvc
+        existingClaim: flood-config-pvc-2
       # PVC from qbittorrent
       downloads:
         enabled: true
