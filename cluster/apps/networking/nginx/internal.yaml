@@ -164,6 +164,7 @@ spec:
           subPath: crowdsec
 
     defaultBackend:
+      # https://tarampampam.github.io/error-pages/
       enabled: true
       image:
         repository: ghcr.io/tarampampam/error-pages
