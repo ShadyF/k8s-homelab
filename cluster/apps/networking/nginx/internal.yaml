@@ -30,6 +30,13 @@ spec:
       ingressClassResource:
         name: internal
         default: true
+        controllerValue: k8s.io/internal
+      admissionWebhooks:
+        objectSelector:
+          matchExpressions:
+            - key: ingress-class
+              operator: In
+              values: [ "internal" ]
       service:
         type: LoadBalancer
         loadBalancerIP: 192.168.1.241
