@@ -3,7 +3,7 @@
 # https://github.com/onedr0p/home-ops/blob/main/ansible/main/playbooks/cluster-prepare.yaml
 ---
 - name: Prepare System
-  hosts: testing
+  hosts: k8-w2
   become: true
   gather_facts: true
   any_errors_fatal: true
@@ -31,7 +31,7 @@
             cache_valid_time: 86400 #One day
         - name: Packages | Install
           apt:
-            name: htop,ncdu,neofetch,lm-sensors,gnupg,fish,curl,apt-transport-https,ca-certificates,nfs-common,open-iscsi
+            name: htop,ncdu,neofetch,lm-sensors,gnupg,fish,curl,apt-transport-https,ca-certificates,nfs-common,nfs-kernel-server,open-iscsi
             install_recommends: false
 
     - name: User Configuration
