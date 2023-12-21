@@ -47,11 +47,11 @@ spec:
         # Needed if sharing UDP and TCP services, not sure if this is actually needed here though
         annotations:
           metallb.universe.tf/allow-shared-ip: plex
-          metallb.universe.tf/loadBalancerIPs: 192.168.1.241
+          metallb.universe.tf/loadBalancerIPs: 192.168.1.245
     ingress:
       main:
         enabled: true
-        ingressClassName: "nginx"
+        ingressClassName: "external"
         annotations:
           nginx.ingress.kubernetes.io/connection-proxy-header: "upgrade"
           external-dns/is-public: "true"

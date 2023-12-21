@@ -4,6 +4,7 @@ metadata:
   name: actual-pvc
   namespace: default
 spec:
+  # TODO: Should be ReadWriteOnce
   accessModes:
     - ReadWriteMany
   storageClassName: longhorn

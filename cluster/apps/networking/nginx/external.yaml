@@ -1,0 +1,155 @@
+# TODO: Figure out why people add resource limits here
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: nginx-external
+  namespace: networking
+spec:
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://kubernetes.github.io/ingress-nginx
+      chart: ingress-nginx
+      version: 4.9.0
+      sourceRef:
+        kind: HelmRepository
+        name: ingress-nginx-charts
+        namespace: flux-system
+      interval: 5m
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    fullnameOverride: nginx-external
+    controller:
+      replicaCount: 2
+      ingressClassResource:
+        name: external
+        default: false
+      service:
+        type: LoadBalancer
+        loadBalancerIP: 192.168.1.240
+        # See https://docs.microsoft.com/en-us/azure/aks/concepts-network#client-source-ip-preservation
+        # Also see https://metallb.universe.tf/usage/#traffic-policies for what happens when used
+        # in conjuction with MetalLB
+        externalTrafficPolicy: Local
+      config:
+        ssl-protocols: "TLSv1.3 TLSv1.2"
+        # Same size defined in cloudflare
+        proxy-body-size: "100m"
+        # Helps with getting real IP, I think?
+        use-forwarded-headers: "true"
+        enable-brotli: "true"
+        # enable-ocsp: "true"
+        enable-real-ip: "true"
+        log-format-escape-json: "true"
+        log-format-upstream: '{
+          "msec": "$msec",
+          "connection": "$connection",
+          "connection_requests": "$connection_requests",
+          "pid": "$pid",
+          "request_id": "$request_id",
+          "request_length": "$request_length",
+          "remote_addr": "$remote_addr",
+          "remote_user": "$remote_user",
+          "remote_port": "$remote_port",
+          "time_local": "$time_local",
+          "time_iso8601": "$time_iso8601",
+          "request": "$request",
+          "request_uri": "$request_uri",
+          "args": "$args",
+          "status": "$status",
+          "body_bytes_sent": "$body_bytes_sent",
+          "bytes_sent": "$bytes_sent",
+          "http_referer": "$http_referer",
+          "http_user_agent": "$http_user_agent",
+          "http_x_forwarded_for": "$http_x_forwarded_for",
+          "http_host": "$http_host",
+          "server_name": "$server_name",
+          "request_time": "$request_time",
+          "upstream": "$upstream_addr",
+          "upstream_connect_time": "$upstream_connect_time",
+          "upstream_header_time": "$upstream_header_time",
+          "upstream_response_time": "$upstream_response_time",
+          "upstream_response_length": "$upstream_response_length",
+          "upstream_cache_status": "$upstream_cache_status",
+          "ssl_protocol": "$ssl_protocol",
+          "ssl_cipher": "$ssl_cipher",
+          "scheme": "$scheme",
+          "request_method": "$request_method",
+          "server_protocol": "$server_protocol",
+          "pipe": "$pipe",
+          "gzip_ratio": "$gzip_ratio",
+          "http_cf_ray": "$http_cf_ray",
+          "geoip_country_code": "$geoip_country_code"
+        }'
+        # Needed for crowdsec
+        plugins: "crowdsec"
+        lua-shared-dicts: "crowdsec_cache: 50m"
+        server-snippet: |
+          resolver local=on ipv6=off;
+      # Enable when grafana / prometheus is added
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
+          namespaceSelector:
+            any: true
+        prometheusRule:
+          enabled: false
+      # Wildcare certificate, so we don't have to define a certificate for each ingress we create
+      extraArgs:
+        default-ssl-certificate: "networking/${SECRET_DOMAIN/./-}-tls"
+
+      # Needed for crowdsec
+      extraVolumes:
+        - name: crowdsec-bouncer-plugin
+          emptyDir: { }
+      extraInitContainers:
+        - name: init-clone-crowdsec-bouncer
+          image: crowdsecurity/lua-bouncer-plugin:v1.0.1
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef:
+                name: crowdsec-secrets
+          env:
+            - name: API_URL
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-secrets
+                  key: CROWDSEC_API_URL
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-secrets
+                  key: CROWDSEC_INGRESS_NGINX_BOUNCER_API_KEY
+            - name: BOUNCER_CONFIG
+              value: "/crowdsec/crowdsec-bouncer.conf"
+            - name: MODE
+              value: "stream"
+            - name: UPDATE_FREQUENCY
+              value: "10" # 10 seconds
+            - name: BOUNCER_CONFIG
+              value: "/crowdsec/crowdsec-bouncer.conf"
+            - name: CAPTCHA_PROVIDER
+              value: "recaptcha" # valid providers are recaptcha, hcaptcha, turnstile
+            #            - name: SECRET_KEY
+            #              value: "<your-captcha-secret-key>" # If you want captcha support otherwise remove this ENV VAR
+            #            - name: SITE_KEY
+            #              value: "<your-captcha-site-key>" # If you want captcha support otherwise remove this ENV VAR
+            - name: BAN_TEMPLATE_PATH
+              value: /etc/nginx/lua/plugins/crowdsec/templates/ban.html
+            - name: CAPTCHA_TEMPLATE_PATH
+              value: /etc/nginx/lua/plugins/crowdsec/templates/captcha.html
+          command: [ 'sh', '-c', "sh /docker_start.sh; mkdir -p /lua_plugins/crowdsec/; cp -R /crowdsec/* /lua_plugins/crowdsec/" ]
+          volumeMounts:
+            - name: crowdsec-bouncer-plugin
+              mountPath: /lua_plugins
+      extraVolumeMounts:
+        - name: crowdsec-bouncer-plugin
+          mountPath: /etc/nginx/lua/plugins/crowdsec
+          subPath: crowdsec

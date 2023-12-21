@@ -84,10 +84,8 @@ spec:
     ingress:
       main:
         enabled: true
-        className: "nginx"
+        className: "external"
         annotations:
-          #          nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.networking.svc.cluster.local/oauth2/auth"
-          #          nginx.ingress.kubernetes.io/auth-signin: "https://auth.${SECRET_DOMAIN}/oauth2/sign_in"
           nginx.ingress.kubernetes.io/ssl-redirect: "true"
           nginx.ingress.kubernetes.io/connection-proxy-header: "upgrade"
           external-dns/is-public: "true"

@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
-  name: ingress-nginx
+  name: nginx-internal
   namespace: networking
 spec:
   interval: 5m
@@ -24,11 +24,15 @@ spec:
     remediation:
       retries: 3
   values:
+    fullnameOverride: nginx-internal
     controller:
       replicaCount: 2
+      ingressClassResource:
+        name: internal
+        default: true
       service:
         type: LoadBalancer
-        loadBalancerIP: 192.168.1.240
+        loadBalancerIP: 192.168.1.241
         # See https://docs.microsoft.com/en-us/azure/aks/concepts-network#client-source-ip-preservation
         # Also see https://metallb.universe.tf/usage/#traffic-policies for what happens when used
         # in conjuction with MetalLB
@@ -39,6 +43,9 @@ spec:
         proxy-body-size: "100m"
         # Helps with getting real IP, I think?
         use-forwarded-headers: "true"
+        enable-brotli: "true"
+        # enable-ocsp: "true"
+        enable-real-ip: "true"
         log-format-escape-json: "true"
         log-format-upstream: '{
           "msec": "$msec",
@@ -87,8 +94,12 @@ spec:
           resolver local=on ipv6=off;
       # Enable when grafana / prometheus is added
       metrics:
-        enabled: false
+        enabled: true
         serviceMonitor:
+          enabled: true
+          namespaceSelector:
+            any: true
+        prometheusRule:
           enabled: false
       # Wildcare certificate, so we don't have to define a certificate for each ingress we create
       extraArgs:

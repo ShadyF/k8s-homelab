@@ -43,9 +43,10 @@ spec:
       enabled: true
       host: "longhorn.${SECRET_DOMAIN}"
       tls: true
-      ingressClassName: "nginx"
+      ingressClassName: "internal"
       tlsSecret: longhorn-tls
       annotations:
+        external-dns/is-public: "false"
         nginx.ingress.kubernetes.io/connection-proxy-header: "upgrade"
         nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.networking.svc.cluster.local/oauth2/auth"
         nginx.ingress.kubernetes.io/auth-signin: "https://auth.${SECRET_DOMAIN}/oauth2/sign_in"
