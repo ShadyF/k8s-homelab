@@ -22,6 +22,7 @@ spec:
     image:
       repository: jesec/flood
       tag: 4.7.0
+
     env:
       - name: FLOOD_OPTION_AUTH
         value: "none"
