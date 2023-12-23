@@ -110,14 +110,14 @@ spec:
             editable: true
             options:
               path: /var/lib/grafana/dashboards/grafana-dashboards-kubernetes
-          - name: flux
-            orgId: 1
-            folder: Flux
-            type: file
-            disableDeletion: true
-            editable: true
-            options:
-              path: /var/lib/grafana/dashboards/flux
+#          - name: flux
+#            orgId: 1
+#            folder: Flux
+#            type: file
+#            disableDeletion: true
+#            editable: true
+#            options:
+#              path: /var/lib/grafana/dashboards/flux
     dashboards:
       default:
         # Ref: https://grafana.com/grafana/dashboards/12559/revisions
@@ -157,16 +157,16 @@ spec:
         k8s-views-pods:
           url: https://raw.githubusercontent.com/dotdc/grafana-dashboards-kubernetes/master/dashboards/k8s-views-pods.json
           token: ''
-      flux:
-        flux-cluster:
-          url: https://raw.githubusercontent.com/fluxcd/flux2/main/manifests/monitoring/monitoring-config/dashboards/cluster.json
-          datasource: Prometheus
-        flux-control-plane:
-          url: https://raw.githubusercontent.com/fluxcd/flux2/main/manifests/monitoring/monitoring-config/dashboards/control-plane.json
-          datasource: Prometheus
-        flux-logs:
-          url: https://raw.githubusercontent.com/fluxcd/flux2/main/manifests/monitoring/monitoring-config/dashboards/logs.json
-          datasource: Prometheus
+#      flux:
+#        flux-cluster:
+#          url: https://raw.githubusercontent.com/fluxcd/flux2/main/manifests/monitoring/monitoring-config/dashboards/cluster.json
+#          datasource: Prometheus
+#        flux-control-plane:
+#          url: https://raw.githubusercontent.com/fluxcd/flux2/main/manifests/monitoring/monitoring-config/dashboards/control-plane.json
+#          datasource: Prometheus
+#        flux-logs:
+#          url: https://raw.githubusercontent.com/fluxcd/flux2/main/manifests/monitoring/monitoring-config/dashboards/logs.json
+#          datasource: Prometheus
     plugins:
       - grafana-worldmap-panel
     #      - natel-discrete-panel
