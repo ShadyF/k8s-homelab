@@ -76,10 +76,10 @@ spec:
         mountPath: /shared
     resources:
       requests:
-        memory: 250Mi
-        cpu: 500m
+        cpu: 10m
+        memory: 100Mi
       limits:
-        memory: 5000Mi
+        memory: 100Mi
     # Only schedule on RPI since intel rig has faulty ram that causes integrity issues when downloading torrents
     #    affinity:
     #      nodeAffinity:
@@ -167,3 +167,9 @@ spec:
           periodSeconds: 120
           failureThreshold: 5
           successThreshold: 1
+        resources:
+          requests:
+            cpu: 10m
+            memory: 568Mi
+          limits:
+            memory: 568Mi
