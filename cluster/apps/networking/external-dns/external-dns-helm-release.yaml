@@ -46,6 +46,11 @@ spec:
         cpu: 25m
       limits:
         memory: 250Mi
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+        namespace: monitoring
 #    affinity:
 #      nodeAffinity:
 #        requiredDuringSchedulingIgnoredDuringExecution:
