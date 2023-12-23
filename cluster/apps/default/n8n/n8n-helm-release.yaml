@@ -91,10 +91,10 @@ spec:
       existingClaim: n8n-pvc
 
     resources:
-      limits:
-        memory: 256Mi
       requests:
-        cpu: 300m
+        cpu: 14m
+        memory: 256Mi
+      limits:
         memory: 256Mi
 
     scaling:

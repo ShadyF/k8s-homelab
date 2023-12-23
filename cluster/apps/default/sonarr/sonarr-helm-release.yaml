@@ -64,10 +64,10 @@ spec:
                 enabled: false
             resources:
               requests:
-                cpu: 25m
-                memory: 350Mi
+                cpu: 15m
+                memory: 202Mi
               limits:
-                memory: 500Mi
+                memory: 202Mi
 
     service:
       main:

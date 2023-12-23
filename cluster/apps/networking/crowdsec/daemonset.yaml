@@ -48,10 +48,10 @@ spec:
                   name: crowdsec-secrets
                   key: CROWDSEC_AGENT_PASSWORD
           resources:
-            limits:
-              memory: 100Mi
             requests:
-              cpu: 150m
+              cpu: 10m
+              memory: 100Mi
+            limits:
               memory: 100Mi
           volumeMounts:
             - name: s02-whitelist

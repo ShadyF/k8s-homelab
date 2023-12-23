@@ -90,6 +90,12 @@ spec:
                   operator: NotIn
                   values:
                     - arm64
+    resources:
+      requests:
+#        cpu: 3
+        memory: 983Mi
+      limits:
+        memory: 983Mi
 #    addons:
 #      promtail:
 #        enabled: true
