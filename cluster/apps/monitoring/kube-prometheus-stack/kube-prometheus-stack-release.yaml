@@ -137,6 +137,7 @@ spec:
 
     # See https://github.com/k3s-io/k3s/issues/425 for issue revolving inproper monitoring for k3s and workaround
     # Adapted from https://github.com/onedr0p/home-ops/blob/main/kubernetes/main/apps/observability/kube-prometheus-stack/app/helmrelease.yaml
+    # Might also want to see https://picluster.ricsanfre.com/docs/prometheus/#k3s-components-monitoring for duplicate metrics issue
     kubelet:
       enabled: true
       serviceMonitor:
