@@ -40,13 +40,12 @@ spec:
   maxHistory: 3
   values:
     configuration:
-#      startTime: "2:00"
-#      endTime: "6:00"
-      period: "2m"
+      startTime: "2:00"
+      endTime: "6:00"
       timeZone: "Africa/Cairo"
-#      rebootDays:
-#        - th
-#        - fr
+      rebootDays:
+        - th
+        - fr
       rebootCommand: "/usr/bin/systemctl reboot"
     metrics:
       create: true
