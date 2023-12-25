@@ -40,8 +40,8 @@ spec:
   maxHistory: 3
   values:
     configuration:
-      startTime: "2:00"
-      endTime: "6:00"
+#      startTime: "2:00"
+#      endTime: "6:00"
       timeZone: "Africa/Cairo"
 #      rebootDays:
 #        - th
