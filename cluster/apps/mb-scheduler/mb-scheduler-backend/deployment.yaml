@@ -43,9 +43,9 @@ spec:
           resources:
             requests:
               cpu: 10m
-              memory: 180Mi
+              memory: 300Mi
             limits:
-              memory: 180Mi
+              memory: 300Mi
         # NGINX container to server static files
         - name: nginx
           image: nginx:1.25.3
