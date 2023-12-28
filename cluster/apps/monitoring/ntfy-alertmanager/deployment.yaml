@@ -33,9 +33,6 @@ spec:
             httpGet:
               path: /
               port: http
-          envFrom:
-            - secretRef:
-                name: mb-scheduler-backend-secrets
           volumeMounts:
             - name: config
               mountPath: "/etc/ntfy-alertmanager"
