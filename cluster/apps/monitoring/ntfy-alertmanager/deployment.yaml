@@ -25,14 +25,14 @@ spec:
             - name: http
               protocol: TCP
               containerPort: 8080
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
+#          livenessProbe:
+#            httpGet:
+#              path: /
+#              port: http
+#          readinessProbe:
+#            httpGet:
+#              path: /
+#              port: http
           volumeMounts:
             - name: config
               mountPath: "/etc/ntfy-alertmanager"
