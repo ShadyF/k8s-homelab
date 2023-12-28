@@ -27,8 +27,8 @@ spec:
           resources:
             requests:
               cpu: 10m
-              memory: 100Mi
+              memory: 25Mi
             limits:
-              memory: 100Mi
+              memory: 25Mi
       imagePullSecrets:
         - name: ghcr-login-secret
