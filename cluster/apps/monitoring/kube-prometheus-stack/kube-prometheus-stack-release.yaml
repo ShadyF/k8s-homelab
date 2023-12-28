@@ -62,11 +62,10 @@ spec:
             - receiver: "null" # quote
               matchers:
                 - alertname =~ "InfoInhibitor"
-            - receiver: 'pagerduty'
+            - receiver: 'ntfy'
               matchers:
                 - severity = "critical"
               continue: true
-            - receiver: 'ntfy'
         inhibit_rules:
           - source_matchers:
               - severity = "critical"
