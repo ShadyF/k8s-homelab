@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ntfy-alertmanager
+  namespace: monitoring
+  labels:
+    app: ntfy-alertmanager
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: ntfy-alertmanager
+  template:
+    metadata:
+      labels:
+        app: ntfy-alertmanager
+    spec:
+      containers:
+        - name: main
+          image: xenrox/ntfy-alertmanager:0.3.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              protocol: TCP
+              containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          envFrom:
+            - secretRef:
+                name: mb-scheduler-backend-secrets
+          volumeMounts:
+            - name: config
+              mountPath: "/etc/ntfy-alertmanager"
+              readOnly: true
+#          resources:
+#            requests:
+#              cpu: 10m
+#              memory: 100Mi
+#            limits:
+#              memory: 100Mi
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/arch
+                    operator: In
+                    values:
+                      - amd64
+      volumes:
+        - name: config
+          secret:
+            secretName: ntfy-alertmanager-secrets
+
+

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ntfy-alertmanager-svc
+  namespace: monitoring
+spec:
+  selector:
+    app: ntfy-alertmanager
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8080
+      name: http
+      targetPort: http

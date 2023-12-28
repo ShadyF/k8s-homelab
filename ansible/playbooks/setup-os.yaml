@@ -114,6 +114,17 @@
           hostname:
             name: "{{ inventory_hostname }}"
 
+# If installing k3s on this machine, need to add the following to /etc/rancher/k3s/config.yaml (create if not available)
+# to make prometheus metrics work
+#    kube-controller-manager-arg:
+#      - "address=0.0.0.0"
+#      - "bind-address=0.0.0.0"
+#    kube-proxy-arg:
+#      - "metrics-bind-address=0.0.0.0"
+#    kube-scheduler-arg:
+#      - "address=0.0.0.0"
+#      - "bind-address=0.0.0.0"
+#    etcd-expose-metrics: true
 
   handlers:
     - name: Reboot
