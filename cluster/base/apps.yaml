@@ -43,6 +43,6 @@ spec:
               - kind: Secret
                 name: cluster-secrets
       target:
-        group: kustomize.toolkit.fluxcd.io
+#        group: kustomize.toolkit.fluxcd.io
         kind: Kustomization
 #        labelSelector: substitution.flux.home.arpa/disabled notin (true)
