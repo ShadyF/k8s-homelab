@@ -28,8 +28,7 @@ spec:
     primary:
       persistence:
         enabled: true
-        storageClass: longhorn
-        size: 2Gi
+        existingClaim: mb-scheduler-db-pvc
       resources:
         requests:
           memory: 50Mi

@@ -24,8 +24,9 @@ spec:
       #        name: cluster-settings
       - kind: Secret
         name: cluster-secrets
-  # https://github.com/fluxcd/kustomize-controller/issues/707
   # Needed so other kustomizations have these added to them
+  # https://github.com/fluxcd/kustomize-controller/issues/707
+  # https://fluxcd.io/flux/components/kustomize/kustomizations/#patches
   patches:
     - patch: |-
         apiVersion: kustomize.toolkit.fluxcd.io/v1
@@ -44,4 +45,4 @@ spec:
       target:
         group: kustomize.toolkit.fluxcd.io
         kind: Kustomization
-        labelSelector: substitution.flux.home.arpa/disabled notin (true)
+#        labelSelector: substitution.flux.home.arpa/disabled notin (true)
