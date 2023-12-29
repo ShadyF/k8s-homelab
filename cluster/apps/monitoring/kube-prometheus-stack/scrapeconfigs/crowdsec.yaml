@@ -1,0 +1,9 @@
+---
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ScrapeConfig
+metadata:
+  name: crowdsec
+spec:
+  staticConfigs:
+    - targets: ["opnsense.home.arpa:6060"]
+  metricsPath: /metrics

@@ -122,10 +122,18 @@ spec:
             orgId: 1
             folder: Nginx
             type: file
-            disableDeletion: false
+            disableDeletion: true
             editable: true
             options:
               path: /var/lib/grafana/dashboards/nginx
+          - name: crowdsec
+            orgId: 1
+            folder: Crowdsec
+            type: file
+            disableDeletion: true
+            editable: true
+            options:
+              path: /var/lib/grafana/dashboards/crowdsec
     dashboards:
       default:
         external-dns:
@@ -175,6 +183,20 @@ spec:
         flux-logs:
           url: https://raw.githubusercontent.com/fluxcd/flux2-monitoring-example/main/monitoring/configs/dashboards/logs.json
           datasource: Loki
+      crowdsec:
+        crowdsec-overview:
+          url: https://raw.githubusercontent.com/crowdsecurity/grafana-dashboards/master/dashboards_v5/Crowdsec%20Overview.json
+          datasource: Prometheus
+        lapi-metrics:
+          url: https://raw.githubusercontent.com/crowdsecurity/grafana-dashboards/master/dashboards_v5/LAPI%20Metrics.json
+          datasource: Prometheus
+        crowdsec-details-per-machine:
+          url: https://raw.githubusercontent.com/crowdsecurity/grafana-dashboards/master/dashboards_v5/Crowdsec%20Details%20per%20Machine.json
+          datasource: Prometheus
+        crowdsec-insight:
+          url: https://raw.githubusercontent.com/crowdsecurity/grafana-dashboards/master/dashboards_v5/Crowdsec%20Insight.json
+          datasource: Prometheus
+
       nginx:
         nginx:
           url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/nginx.json
