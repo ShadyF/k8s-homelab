@@ -118,13 +118,16 @@ spec:
             editable: true
             options:
               path: /var/lib/grafana/dashboards/flux
+          - name: nginx
+            orgId: 1
+            folder: Nginx
+            type: file
+            disableDeletion: false
+            editable: true
+            options:
+              path: /var/lib/grafana/dashboards/nginx
     dashboards:
       default:
-        # Ref: https://grafana.com/grafana/dashboards/12559/revisions
-        nginx-dashboard:
-          gnetId: 12559
-          revision: 14
-          datasource: Loki
         external-dns:
           # renovate: depName="External-dns"
           gnetId: 15038
@@ -157,6 +160,11 @@ spec:
         k8s-views-pods:
           url: https://raw.githubusercontent.com/dotdc/grafana-dashboards-kubernetes/master/dashboards/k8s-views-pods.json
           token: ''
+        kubernetes-volumes:
+          # renovate: depName="K8s / Storage / Volumes / Cluster"
+          gnetId: 11454
+          revision: 14
+          datasource: Prometheus
       flux:
         flux-cluster:
           url: https://raw.githubusercontent.com/fluxcd/flux2-monitoring-example/main/monitoring/configs/dashboards/cluster.json
@@ -166,6 +174,18 @@ spec:
           datasource: Prometheus
         flux-logs:
           url: https://raw.githubusercontent.com/fluxcd/flux2-monitoring-example/main/monitoring/configs/dashboards/logs.json
+          datasource: Loki
+      nginx:
+        nginx:
+          url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/nginx.json
+          datasource: Prometheus
+        nginx-request-handling-performance:
+          url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/request-handling-performance.json
+          datasource: Prometheus
+        # Ref: https://grafana.com/grafana/dashboards/12559/revisions
+        nginx-dashboard:
+          gnetId: 12559
+          revision: 14
           datasource: Loki
     plugins:
       - grafana-worldmap-panel
