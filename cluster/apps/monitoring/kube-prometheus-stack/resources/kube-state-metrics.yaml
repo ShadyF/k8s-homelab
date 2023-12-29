@@ -6,7 +6,7 @@ metadata:
   name: kube-state-metrics-configmap
   namespace: monitoring
 data:
-  kube-state-metrics.yml: |-
+  kube-state-metrics.yaml: |-
     kube-state-metrics:
       fullnameOverride: kube-state-metrics
       metricLabelsAllowlist:
