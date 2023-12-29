@@ -30,6 +30,11 @@ spec:
     - name: longhorn
       namespace: longhorn-system
   # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
+  # Needed to make flux metrics work
+  valuesFrom:
+    - kind: ConfigMap
+      name: kube-state-metrics-configmap
+      valuesKey: kube-state-metrics.yaml
   values:
     crds:
       enabled: true
@@ -44,11 +49,11 @@ spec:
           - name: 'null'
           - name: "ntfy"
             webhook_configs:
-                - url: "http://ntfy-alertmanager-svc.monitoring.svc.cluster.local:8080"
-#                  http_config:
-#                      basic_auth:
-#                          username: "webhookUser"
-#                          password: "webhookPass"
+              - url: "http://ntfy-alertmanager-svc.monitoring.svc.cluster.local:8080"
+        #                  http_config:
+        #                      basic_auth:
+        #                          username: "webhookUser"
+        #                          password: "webhookPass"
         route:
           group_by: [ "alertname", "job" ]
           group_wait: 1m
