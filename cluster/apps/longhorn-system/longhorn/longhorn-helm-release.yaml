@@ -23,6 +23,7 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
+  # https://github.com/longhorn/charts/blob/v1.5.x/charts/longhorn/values.yaml
   values:
     # https://github.com/longhorn/longhorn/issues/1861#issuecomment-716459507
     csi:
@@ -37,8 +38,13 @@ spec:
     enablePSP: false
     persistence:
       defaultClassReplicaCount: 2
+      # Prevents PVC and daata being lost when helm release is uninstalled
+      reclaimPolicy: Retain
+      defaultDataLocality: best-effort
     defaultSettings:
       defaultReplicaCount: 2
+      defaultDataLocality: best-effort
+      replicaAutoBalance: best-effort
     ingress:
       enabled: true
       host: "longhorn.${SECRET_DOMAIN}"
