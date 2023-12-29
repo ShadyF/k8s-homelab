@@ -110,8 +110,8 @@ spec:
           enabled: true
           namespaceSelector:
             any: true
-        prometheusRule:
-          enabled: true
+#        prometheusRule:
+#          enabled: true
       # Wildcare certificate, so we don't have to define a certificate for each ingress we create
       extraArgs:
         default-ssl-certificate: "networking/${SECRET_DOMAIN/./-}-tls"
