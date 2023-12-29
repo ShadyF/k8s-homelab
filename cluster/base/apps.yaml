@@ -37,10 +37,10 @@ spec:
             provider: sops
             secretRef:
               name: sops-gpg
-        postBuild:
-          substituteFrom:
-            - kind: Secret
-              name: cluster-secrets
+          postBuild:
+            substituteFrom:
+              - kind: Secret
+                name: cluster-secrets
       target:
         group: kustomize.toolkit.fluxcd.io
         kind: Kustomization
