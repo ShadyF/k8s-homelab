@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: ntfy-configmap
-  namespace: default
+  namespace: monitoring
 data:
   server.yml: |-
     behind-proxy: true
@@ -16,5 +16,5 @@ data:
     smtp-server-listen: ":25"
     smtp-server-domain: "ntfy.${SECRET_DOMAIN}"
     #smtp-server-addr-prefix: "ntfy-"  # optional
-    #web-root: disable
+    web-root: disable
     
