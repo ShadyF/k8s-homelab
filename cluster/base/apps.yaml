@@ -27,22 +27,23 @@ spec:
   # Needed so other kustomizations have these added to them
   # https://github.com/fluxcd/kustomize-controller/issues/707
   # https://fluxcd.io/flux/components/kustomize/kustomizations/#patches
-  patches:
-    - patch: |-
-        apiVersion: kustomize.toolkit.fluxcd.io/v1
-        kind: Kustomization
-        metadata:
-          name: not-used
-        spec:
-          decryption:
-            provider: sops
-            secretRef:
-              name: sops-gpg
-          postBuild:
-            substituteFrom:
-              - kind: Secret
-                name: cluster-secrets
-      target:
+  # DIDN'T WORK FOR WHATEVER REASON
+#  patches:
+#    - patch: |-
+#        apiVersion: kustomize.toolkit.fluxcd.io/v1
+#        kind: Kustomization
+#        metadata:
+#          name: not-used
+#        spec:
+#          decryption:
+#            provider: sops
+#            secretRef:
+#              name: sops-gpg
+#          postBuild:
+#            substituteFrom:
+#              - kind: Secret
+#                name: cluster-secrets
+#      target:
 #        group: kustomize.toolkit.fluxcd.io
-        kind: Kustomization
+#        kind: Kustomization
 #        labelSelector: substitution.flux.home.arpa/disabled notin (true)
