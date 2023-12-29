@@ -5,7 +5,7 @@ metadata:
   namespace: flux-system
 spec:
   # Turn this on to enable this entire namespace
-  suspend: false
+  suspend: true
   interval: 10m
   retryInterval: 1m
   timeout: 5m
