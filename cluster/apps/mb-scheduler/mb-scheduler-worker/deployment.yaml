@@ -42,9 +42,9 @@ spec:
           resources:
             requests:
               cpu: 10m
-              memory: 1024Mi
+              memory: 350Mi
             limits:
-              memory: 1024Mi
+              memory: 350Mi
         # Consider using redbeat if going to scale workers and want a highly available celery-beat
         - name: celery-beat
           image: ghcr.io/shadyf/mb-backend:v1.1.8
@@ -61,9 +61,9 @@ spec:
           resources:
             requests:
               cpu: 10m
-              memory: 256Mi
+              memory: 120Mi
             limits:
-              memory: 256Mi
+              memory: 120Mi
 
       imagePullSecrets:
         - name: ghcr-login-secret
