@@ -4,8 +4,9 @@ metadata:
   name: mb-scheduler
   namespace: flux-system
 spec:
+  # Turn this on to enable this entire namespace
   suspend: false
-  interval: 30m
+  interval: 10m
   retryInterval: 1m
   timeout: 5m
   prune: true
