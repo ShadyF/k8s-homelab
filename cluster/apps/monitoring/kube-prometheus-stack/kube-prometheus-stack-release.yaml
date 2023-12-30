@@ -222,9 +222,9 @@ spec:
               resources:
                 requests:
                   storage: 25Gi
-#        resources:
-#          requests:
-#            memory: 2000Mi
-#            cpu: 250m
-#          limits:
-#            memory: 5000Mi
+        resources:
+          requests:
+            cpu: 444m
+            memory: 2818Mi
+          limits:
+            memory: 2818Mi
