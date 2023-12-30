@@ -83,9 +83,9 @@ spec:
     resources:
       requests:
         cpu: 10m
-        memory: 100Mi
+        memory: 120Mi
       limits:
-        memory: 100Mi
+        memory: 120Mi
 
     podSecurityContext:
       runAsUser: 1001
