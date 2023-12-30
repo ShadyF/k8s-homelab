@@ -77,9 +77,9 @@ spec:
     resources:
       requests:
         cpu: 10m
-        memory: 100Mi
+        memory: 200Mi
       limits:
-        memory: 100Mi
+        memory: 200Mi
     # Only schedule on RPI since intel rig has faulty ram that causes integrity issues when downloading torrents
     #    affinity:
     #      nodeAffinity:
@@ -170,6 +170,6 @@ spec:
         resources:
           requests:
             cpu: 10m
-            memory: 568Mi
+            memory: 591Mi
           limits:
-            memory: 568Mi
+            memory: 591Mi
