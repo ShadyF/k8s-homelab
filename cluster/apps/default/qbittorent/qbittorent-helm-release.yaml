@@ -108,7 +108,7 @@ spec:
           limits:
             memory: 25Mi
       - name: gluetun
-        image: qmcgaw/gluetun:v3.34.0
+        image: qmcgaw/gluetun:v3.35.0
         imagePullPolicy: IfNotPresent
         securityContext:
           capabilities:
