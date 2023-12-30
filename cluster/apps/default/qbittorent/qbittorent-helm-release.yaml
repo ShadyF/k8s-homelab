@@ -76,7 +76,7 @@ spec:
         mountPath: /shared
     resources:
       requests:
-        cpu: 10m
+        cpu: 258m
         memory: 550Mi
       limits:
         memory: 550Mi
@@ -101,6 +101,12 @@ spec:
         ports:
           - containerPort: 1080
             protocol: TCP
+        resources:
+          requests:
+            cpu: 146m
+            memory: 25Mi
+          limits:
+            memory: 25Mi
       - name: gluetun
         image: qmcgaw/gluetun:v3.36.0
         imagePullPolicy: IfNotPresent
@@ -169,7 +175,7 @@ spec:
           successThreshold: 1
         resources:
           requests:
-            cpu: 10m
+            cpu: 265m
             memory: 591Mi
           limits:
             memory: 591Mi
