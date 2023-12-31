@@ -222,6 +222,15 @@ spec:
               resources:
                 requests:
                   storage: 25Gi
+        affinity:
+         nodeAffinity:
+           requiredDuringSchedulingIgnoredDuringExecution:
+             nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/arch
+                  operator: NotIn
+                  values:
+                    - arm64
         resources:
           requests:
             cpu: 444m
