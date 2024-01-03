@@ -44,8 +44,8 @@ spec:
       endTime: "6:00"
       timeZone: "Africa/Cairo"
       rebootDays:
-        - th
         - fr
+        - sa
       rebootCommand: "/usr/bin/systemctl reboot"
     metrics:
       create: true
