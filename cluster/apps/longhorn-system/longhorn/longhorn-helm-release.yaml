@@ -45,6 +45,9 @@ spec:
       defaultReplicaCount: 2
       defaultDataLocality: best-effort
       replicaAutoBalance: best-effort
+      # Prevents pods from being rescheduled on healthy nodes
+      nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
+      nodeDrainPolicy: block-if-contains-last-replica
     ingress:
       enabled: true
       host: "longhorn.${SECRET_DOMAIN}"
