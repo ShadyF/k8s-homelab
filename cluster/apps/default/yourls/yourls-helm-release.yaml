@@ -55,6 +55,13 @@ spec:
         - ReadWriteOnce
       size: 10Gi
 
+    resources:
+      requests:
+        cpu: 10m
+        memory: 100Mi
+      limits:
+        memory: 100Mi
+
     mariadb:
       # https://github.com/bitnami/charts/blob/master/bitnami/mariadb/values.yaml
       auth:
