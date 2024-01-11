@@ -53,13 +53,15 @@ spec:
           enabled: true
           params:
             nodeResourceUtilizationThresholds:
+              # For ALL of these, node will be considered under-utilized
               thresholds:
-                cpu: 40
-                memory: 40
+                cpu: 25
+                memory: 50
                 pods: 20
+              # For ANY of these, node will be considered over-utilized
               targetThresholds:
-                cpu: 60
-                memory: 60
+                cpu: 70
+                memory: 80
                 pods: 40
         RemoveFailedPods:
           enabled: true
