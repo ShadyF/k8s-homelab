@@ -45,7 +45,7 @@ spec:
               pullPolicy: IfNotPresent
             env:
               TZ: Africa/Cairo
-              READARR__AUTHENTICATION_METHOD: External
+              READARR__AUTHENTICATION_METHOD: None
               READARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
             probes:
               liveness: &probes
