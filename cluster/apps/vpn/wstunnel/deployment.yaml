@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: wstunnel
-          image: ghcr.io/erebe/wstunnel:v9.2.2
+          image: shadyf/wstunnel:latest
           imagePullPolicy: IfNotPresent
           command: [ '/wstunnel' ]
           args: [ "-v", "--server", "ws://0.0.0.0:48513", "-r", "wg-svc:51820" ]
@@ -28,12 +28,12 @@ spec:
             - containerPort: 48513
       imagePullSecrets:
         - name: regcred
-#      affinity:
-#        nodeAffinity:
-#          requiredDuringSchedulingIgnoredDuringExecution:
-#            nodeSelectorTerms:
-#              - matchExpressions:
-#                  - key: beta.kubernetes.io/arch
-#                    operator: In
-#                    values:
-#                      - arm64
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: beta.kubernetes.io/arch
+                    operator: In
+                    values:
+                      - arm64
