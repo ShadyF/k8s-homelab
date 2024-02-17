@@ -9,7 +9,7 @@ spec:
     spec:
       # renovate: registryUrl=https://bjw-s.github.io/helm-charts/
       chart: app-template
-      version: 2.5.0
+      version: 2.6.0
       interval: 15m
       sourceRef:
         kind: HelmRepository
@@ -53,7 +53,7 @@ spec:
           stunnel:
             image:
               repository: alpine
-              tag: 3.19.0
+              tag: 3.19.1
               pullPolicy: IfNotPresent
             command: [ "sh", "/opt/start.sh" ]
 
