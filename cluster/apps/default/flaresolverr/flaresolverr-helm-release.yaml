@@ -65,12 +65,17 @@ spec:
         ports:
           http:
             port: *port
+          http-metrics:
+            port: 8192
+            protocol: TCP
+            targetPort: 8192
+
     serviceMonitor:
       main:
         enabled: true
 
         endpoints:
-          - port: 8192
+          - port: http-metrics
             scheme: http
             path: /metrics
             interval: 1m
