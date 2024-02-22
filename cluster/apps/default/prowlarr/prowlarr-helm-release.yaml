@@ -32,7 +32,8 @@ spec:
     env:
       TZ: "Africa/Cairo"
       # Needed so that flaresolverr can be added without any issues
-      PROWLARR__URL_BASE: prowlarr.default.svc.cluster.local
+      # Update: not URL_BASE. Should be application URL but opted to just ignore this since it can be circumvented
+      # PROWLARR__URL_BASE: prowlarr.default.svc.cluster.local
     ingress:
       main:
         enabled: true
