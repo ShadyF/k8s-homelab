@@ -7,3 +7,4 @@ metadata:
 spec:
   staticConfigs:
     - targets: ["flaresolverr.default.svc.cluster.local:8192"]
+  metricsPath: /metrics
