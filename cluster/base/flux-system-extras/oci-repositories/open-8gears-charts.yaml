@@ -1,3 +1,4 @@
+# https://fluxcd.io/flux/cheatsheets/oci-artifacts/
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
