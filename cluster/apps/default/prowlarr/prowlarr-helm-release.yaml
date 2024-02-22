@@ -31,6 +31,8 @@ spec:
       tag: 1.13.3.4273
     env:
       TZ: "Africa/Cairo"
+      # Needed so that flaresolverr can be added without any issues
+      PROWLARR__URL_BASE: prowlarr.default.svc.cluster.local
     ingress:
       main:
         enabled: true
