@@ -32,7 +32,7 @@ spec:
           main:
             image:
               repository: ghcr.io/flaresolverr/flaresolverr
-              tag: v3.3.15
+              tag: v3.3.14
               pullPolicy: IfNotPresent
             env:
               TZ: Africa/Cairo
