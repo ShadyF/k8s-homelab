@@ -31,7 +31,7 @@
             cache_valid_time: 86400 #One day
         - name: Packages | Install
           apt:
-            name: htop,ncdu,neofetch,lm-sensors,gnupg,fish,curl,apt-transport-https,ca-certificates,nfs-common,nfs-kernel-server,open-iscsi
+            name: htop,ncdu,neofetch,lm-sensors,gnupg,fish,curl,apt-transport-https,ca-certificates,nfs-common,nfs-kernel-server,open-iscsi,nano
             install_recommends: false
 
     - name: User Configuration
@@ -114,17 +114,23 @@
           hostname:
             name: "{{ inventory_hostname }}"
 
-# If installing k3s on this machine, need to add the following to /etc/rancher/k3s/config.yaml (create if not available)
-# to make prometheus metrics work
-#    kube-controller-manager-arg:
-#      - "address=0.0.0.0"
-#      - "bind-address=0.0.0.0"
-#    kube-proxy-arg:
-#      - "metrics-bind-address=0.0.0.0"
-#    kube-scheduler-arg:
-#      - "address=0.0.0.0"
-#      - "bind-address=0.0.0.0"
-#    etcd-expose-metrics: true
+# If installing k3s on this machine, need to add the following to /etc/systemd/system/k3s.service to make prometheus metrics work
+#  ExecStart=/usr/local/bin/k3s \
+#  server \
+#      '--server' \
+#      'https://192.168.1.200:6443' \
+#      '--disable' \
+#      'servicelb' \
+#      '--disable' \
+#      'traefik' \
+#      '--kube-controller-manager-arg' \
+#      'bind-address=0.0.0.0' \
+#      '--kube-proxy-arg' \
+#      'metrics-bind-address=0.0.0.0' \
+#      '--kube-scheduler-arg' \
+#      'bind-address=0.0.0.0' \
+#      '--etcd-expose-metrics' \
+#      'true' \
 
   handlers:
     - name: Reboot
