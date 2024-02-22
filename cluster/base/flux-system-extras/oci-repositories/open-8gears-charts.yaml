@@ -7,5 +7,5 @@ metadata:
 spec:
   interval: 30m
   type: oci
-  url: oci://8gears.container-registry.com/library/n8n
+  url: oci://8gears.container-registry.com/library
   timeout: 3m
