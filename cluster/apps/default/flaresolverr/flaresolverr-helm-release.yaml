@@ -36,7 +36,7 @@ spec:
               pullPolicy: IfNotPresent
             env:
               TZ: Africa/Cairo
-#              LOG_LEVEL: debug
+              #              LOG_LEVEL: debug
               PROMETHEUS_ENABLED: true
             probes:
               liveness: &probes
@@ -65,3 +65,13 @@ spec:
         ports:
           http:
             port: *port
+    serviceMonitor:
+      main:
+        enabled: true
+
+        endpoints:
+          - port: 8192
+            scheme: http
+            path: /metrics
+            interval: 1m
+            scrapeTimeout: 10s
