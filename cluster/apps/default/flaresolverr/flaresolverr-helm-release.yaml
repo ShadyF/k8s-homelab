@@ -36,7 +36,7 @@ spec:
               pullPolicy: IfNotPresent
             env:
               TZ: Africa/Cairo
-              LOG_LEVEL: debug
+#              LOG_LEVEL: debug
               PROMETHEUS_ENABLED: true
             probes:
               liveness: &probes
