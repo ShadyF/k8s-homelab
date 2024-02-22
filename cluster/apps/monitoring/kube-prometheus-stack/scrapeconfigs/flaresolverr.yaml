@@ -1,0 +1,9 @@
+---
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ScrapeConfig
+metadata:
+  name: flaresolverr
+  namespace: monitoring
+spec:
+  staticConfigs:
+    - targets: ["flaresolverr.default.svc.cluster.local:8192"]
