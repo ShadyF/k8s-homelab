@@ -22,8 +22,8 @@ spec:
         - name: wstunnel
           image: ghcr.io/erebe/wstunnel:v9.2.2
           imagePullPolicy: IfNotPresent
-          command: [ 'wstunnel' ]
-          args: [ "server",  "ws://[::]:48513", "--restrict-to", "wg-svc:51820" ]
+          # Got this from source code's dockerfile
+          command: ["/bin/sh", "-c", "exec /home/app/wstunnel server ws://[::]:48513 --restrict-to wg-svc:51820"]
           ports:
             - containerPort: 48513
       imagePullSecrets:
