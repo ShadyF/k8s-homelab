@@ -22,7 +22,7 @@ spec:
         - name: wstunnel
           image: ghcr.io/erebe/wstunnel:v9.2.2
           imagePullPolicy: IfNotPresent
-          command: [ '/wstunnel' ]
+          command: [ 'wstunnel' ]
           args: [ "server",  "ws://[::]:48513", "--restrict-to", "wg-svc:51820" ]
           ports:
             - containerPort: 48513
