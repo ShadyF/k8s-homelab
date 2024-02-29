@@ -52,7 +52,7 @@ _Note: Flux always syncs these directories in the above order. (base -> crds -> 
 
 ### Apps
 
-List of the apps that are currently running on the cluster
+List of some of the apps that are currently running on the cluster
 
 - [Plex](https://www.plex.tv/): Home media solution. Like a selfhosted version of Netflix.
 - [qBittorrent](https://www.qbittorrent.org/): Torrent Client.
@@ -60,6 +60,7 @@ List of the apps that are currently running on the cluster
 - [Syncthing](https://syncthing.net/): File synchronization program. Like a selfhosted Dropbox.
 - [Hyperion](https://github.com/hyperion-project/hyperion.ng): Opensource ambient light software. Used to control smart
   LEDs I have around the house.
+- and more...
 
 ## :computer: Infrastructure
 
@@ -76,6 +77,7 @@ My k3s cluster currently has the following hardware
   | PSU    | Antec 650W                                  |
 
 - 1x Raspberry Pi 4 (8GB RAM)
+- 1x Asus Zenbook UX305UA
 
 ## Uptime Monitoring
 Uptime monitoring is done via [UptimeRobot](https://stats.uptimerobot.com/DAmr6ToN03).
