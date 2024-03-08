@@ -30,7 +30,7 @@ spec:
               value: "production"
             - name: SERVER_PORT
               value: "8080"
-            - name: ACTUAL_SERVER_PROCTOCOL
+            - name: ACTUAL_SERVER_PROTOCOL
               value: "http"
             - name: ACTUAL_SERVER_HOST
               value: "actual-budget-svc.default.svc.cluster.local"
