@@ -46,7 +46,7 @@ spec:
                 spec:
                   httpGet:
                     path: /health
-                    port: &port "8191"
+                    port: &port 8191
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
