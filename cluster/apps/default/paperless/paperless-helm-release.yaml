@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.0.2/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
@@ -7,8 +8,9 @@ spec:
   interval: 15m
   chart:
     spec:
+      # renovate: registryUrl=https://bjw-s.github.io/helm-charts/
       chart: app-template
-      version: 0.2.1
+      version: 3.0.2
       interval: 15m
       sourceRef:
         kind: HelmRepository
@@ -49,6 +51,7 @@ spec:
 
     service:
       main:
+        controller: paperless-ngx
         ports:
           http:
             port: 8000
@@ -56,7 +59,7 @@ spec:
     ingress:
       main:
         enabled: true
-        ingressClassName: "external"
+        className: "external"
         annotations:
           nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.networking.svc.cluster.local/oauth2/auth"
           nginx.ingress.kubernetes.io/auth-signin: "https://auth.${SECRET_DOMAIN}/oauth2/sign_in"
@@ -67,6 +70,9 @@ spec:
             paths:
               - path: /
                 pathType: Prefix
+                service:
+                  identifier: main
+                  port: http
         tls:
           - hosts:
               - "paperless.${SECRET_DOMAIN}"
@@ -74,25 +80,29 @@ spec:
     persistence:
       data:
         enabled: true
-        mountPath: /usr/src/paperless/data
+        globalMounts:
+          - path: /usr/src/paperless/data
         type: nfs
         server: 192.168.1.200
         path: "/srv/nfs/Docs/paperless/data"
       media:
         enabled: true
-        mountPath: /usr/src/paperless/media
+        globalMounts:
+          - path: /usr/src/paperless/media
         type: nfs
         server: 192.168.1.200
         path: "/srv/nfs/Docs/paperless/media"
       consume:
         enabled: true
-        mountPath: /usr/src/paperless/consume
+        globalMounts:
+          - path: /usr/src/paperless/consume
         type: nfs
         server: 192.168.1.200
         path: "/srv/nfs/Docs/paperless/incoming"
       export:
         enabled: true
-        mountPath: /usr/src/paperless/export
+        globalMounts:
+          - path: /usr/src/paperless/export
         type: nfs
         server: 192.168.1.200
         path: "/srv/nfs/Docs/paperless/export"
