@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.0.2/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
@@ -45,7 +46,7 @@ spec:
                 spec:
                   httpGet:
                     path: /health
-                    port: &port 8191
+                    port: &port "8191"
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
@@ -62,6 +63,7 @@ spec:
 
     service:
       main:
+        controller: main
         ports:
           http:
             port: *port
@@ -72,6 +74,7 @@ spec:
 
     serviceMonitor:
       main:
+        serviceName: flaresolverr
         enabled: true
 
         endpoints:

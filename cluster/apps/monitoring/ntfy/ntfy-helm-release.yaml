@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.0.2/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
@@ -59,6 +60,7 @@ spec:
 
     service:
       main:
+        controller: main
         ports:
           http:
             port: 80
@@ -95,7 +97,7 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  name: main
+                  identifier: main
                   port: http
         tls:
           - hosts:
@@ -112,7 +114,7 @@ spec:
               - path: /etc/ntfy/server.yml
                 subPath: server.yml
       cache:
-        enable: true
+        enabled: true
         type: persistentVolumeClaim
         existingClaim: ntfy-cache-pvc
         advancedMounts:
@@ -120,7 +122,7 @@ spec:
             main: # the container with the "main" identifier
               - path: /var/cache/ntfy
       auth:
-        enable: true
+        enabled: true
         type: persistentVolumeClaim
         existingClaim: ntfy-auth-pvc
         advancedMounts:
