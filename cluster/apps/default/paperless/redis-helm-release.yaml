@@ -24,7 +24,7 @@ spec:
 
     service:
       main:
-        controller: main
+        controller: paperless-redis
         ports:
           http:
             enabled: false

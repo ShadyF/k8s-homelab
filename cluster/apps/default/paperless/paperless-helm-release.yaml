@@ -51,7 +51,7 @@ spec:
 
     service:
       main:
-        controller: main
+        controller: paperless
         ports:
           http:
             port: 8000
@@ -71,7 +71,7 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  identifier: main
+                  identifier: paperless
                   port: http
         tls:
           - hosts:
