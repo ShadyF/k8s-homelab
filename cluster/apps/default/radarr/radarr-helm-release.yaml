@@ -55,7 +55,7 @@ spec:
                 spec:
                   httpGet:
                     path: /ping
-                    port: &port "7878"
+                    port: &port 7878
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1

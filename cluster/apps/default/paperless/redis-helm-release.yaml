@@ -18,12 +18,23 @@ spec:
         namespace: flux-system
 
   values:
-    image:
-      repository: docker.io/library/redis
-      tag: 7.2.4
+    controllers:
+      paperless-redis:
+        containers:
+          app:
+            image:
+              repository: docker.io/library/redis
+              tag: 7.2.4
+
+            resources:
+              requests:
+                cpu: 23m
+                memory: 64M
+              limits:
+                memory: 64M
 
     service:
-      main:
+      app:
         controller: paperless-redis
         ports:
           http:
@@ -32,10 +43,3 @@ spec:
           redis:
             enabled: true
             port: 6379
-
-    resources:
-      requests:
-        cpu: 23m
-        memory: 64M
-      limits:
-        memory: 64M
