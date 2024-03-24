@@ -233,7 +233,7 @@ spec:
                     - arm64
         resources:
           requests:
-            cpu: 444m
-            memory: 2818Mi
+            cpu: 204m
+            memory: 1704Mi
           limits:
-            memory: 2818Mi
+            memory: 1704Mi
