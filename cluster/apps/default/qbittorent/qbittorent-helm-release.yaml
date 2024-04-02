@@ -21,7 +21,7 @@ spec:
   values:
     image:
       repository: ghcr.io/onedr0p/qbittorrent
-      tag: 4.6.3
+      tag: 4.6.4
     ingress:
       main:
         enabled: true
@@ -108,7 +108,7 @@ spec:
           limits:
             memory: 25Mi
       - name: gluetun
-        image: qmcgaw/gluetun:v3.37.0
+        image: qmcgaw/gluetun:v3.38.0
         imagePullPolicy: IfNotPresent
         securityContext:
           capabilities:
