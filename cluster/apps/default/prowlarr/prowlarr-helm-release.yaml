@@ -57,7 +57,7 @@ spec:
         existingClaim: nfs-media-pvc
     resources:
       requests:
-        cpu: 169m
+        cpu: 725m
         memory: 176Mi
       limits:
         memory: 176Mi

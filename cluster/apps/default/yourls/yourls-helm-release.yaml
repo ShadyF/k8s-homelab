@@ -26,7 +26,6 @@ spec:
     replicaCount: 1
     updateStrategy:
       type: Recreate
-      rollingUpdate: null
 
     yourls:
       domain: "yourls.${SECRET_DOMAIN}"
