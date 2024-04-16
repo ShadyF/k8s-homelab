@@ -10,7 +10,7 @@ spec:
     spec:
       # renovate: registryUrl=https://bjw-s.github.io/helm-charts/
       chart: app-template
-      version: 3.0.4
+      version: 3.1.0
       interval: 15m
       sourceRef:
         kind: HelmRepository
@@ -42,7 +42,7 @@ spec:
           main:
             image:
               repository: ghcr.io/onedr0p/readarr-develop
-              tag: 0.3.21.2475
+              tag: 0.3.22.2499
               pullPolicy: IfNotPresent
             env:
               TZ: Africa/Cairo
