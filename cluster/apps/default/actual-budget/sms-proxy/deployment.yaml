@@ -36,8 +36,10 @@ spec:
               value: "actual-budget-svc.default.svc.cluster.local"
             - name: ACTUAL_SERVER_PORT
               value: "5006"
-            - name: FOREIGN_CURRENCY_FACTOR
-              value: "1.1"
+            - name: FX_FEE_PERCENT
+              value: "0.1"
+            - name: MAIN_CURRENCY
+              value: "egp"
           envFrom:
             - secretRef:
                 name: actual-budget-sms-proxy-secrets
