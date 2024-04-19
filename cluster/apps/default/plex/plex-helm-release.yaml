@@ -92,7 +92,7 @@ spec:
                     - arm64
     resources:
       requests:
-        cpu: 2
+#        cpu: 2
         memory: 983Mi
       limits:
         memory: 983Mi
