@@ -1,6 +1,6 @@
 # If using Auth0, https://auth.domain.com/oauth2/callback needs to be added as callback in auth0
 # TODO: Add toleration to ARM devices since the image in this release will only work on ARM devices
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: oauth2-proxy
