@@ -115,7 +115,9 @@ spec:
         imagePullPolicy: IfNotPresent
         securityContext:
           capabilities:
-            add: [ "NET_ADMIN" ]
+            add:
+              - NET_ADMIN
+              - SYS_MODULE
         env:
           - name: VPN_SERVICE_PROVIDER
             value: "custom"
