@@ -47,13 +47,7 @@ spec:
     # Permission denied issues in qbittorrent container if podSecurityContext -> fsGroup 1001 is not added
     # Maybe has to do with qbittorrent's container not running as root?
     podSecurityContext:
-      runAsUser: 65534
-      runAsGroup: 65534
-      fsGroup: 65534
-      fsGroupChangePolicy: OnRootMismatch
-      privileged: false
-      capabilities:
-        add: [ "NET_ADMIN", "NET_RAW" ]
+      fsGroup: 1001
     persistence:
       config:
         enabled: true
@@ -116,6 +110,9 @@ spec:
       - name: gluetun
         image: qmcgaw/gluetun:v3.38.0
         imagePullPolicy: IfNotPresent
+        securityContext:
+          capabilities:
+            add: [ "NET_ADMIN" ]
         env:
           - name: VPN_SERVICE_PROVIDER
             value: "custom"
