@@ -23,7 +23,7 @@ spec:
       repository: yourls/yourls
       tag: 1.9.2
 
-    replicaCount: 1
+    replicaCount: 0
     updateStrategy:
       type: Recreate
 
@@ -61,16 +61,16 @@ spec:
       limits:
         memory: 100Mi
 
-    mariadb:
-      # https://github.com/bitnami/charts/blob/master/bitnami/mariadb/values.yaml
-      auth:
-        database: yourls
-        username: yourls
-        existingSecret: yourls-mariadb
-      primary:
-        persistence:
-          enabled: true
-          storageClass: longhorn
-          accessModes:
-            - ReadWriteOnce
-          size: 8Gi
+#    mariadb:
+#      # https://github.com/bitnami/charts/blob/master/bitnami/mariadb/values.yaml
+#      auth:
+#        database: yourls
+#        username: yourls
+#        existingSecret: yourls-mariadb
+#      primary:
+#        persistence:
+#          enabled: true
+#          storageClass: longhorn
+#          accessModes:
+#            - ReadWriteOnce
+#          size: 8Gi
