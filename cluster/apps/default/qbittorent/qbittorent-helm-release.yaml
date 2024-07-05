@@ -51,6 +51,9 @@ spec:
       runAsGroup: 65534
       fsGroup: 65534
       fsGroupChangePolicy: OnRootMismatch
+      privileged: false
+      capabilities:
+        add: [ "NET_ADMIN", "NET_RAW" ]
     persistence:
       config:
         enabled: true
@@ -113,10 +116,6 @@ spec:
       - name: gluetun
         image: qmcgaw/gluetun:v3.38.0
         imagePullPolicy: IfNotPresent
-        securityContext:
-          privileged: false
-          capabilities:
-            add: [ "NET_ADMIN", "NET_RAW" ]
         env:
           - name: VPN_SERVICE_PROVIDER
             value: "custom"
