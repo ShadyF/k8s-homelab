@@ -114,9 +114,9 @@ spec:
         image: qmcgaw/gluetun:v3.38.0
         imagePullPolicy: IfNotPresent
         securityContext:
-          fsGroup: 1001
+          privileged: false
           capabilities:
-            add: [ "NET_ADMIN" ]
+            add: [ "NET_ADMIN", "NET_RAW" ]
         env:
           - name: VPN_SERVICE_PROVIDER
             value: "custom"
