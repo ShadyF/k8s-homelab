@@ -42,7 +42,7 @@ spec:
           main:
             image:
               repository: ghcr.io/onedr0p/readarr-develop
-              tag: 0.3.29.2565
+              tag: 0.3.31.2578
               pullPolicy: IfNotPresent
             env:
               TZ: Africa/Cairo
