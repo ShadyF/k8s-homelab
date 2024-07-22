@@ -94,7 +94,7 @@ spec:
 
       schemaConfig:
         configs:
-          - from: "2024-07-23"
+          - from: "2024-07-22"
             store: tsdb
             object_store: filesystem
             schema: v13
