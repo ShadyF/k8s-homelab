@@ -1,0 +1,17 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: upstream-custom-headers
+  namespace: ingress-nginx
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+data:
+  X-Correlation-ID: "$request_id"
+  X-GeoIP-Country-Code: "$geoip2_city_country_code"
+  X-GeoIP-Country-Name: "$geoip2_city_country_name"
+  X-GeoIP-Region: "$geoip2_region_name"
+  X-GeoIP-City: "$geoip2_city"
+  X-GeoIP-Postal-Code: "$geoip2_postal_code"
+  X-GeoIP-Latitude: "$geoip2_latitude"
+  X-GeoIP-Longitude: "$geoip2_longitude"
