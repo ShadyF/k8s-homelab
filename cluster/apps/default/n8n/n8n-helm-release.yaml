@@ -86,9 +86,11 @@ spec:
         name: n8n-secrets
         key: N8N_HOST
 
-    persistence:
-      enabled: true
-      existingClaim: n8n-pvc
+# Removed persistence because n8n-pvc was not even used.
+# Have a hunch it isn't used because we're using a PSQL database for persistence
+#    persistence:
+#      enabled: true
+#      existingClaim: n8n-pvc
 
     resources:
       requests:
