@@ -31,6 +31,9 @@ spec:
       replicas: 0
     backend:
       replicas: 0
+    resultsCache:
+      # -- Specifies whether memcached based results-cache should be enabled
+      enabled: false
     singleBinary:
       replicas: 1
     #      affinity: |
