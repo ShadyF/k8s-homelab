@@ -29,6 +29,7 @@ spec:
       replicaCount: 2
       # https://kubernetes.github.io/ingress-nginx/user-guide/multiple-ingress/
       electionID: internal-ingress-controller-leader
+      maxmindLicenseKey: "${SECRET_GEOIP2_LICENSE}"
       ingressClassResource:
         name: internal
         default: true
@@ -57,7 +58,7 @@ spec:
         enable-brotli: "true"
         # enable-ocsp: "true"
         enable-real-ip: "true"
-        use-geoip: "true"
+        use-geoip2: "true"
         log-format-escape-json: "true"
         log-format-upstream: '{
           "msec": "$msec",
