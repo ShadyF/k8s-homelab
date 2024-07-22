@@ -214,8 +214,8 @@ spec:
           datasource: Prometheus
         # Ref: https://grafana.com/grafana/dashboards/12559/revisions
         nginx-dashboard:
-          gnetId: 13865
-          revision: 6
+          gnetId: 12559
+          revision: 14
           datasource: Loki
     plugins:
       - grafana-worldmap-panel

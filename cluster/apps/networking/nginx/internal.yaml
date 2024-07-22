@@ -29,6 +29,8 @@ spec:
       replicaCount: 2
       # https://kubernetes.github.io/ingress-nginx/user-guide/multiple-ingress/
       electionID: internal-ingress-controller-leader
+      # Should probably NOT download the DB dynamically, instead should download it once and mount it via volumes
+      # NGINX could crash if geoip2 download failed
       maxmindLicenseKey: "${SECRET_GEOIP2_LICENSE}"
       ingressClassResource:
         name: internal
