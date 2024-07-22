@@ -203,7 +203,7 @@ spec:
           - hosts:
               - "prom.${SECRET_DOMAIN}"
       prometheusSpec:
-        replicas: 2
+        replicas: 1
         replicaExternalLabelName: "replica"
         podAntiAffinity: hard
         ruleSelectorNilUsesHelmValues: false
@@ -211,8 +211,8 @@ spec:
         podMonitorSelectorNilUsesHelmValues: false
         probeSelectorNilUsesHelmValues: false
         scrapeConfigSelectorNilUsesHelmValues: false
-        retention: 7d
-        retentionSize: 15GB
+        retention: 14d
+        retentionSize: 25GB
         enableAdminAPI: true
         walCompression: true
         storageSpec:
@@ -222,15 +222,15 @@ spec:
               resources:
                 requests:
                   storage: 25Gi
-        affinity:
-         nodeAffinity:
-           requiredDuringSchedulingIgnoredDuringExecution:
-             nodeSelectorTerms:
-              - matchExpressions:
-                - key: kubernetes.io/arch
-                  operator: NotIn
-                  values:
-                    - arm64
+#        affinity:
+#         nodeAffinity:
+#           requiredDuringSchedulingIgnoredDuringExecution:
+#             nodeSelectorTerms:
+#              - matchExpressions:
+#                - key: kubernetes.io/arch
+#                  operator: NotIn
+#                  values:
+#                    - arm64
         resources:
           requests:
             cpu: 234m
