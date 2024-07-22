@@ -98,7 +98,7 @@ spec:
           "pipe": "$pipe",
           "gzip_ratio": "$gzip_ratio",
           "http_cf_ray": "$http_cf_ray",
-          "geoip_country_code": "$geoip_country_code"
+          "geoip_country_code": "$geoip2_data_country_code"
         }'
         # Needed for crowdsec
         plugins: "crowdsec"
