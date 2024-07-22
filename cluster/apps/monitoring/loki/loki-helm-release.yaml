@@ -24,18 +24,25 @@ spec:
       retries: 3
   values:
     # https://grafana.com/docs/loki/latest/configuration/#configuration-file-reference
+    deploymentMode: SingleBinary
+    write:
+      replicas: 0
+    read:
+      replicas: 0
+    backend:
+      replicas: 0
     singleBinary:
       replicas: 1
-#      affinity: |
-#        nodeAffinity:
-#          preferredDuringSchedulingIgnoredDuringExecution:
-#            - weight: 1
-#              preference:
-#                matchExpressions:
-#                  - key: kubernetes.io/hostname
-#                    operator: In
-#                    values:
-#                      - k8-w1
+    #      affinity: |
+    #        nodeAffinity:
+    #          preferredDuringSchedulingIgnoredDuringExecution:
+    #            - weight: 1
+    #              preference:
+    #                matchExpressions:
+    #                  - key: kubernetes.io/hostname
+    #                    operator: In
+    #                    values:
+    #                      - k8-w1
     loki:
       auth_enabled: false
 
@@ -77,9 +84,9 @@ spec:
       #            store: inmemory
       storage:
         type: filesystem
-        filesystem:
-          chunks_directory: /var/loki/chunks
-          rules_directory: /var/loki/rules
+        tsdb_shipper:
+          active_index_directory: /var/loki/tsdb-index
+          cache_location: /var/loki/tsdb-cache
 
       schemaConfig:
         configs:
@@ -90,14 +97,21 @@ spec:
             index:
               prefix: index_
               period: 24h
+          - from: "2024-07-23"
+            store: tsdb
+            object_store: filesystem
+            schema: v13
+            index:
+              prefix: index_
+              period: 24h
 
       compactor:
         working_directory: /var/loki/boltdb-shipper-compactor
-        shared_store: filesystem
         compaction_interval: 10m
         retention_enabled: true
-        retention_delete_delay: 2h
-        retention_delete_worker_count: 150
+        retention_delete_delay: 1h
+        retention_delete_worker_count: 100
+        delete_request_store: filesystem
 
       ingester:
         max_chunk_age: 1h
@@ -118,38 +132,6 @@ spec:
     #        tls:
     #          - hosts:
     #              - "loki.${SECRET_DOMAIN}"
-    read:
-      replicas: 1
-      persistence:
-        size: 10Gi
-        storageClass: longhorn
-      extraVolumeMounts:
-        - name: rules
-          mountPath: /rules
-      extraVolumes:
-        - name: rules
-          emptyDir: { }
-    write:
-      replicas: 1
-      persistence:
-        size: 10Gi
-        storageClass: longhorn
-    backend:
-      replicas: 1
-      persistence:
-        size: 10Gi
-        storageClass: longhorn
-      extraVolumeMounts:
-        - name: rules
-          mountPath: /rules/fake
-        - name: scratch
-          mountPath: /tmp/scratch
-      extraVolumes:
-        - name: rules
-          configMap:
-            name: loki-alerting-rules
-        - name: scratch
-          emptyDir: { }
     monitoring:
       serviceMonitor:
         enabled: false
