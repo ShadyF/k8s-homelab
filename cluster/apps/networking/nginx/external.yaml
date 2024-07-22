@@ -29,6 +29,7 @@ spec:
       replicaCount: 2
       # https://kubernetes.github.io/ingress-nginx/user-guide/multiple-ingress/
       electionID: external-ingress-controller-leader
+      maxmindLicenseKey: "${SECRET_GEOIP2_LICENSE}"
       ingressClassResource:
         name: external
         default: false
@@ -57,6 +58,7 @@ spec:
         enable-brotli: "true"
         # enable-ocsp: "true"
         enable-real-ip: "true"
+        use-geoip2: "true"
         log-format-escape-json: "true"
         log-format-upstream: '{
           "msec": "$msec",
@@ -96,7 +98,7 @@ spec:
           "pipe": "$pipe",
           "gzip_ratio": "$gzip_ratio",
           "http_cf_ray": "$http_cf_ray",
-          "geoip_country_code": "$geoip_country_code"
+          "geoip_country_code": "$geoip2_city_country_code"
         }'
         # Needed for crowdsec
         plugins: "crowdsec"
