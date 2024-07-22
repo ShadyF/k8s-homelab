@@ -97,7 +97,7 @@ spec:
             index:
               prefix: index_
               period: 24h
-          - from: "2024-07-23"
+          - from: "2024-07-24"
             store: tsdb
             object_store: filesystem
             schema: v13
