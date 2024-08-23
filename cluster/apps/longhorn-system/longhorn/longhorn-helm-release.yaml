@@ -53,7 +53,7 @@ spec:
       host: "longhorn.${SECRET_DOMAIN}"
       tls: true
       ingressClassName: "internal"
-      # tlsSecret: longhorn-tls
+      tlsSecret: longhorn-tls
       annotations:
         external-dns/is-public: "false"
         nginx.ingress.kubernetes.io/connection-proxy-header: "upgrade"
