@@ -5,7 +5,7 @@ metadata:
   namespace: default
 spec:
   capacity:
-    storage: 20Gi
+    storage: 5Gi
   volumeMode: Filesystem
   accessModes:
     - ReadWriteOnce
@@ -35,6 +35,6 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 20Gi
+      storage: 5Gi
   volumeName: plex-csi-config-pv
   storageClassName: longhorn
