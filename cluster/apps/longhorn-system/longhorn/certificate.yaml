@@ -2,12 +2,12 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: longhorn-tls-certificate
-  namespace: longhorn-system
+  namespace: longhorn
 spec:
   secretName: longhorn-tls
   issuerRef:
     name: letsencrypt-production
     kind: ClusterIssuer
-  commonName: longhorn-tls
+  commonName: "longhorn.${SECRET_DOMAIN}"
   dnsNames:
-    - longhorn-tls
+    - "longhorn.${SECRET_DOMAIN}"
