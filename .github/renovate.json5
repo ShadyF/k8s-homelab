@@ -195,6 +195,25 @@
         "ghcr.io/shadyf/mb-backend"
       ],
       "enabled": false
+    },
+    // Automerge
+    {
+      "description": [
+        "Auto-merge container digests updates for trusted containers"
+      ],
+      "matchDatasources": [
+        "docker"
+      ],
+      "automerge": true,
+      "automergeType": "branch",
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "matchPackagePatterns": [
+        "ghcr.io/bjw-s",
+        "ghcr.io/onedr0p"
+      ]
     }
   ]
 }

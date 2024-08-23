@@ -2,7 +2,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: longhorn-tls-certificate
-  namespace: longhorn
+  namespace: longhorn-system
 spec:
   secretName: longhorn-tls
   issuerRef:
