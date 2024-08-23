@@ -21,7 +21,7 @@ spec:
   values:
     image:
       repository: ghcr.io/onedr0p/qbittorrent
-      tag: 4.6.5
+      tag: 4.6.6
     ingress:
       main:
         enabled: true
