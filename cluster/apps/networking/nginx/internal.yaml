@@ -60,7 +60,7 @@ spec:
         enable-brotli: "true"
         # enable-ocsp: "true"
         enable-real-ip: "true"
-        use-geoip2: "true"
+        use-geoip2: "false"
         log-format-escape-json: "true"
         log-format-upstream: '{
           "msec": "$msec",
@@ -99,8 +99,8 @@ spec:
           "server_protocol": "$server_protocol",
           "pipe": "$pipe",
           "gzip_ratio": "$gzip_ratio",
-          "http_cf_ray": "$http_cf_ray",
-          "geoip_country_code": "$geoip2_city_country_code"
+          "http_cf_ray": "$http_cf_ray"
+#          "geoip_country_code": "$geoip2_city_country_code"
         }'
         # Needed for crowdsec
         plugins: "crowdsec"
