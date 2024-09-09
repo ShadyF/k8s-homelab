@@ -52,7 +52,7 @@ spec:
               name: dashboard
           env:
             - name: INDEXER_URL
-              value: 'https://indexer:9200'
+              value: "http://indexer-api-svc.wazuh-system.svc.cluster.local:9200"
             - name: INDEXER_USERNAME
               valueFrom:
                 secretKeyRef:
