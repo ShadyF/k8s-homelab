@@ -11,7 +11,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: wazuh-manager-worker
-  namespace: wazuh
+  namespace: wazuh-system
 spec:
   replicas: 1
   selector:
