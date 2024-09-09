@@ -3,6 +3,8 @@ apiVersion: v1
 metadata:
   name: wazuh-indexer-configmap
   namespace: wazuh-system
+  annotations:
+    kustomize.toolkit.fluxcd.io/substitute: disabled
 data:
   opensearch.yml: |-
     cluster.name: ${CLUSTER_NAME}
