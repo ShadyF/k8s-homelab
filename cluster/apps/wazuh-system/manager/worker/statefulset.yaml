@@ -139,8 +139,8 @@ spec:
             - name: WAZUH_CLUSTER_KEY
               valueFrom:
                 secretKeyRef:
-                  name: wazuh-cluster-key
-                  key: key
+                  name: wazuh-manager-secrets
+                  key: cluster_key
   volumeClaimTemplates:
     - metadata:
         name: wazuh-manager-worker
