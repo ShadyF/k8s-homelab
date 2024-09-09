@@ -27,6 +27,9 @@ spec:
         - name: config
           configMap:
             name: wazuh-dashboard-configmap
+        - name: ca-cert
+          secret:
+            secretName: wazuh-pki-ca
       containers:
         - name: wazuh-dashboard
           image: 'wazuh/wazuh-dashboard:4.9.0'
@@ -40,10 +43,10 @@ spec:
               mountPath: /usr/share/wazuh-dashboard/config/opensearch_dashboards.yml
               subPath: opensearch_dashboards.yml
               readOnly: false
-#            - name: dashboard-certs
-#              mountPath: /usr/share/wazuh-dashboard/certs/ca.crt
-#              subPath: ca.crt
-#              readOnly: true
+            - name: ca-cert
+              mountPath: /usr/share/wazuh-dashboard/certs/ca.crt
+              subPath: ca.crt
+              readOnly: true
           ports:
             - containerPort: 5601
               name: dashboard
@@ -53,22 +56,22 @@ spec:
             - name: INDEXER_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: indexer-cred
+                  name: wazuh-indexer-secrets
                   key: username
             - name: INDEXER_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: indexer-cred
+                  name: wazuh-indexer-secrets
                   key: password
             - name: DASHBOARD_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: dashboard-cred
+                  name: wazuh-dashboard-secrets
                   key: username
             - name: DASHBOARD_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: dashboard-cred
+                  name: wazuh-dashboard-secrets
                   key: password
             - name: SERVER_SSL_ENABLED
               value: "false"
@@ -77,10 +80,10 @@ spec:
             - name: API_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: wazuh-api-cred
+                  name: wazuh-api-secrets
                   key: username
             - name: API_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: wazuh-api-cred
+                  name: wazuh-api-secrets
                   key: password
