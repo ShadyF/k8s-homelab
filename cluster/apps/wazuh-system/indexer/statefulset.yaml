@@ -13,11 +13,11 @@ metadata:
   name: wazuh-indexer
   namespace: wazuh-system
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: wazuh-indexer
-  serviceName: wazuh-indexer
+  serviceName: wazuh-indexer-discovery-svc
   template:
     metadata:
       labels:
