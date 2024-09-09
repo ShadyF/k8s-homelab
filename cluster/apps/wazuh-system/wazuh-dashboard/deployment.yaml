@@ -76,7 +76,7 @@ spec:
             - name: SERVER_SSL_ENABLED
               value: "false"
             - name: WAZUH_API_URL
-              value: https://wazuh-manager-master-0.wazuh-cluster
+              value: https://wazuh-manager-master-0.wazuh-cluster.svc
             - name: API_USERNAME
               valueFrom:
                 secretKeyRef:
