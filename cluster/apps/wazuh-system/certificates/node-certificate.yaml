@@ -10,9 +10,9 @@ spec:
     kind: Issuer
     name: wazuh-issuer
   secretName: wazuh-node-tls
-  commonName: "*.wazuh-indexer"
+  commonName: "wazuh-indexer-api-svc.wazuh-system.svc.cluster.local"
   dnsNames:
-    - "*.wazuh-indexer"
+    - "wazuh-indexer-api-svc.wazuh-system.svc.cluster.local"
   usages:
     - "signing"
     - "key encipherment"
