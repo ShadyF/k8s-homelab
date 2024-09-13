@@ -27,9 +27,9 @@ spec:
         - name: config
           configMap:
             name: wazuh-dashboard-configmap
-        - name: ca-cert
+        - name: dashboard-certs
           secret:
-            secretName: wazuh-pki-ca
+            secretName: dashboard-tls
       containers:
         - name: wazuh-dashboard
           image: 'wazuh/wazuh-dashboard:4.9.0'
@@ -43,7 +43,15 @@ spec:
               mountPath: /usr/share/wazuh-dashboard/config/opensearch_dashboards.yml
               subPath: opensearch_dashboards.yml
               readOnly: false
-            - name: ca-cert
+            - name: dashboard-certs
+              mountPath: /usr/share/wazuh-dashboard/certs/tls.crt
+              readOnly: true
+              subPath: tls.crt
+            - name: dashboard-certs
+              mountPath: /usr/share/wazuh-dashboard/certs/tls.key
+              readOnly: true
+              subPath: tls.key
+            - name: dashboard-certs
               mountPath: /usr/share/wazuh-dashboard/certs/ca.crt
               subPath: ca.crt
               readOnly: true
