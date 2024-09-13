@@ -124,7 +124,7 @@ spec:
                   name: wazuh-indexer-secrets
                   key: password
             - name: FILEBEAT_SSL_VERIFICATION_MODE
-              value: 'full'
+              value: 'none'
             - name: SSL_CERTIFICATE_AUTHORITIES
               value: /etc/ssl/ca.crt
             - name: SSL_CERTIFICATE
