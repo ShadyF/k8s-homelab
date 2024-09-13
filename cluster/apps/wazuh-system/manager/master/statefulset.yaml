@@ -124,7 +124,7 @@ spec:
                   name: wazuh-indexer-secrets
                   key: password
             - name: FILEBEAT_SSL_VERIFICATION_MODE
-              value: 'none'
+              value: 'full'
             - name: SSL_CERTIFICATE_AUTHORITIES
               value: /etc/ssl/ca.crt
             - name: SSL_CERTIFICATE
@@ -165,4 +165,4 @@ spec:
         storageClassName: longhorn
         resources:
           requests:
-            storage: 1Gi
+            storage: 20Gi
