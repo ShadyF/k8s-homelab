@@ -1,106 +1,106 @@
-# Copyright (C) 2019, Wazuh Inc.
+## Copyright (C) 2019, Wazuh Inc.
+##
+## This program is a free software; you can redistribute it
+## and/or modify it under the terms of the GNU General Public
+## License (version 2) as published by the FSF - Free Software
+## Foundation.
 #
-# This program is a free software; you can redistribute it
-# and/or modify it under the terms of the GNU General Public
-# License (version 2) as published by the FSF - Free Software
-# Foundation.
-
-# Dashboard Deployment
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: wazuh-dashboard
-  namespace: wazuh-system
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: wazuh-dashboard
-  template:
-    metadata:
-      labels:
-        app: wazuh-dashboard
-      name: wazuh-dashboard
-    spec:
-      volumes:
-        - name: config
-          configMap:
-            name: wazuh-dashboard-configmap
-        - name: dashboard-certs
-          secret:
-            secretName: dashboard-tls
-      containers:
-        - name: wazuh-dashboard
-          image: 'wazuh/wazuh-dashboard:4.9.0'
-          imagePullPolicy: IfNotPresent
-          resources:
-            limits:
-              cpu: 500m
-              memory: 1Gi
-          volumeMounts:
-            - name: config
-              mountPath: /usr/share/wazuh-dashboard/config/opensearch_dashboards.yml
-              subPath: opensearch_dashboards.yml
-              readOnly: false
-            - name: dashboard-certs
-              mountPath: /usr/share/wazuh-dashboard/certs/tls.crt
-              readOnly: true
-              subPath: tls.crt
-            - name: dashboard-certs
-              mountPath: /usr/share/wazuh-dashboard/certs/tls.key
-              readOnly: true
-              subPath: tls.key
-            - name: dashboard-certs
-              mountPath: /usr/share/wazuh-dashboard/certs/ca.crt
-              subPath: ca.crt
-              readOnly: true
-          ports:
-            - containerPort: 5601
-              name: dashboard
-          env:
-            - name: INDEXER_URL
-              value: "https://wazuh-indexer-0.wazuh-indexer-discovery-svc:9200"
-            - name: INDEXER_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: wazuh-indexer-secrets
-                  key: username
-            - name: INDEXER_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: wazuh-indexer-secrets
-                  key: password
-            - name: DASHBOARD_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: wazuh-dashboard-secrets
-                  key: username
-            - name: DASHBOARD_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: wazuh-dashboard-secrets
-                  key: password
-            - name: SERVER_SSL_ENABLED
-              value: "false"
-            - name: WAZUH_API_URL
-              value: https://wazuh-manager-master-0.wazuh-cluster-svc
-            - name: API_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: wazuh-api-secrets
-                  key: username
-            - name: API_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: wazuh-api-secrets
-                  key: password
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: kubernetes.io/arch
-                    operator: In
-                    values:
-                      - amd64
+## Dashboard Deployment
+#
+#apiVersion: apps/v1
+#kind: Deployment
+#metadata:
+#  name: wazuh-dashboard
+#  namespace: wazuh-system
+#spec:
+#  replicas: 1
+#  selector:
+#    matchLabels:
+#      app: wazuh-dashboard
+#  template:
+#    metadata:
+#      labels:
+#        app: wazuh-dashboard
+#      name: wazuh-dashboard
+#    spec:
+#      volumes:
+#        - name: config
+#          configMap:
+#            name: wazuh-dashboard-configmap
+#        - name: dashboard-certs
+#          secret:
+#            secretName: dashboard-tls
+#      containers:
+#        - name: wazuh-dashboard
+#          image: 'wazuh/wazuh-dashboard:4.9.0'
+#          imagePullPolicy: IfNotPresent
+#          resources:
+#            limits:
+#              cpu: 500m
+#              memory: 1Gi
+#          volumeMounts:
+#            - name: config
+#              mountPath: /usr/share/wazuh-dashboard/config/opensearch_dashboards.yml
+#              subPath: opensearch_dashboards.yml
+#              readOnly: false
+#            - name: dashboard-certs
+#              mountPath: /usr/share/wazuh-dashboard/certs/tls.crt
+#              readOnly: true
+#              subPath: tls.crt
+#            - name: dashboard-certs
+#              mountPath: /usr/share/wazuh-dashboard/certs/tls.key
+#              readOnly: true
+#              subPath: tls.key
+#            - name: dashboard-certs
+#              mountPath: /usr/share/wazuh-dashboard/certs/ca.crt
+#              subPath: ca.crt
+#              readOnly: true
+#          ports:
+#            - containerPort: 5601
+#              name: dashboard
+#          env:
+#            - name: INDEXER_URL
+#              value: "https://wazuh-indexer-0.wazuh-indexer-discovery-svc:9200"
+#            - name: INDEXER_USERNAME
+#              valueFrom:
+#                secretKeyRef:
+#                  name: wazuh-indexer-secrets
+#                  key: username
+#            - name: INDEXER_PASSWORD
+#              valueFrom:
+#                secretKeyRef:
+#                  name: wazuh-indexer-secrets
+#                  key: password
+#            - name: DASHBOARD_USERNAME
+#              valueFrom:
+#                secretKeyRef:
+#                  name: wazuh-dashboard-secrets
+#                  key: username
+#            - name: DASHBOARD_PASSWORD
+#              valueFrom:
+#                secretKeyRef:
+#                  name: wazuh-dashboard-secrets
+#                  key: password
+#            - name: SERVER_SSL_ENABLED
+#              value: "false"
+#            - name: WAZUH_API_URL
+#              value: https://wazuh-manager-master-0.wazuh-cluster-svc
+#            - name: API_USERNAME
+#              valueFrom:
+#                secretKeyRef:
+#                  name: wazuh-api-secrets
+#                  key: username
+#            - name: API_PASSWORD
+#              valueFrom:
+#                secretKeyRef:
+#                  name: wazuh-api-secrets
+#                  key: password
+#      affinity:
+#        nodeAffinity:
+#          requiredDuringSchedulingIgnoredDuringExecution:
+#            nodeSelectorTerms:
+#              - matchExpressions:
+#                  - key: kubernetes.io/arch
+#                    operator: In
+#                    values:
+#                      - amd64

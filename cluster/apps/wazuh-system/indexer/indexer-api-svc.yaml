@@ -1,24 +1,24 @@
-# Copyright (C) 2019, Wazuh Inc.
+## Copyright (C) 2019, Wazuh Inc.
+##
+## This program is a free software; you can redistribute it
+## and/or modify it under the terms of the GNU General Public
+## License (version 2) as published by the FSF - Free Software
+## Foundation.
 #
-# This program is a free software; you can redistribute it
-# and/or modify it under the terms of the GNU General Public
-# License (version 2) as published by the FSF - Free Software
-# Foundation.
-
-# Indexer service: API
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: wazuh-indexer-api-svc
-  namespace: wazuh-system
-  labels:
-    app: wazuh-indexer
-spec:
-  type: ClusterIP
-  selector:
-    app: wazuh-indexer
-  ports:
-    - name: indexer-rest
-      port: 9200
-      targetPort: 9200
+## Indexer service: API
+#
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: wazuh-indexer-api-svc
+#  namespace: wazuh-system
+#  labels:
+#    app: wazuh-indexer
+#spec:
+#  type: ClusterIP
+#  selector:
+#    app: wazuh-indexer
+#  ports:
+#    - name: indexer-rest
+#      port: 9200
+#      targetPort: 9200

@@ -1,18 +1,18 @@
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: wazuh-dashboard-configmap
-  namespace: wazuh-system
-  annotations:
-    kustomize.toolkit.fluxcd.io/substitute: disabled
-data:
-  opensearch_dashboards.yml: |-
-    server.host: 0.0.0.0
-    server.port: 5601
-    opensearch.hosts: ${INDEXER_URL}
-    opensearch.ssl.verificationMode: none
-    opensearch.requestHeadersWhitelist: [ authorization,securitytenant ]
-    opensearch_security.multitenancy.enabled: false
-    opensearch_security.readonly_mode.roles: [ "kibana_read_only" ]
-    opensearch.ssl.certificateAuthorities: [ "/usr/share/wazuh-dashboard/certs/ca.crt" ]
-    uiSettings.overrides.defaultRoute: /app/wz-home
+#kind: ConfigMap
+#apiVersion: v1
+#metadata:
+#  name: wazuh-dashboard-configmap
+#  namespace: wazuh-system
+#  annotations:
+#    kustomize.toolkit.fluxcd.io/substitute: disabled
+#data:
+#  opensearch_dashboards.yml: |-
+#    server.host: 0.0.0.0
+#    server.port: 5601
+#    opensearch.hosts: ${INDEXER_URL}
+#    opensearch.ssl.verificationMode: none
+#    opensearch.requestHeadersWhitelist: [ authorization,securitytenant ]
+#    opensearch_security.multitenancy.enabled: false
+#    opensearch_security.readonly_mode.roles: [ "kibana_read_only" ]
+#    opensearch.ssl.certificateAuthorities: [ "/usr/share/wazuh-dashboard/certs/ca.crt" ]
+#    uiSettings.overrides.defaultRoute: /app/wz-home

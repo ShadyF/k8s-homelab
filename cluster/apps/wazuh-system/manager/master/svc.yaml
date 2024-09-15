@@ -1,29 +1,29 @@
-# Copyright (C) 2019, Wazuh Inc.
+## Copyright (C) 2019, Wazuh Inc.
+##
+## This program is a free software; you can redistribute it
+## and/or modify it under the terms of the GNU General Public
+## License (version 2) as published by the FSF - Free Software
+## Foundation.
 #
-# This program is a free software; you can redistribute it
-# and/or modify it under the terms of the GNU General Public
-# License (version 2) as published by the FSF - Free Software
-# Foundation.
-
-# Wazuh master Service: API and registration (authd)
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: wazuh-manager-svc  # Don't change, unless you update the Wazuh dashboard app config
-  namespace: wazuh-system
-  labels:
-    app: wazuh-manager
-    # dns: route53
-spec:
-  type: ClusterIP
-  selector:
-    app: wazuh-manager
-    node-type: master
-  ports:
-    - name: registration
-      port: 1515
-      targetPort: 1515
-    - name: api
-      port: 55000
-      targetPort: 55000
+## Wazuh master Service: API and registration (authd)
+#
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: wazuh-manager-svc  # Don't change, unless you update the Wazuh dashboard app config
+#  namespace: wazuh-system
+#  labels:
+#    app: wazuh-manager
+#    # dns: route53
+#spec:
+#  type: ClusterIP
+#  selector:
+#    app: wazuh-manager
+#    node-type: master
+#  ports:
+#    - name: registration
+#      port: 1515
+#      targetPort: 1515
+#    - name: api
+#      port: 55000
+#      targetPort: 55000

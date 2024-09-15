@@ -1,151 +1,151 @@
-# Copyright (C) 2019, Wazuh Inc.
+## Copyright (C) 2019, Wazuh Inc.
+##
+## This program is a free software; you can redistribute it
+## and/or modify it under the terms of the GNU General Public
+## License (version 2) as published by the FSF - Free Software
+## Foundation.
 #
-# This program is a free software; you can redistribute it
-# and/or modify it under the terms of the GNU General Public
-# License (version 2) as published by the FSF - Free Software
-# Foundation.
-
-# Indexer StatefulSet: 3 master nodes.
-
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: wazuh-indexer
-  namespace: wazuh-system
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: wazuh-indexer
-  serviceName: wazuh-indexer-discovery-svc
-  template:
-    metadata:
-      labels:
-        app: wazuh-indexer
-      name: wazuh-indexer
-    spec:
-      # Set the wazuh-indexer volume permissions so the wazuh-indexer user can use it
-      volumes:
-        - name: node-certs
-          secret:
-            secretName: wazuh-node-tls
-        - name: admin-certs
-          secret:
-            secretName: wazuh-admin-tls
-        - name: indexer-conf
-          configMap:
-            name: wazuh-indexer-configmap
-      initContainers:
-        - name: volume-mount-hack
-          image: busybox
-          resources:
-            requests:
-              cpu: 50m
-              memory: 128Mi
-            limits:
-              cpu: 100m
-              memory: 256Mi
-          command:
-            - sh
-            - '-c'
-            - 'chown -R 1000:1000 /var/lib/wazuh-indexer'
-          volumeMounts:
-            - name: wazuh-indexer
-              mountPath: /var/lib/wazuh-indexer
-        - name: increase-the-vm-max-map-count
-          image: busybox
-          command:
-            - sysctl
-            - -w
-            - vm.max_map_count=262144
-          securityContext:
-            privileged: true
-      containers:
-        - name: wazuh-indexer
-          image: 'wazuh/wazuh-indexer:4.9.0'
-          resources:
-            limits:
-              cpu: 500m
-              memory: 2Gi
-          env:
-            - name: OPENSEARCH_JAVA_OPTS
-              value: '-Xms1g -Xmx1g -Dlog4j2.formatMsgNoLookups=true'
-            - name: CLUSTER_NAME
-              value: wazuh
-            - name: NETWORK_HOST
-              value: "0.0.0.0"
-            - name: NODE_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: DISCOVERY_SERVICE
-              value: wazuh-indexer-discovery-svc
-            - name: KUBERNETES_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
-            - name: DISABLE_INSTALL_DEMO_CONFIG
-              value: 'true'
-          securityContext:
-            capabilities:
-              add: ["SYS_CHROOT"]
-          volumeMounts:
-            - name: wazuh-indexer
-              mountPath: /var/lib/wazuh-indexer
-            - name: node-certs
-              mountPath: /usr/share/wazuh-indexer/certs/node/ca.crt
-              subPath: ca.crt
-              readOnly: true
-            - name: node-certs
-              mountPath: /usr/share/wazuh-indexer/certs/node/tls.key
-              subPath: tls.key
-              readOnly: true
-            - name: node-certs
-              mountPath: /usr/share/wazuh-indexer/certs/node/tls.crt
-              subPath: tls.crt
-              readOnly: true
-            - name: admin-certs
-              mountPath: /usr/share/wazuh-indexer/certs/admin/ca.crt
-              subPath: ca.crt
-              readOnly: true
-            - name: admin-certs
-              mountPath: /usr/share/wazuh-indexer/certs/admin/tls.crt
-              subPath: tls.crt
-              readOnly: true
-            - name: admin-certs
-              mountPath: /usr/share/wazuh-indexer/certs/admin/tls.key
-              subPath: tls.key
-              readOnly: true
-            - name: indexer-conf
-              mountPath: /usr/share/wazuh-indexer/opensearch.yml
-              subPath: opensearch.yml
-              readOnly: true
-            - name: indexer-conf
-              mountPath: /usr/share/wazuh-indexer/opensearch-security/internal_users.yml
-              subPath: internal_users.yml
-              readOnly: true
-          ports:
-            - containerPort: 9200
-              name: indexer-rest
-            - containerPort: 9300
-              name: indexer-nodes
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: kubernetes.io/arch
-                    operator: In
-                    values:
-                      - amd64
-  volumeClaimTemplates:
-    - metadata:
-        name: wazuh-indexer
-        namespace: wazuh-system
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        storageClassName: longhorn
-        resources:
-          requests:
-            storage: 5Gi
+## Indexer StatefulSet: 3 master nodes.
+#
+#apiVersion: apps/v1
+#kind: StatefulSet
+#metadata:
+#  name: wazuh-indexer
+#  namespace: wazuh-system
+#spec:
+#  replicas: 1
+#  selector:
+#    matchLabels:
+#      app: wazuh-indexer
+#  serviceName: wazuh-indexer-discovery-svc
+#  template:
+#    metadata:
+#      labels:
+#        app: wazuh-indexer
+#      name: wazuh-indexer
+#    spec:
+#      # Set the wazuh-indexer volume permissions so the wazuh-indexer user can use it
+#      volumes:
+#        - name: node-certs
+#          secret:
+#            secretName: wazuh-node-tls
+#        - name: admin-certs
+#          secret:
+#            secretName: wazuh-admin-tls
+#        - name: indexer-conf
+#          configMap:
+#            name: wazuh-indexer-configmap
+#      initContainers:
+#        - name: volume-mount-hack
+#          image: busybox
+#          resources:
+#            requests:
+#              cpu: 50m
+#              memory: 128Mi
+#            limits:
+#              cpu: 100m
+#              memory: 256Mi
+#          command:
+#            - sh
+#            - '-c'
+#            - 'chown -R 1000:1000 /var/lib/wazuh-indexer'
+#          volumeMounts:
+#            - name: wazuh-indexer
+#              mountPath: /var/lib/wazuh-indexer
+#        - name: increase-the-vm-max-map-count
+#          image: busybox
+#          command:
+#            - sysctl
+#            - -w
+#            - vm.max_map_count=262144
+#          securityContext:
+#            privileged: true
+#      containers:
+#        - name: wazuh-indexer
+#          image: 'wazuh/wazuh-indexer:4.9.0'
+#          resources:
+#            limits:
+#              cpu: 500m
+#              memory: 2Gi
+#          env:
+#            - name: OPENSEARCH_JAVA_OPTS
+#              value: '-Xms1g -Xmx1g -Dlog4j2.formatMsgNoLookups=true'
+#            - name: CLUSTER_NAME
+#              value: wazuh
+#            - name: NETWORK_HOST
+#              value: "0.0.0.0"
+#            - name: NODE_NAME
+#              valueFrom:
+#                fieldRef:
+#                  fieldPath: metadata.name
+#            - name: DISCOVERY_SERVICE
+#              value: wazuh-indexer-discovery-svc
+#            - name: KUBERNETES_NAMESPACE
+#              valueFrom:
+#                fieldRef:
+#                  fieldPath: metadata.namespace
+#            - name: DISABLE_INSTALL_DEMO_CONFIG
+#              value: 'true'
+#          securityContext:
+#            capabilities:
+#              add: ["SYS_CHROOT"]
+#          volumeMounts:
+#            - name: wazuh-indexer
+#              mountPath: /var/lib/wazuh-indexer
+#            - name: node-certs
+#              mountPath: /usr/share/wazuh-indexer/certs/node/ca.crt
+#              subPath: ca.crt
+#              readOnly: true
+#            - name: node-certs
+#              mountPath: /usr/share/wazuh-indexer/certs/node/tls.key
+#              subPath: tls.key
+#              readOnly: true
+#            - name: node-certs
+#              mountPath: /usr/share/wazuh-indexer/certs/node/tls.crt
+#              subPath: tls.crt
+#              readOnly: true
+#            - name: admin-certs
+#              mountPath: /usr/share/wazuh-indexer/certs/admin/ca.crt
+#              subPath: ca.crt
+#              readOnly: true
+#            - name: admin-certs
+#              mountPath: /usr/share/wazuh-indexer/certs/admin/tls.crt
+#              subPath: tls.crt
+#              readOnly: true
+#            - name: admin-certs
+#              mountPath: /usr/share/wazuh-indexer/certs/admin/tls.key
+#              subPath: tls.key
+#              readOnly: true
+#            - name: indexer-conf
+#              mountPath: /usr/share/wazuh-indexer/opensearch.yml
+#              subPath: opensearch.yml
+#              readOnly: true
+#            - name: indexer-conf
+#              mountPath: /usr/share/wazuh-indexer/opensearch-security/internal_users.yml
+#              subPath: internal_users.yml
+#              readOnly: true
+#          ports:
+#            - containerPort: 9200
+#              name: indexer-rest
+#            - containerPort: 9300
+#              name: indexer-nodes
+#      affinity:
+#        nodeAffinity:
+#          requiredDuringSchedulingIgnoredDuringExecution:
+#            nodeSelectorTerms:
+#              - matchExpressions:
+#                  - key: kubernetes.io/arch
+#                    operator: In
+#                    values:
+#                      - amd64
+#  volumeClaimTemplates:
+#    - metadata:
+#        name: wazuh-indexer
+#        namespace: wazuh-system
+#      spec:
+#        accessModes:
+#          - ReadWriteOnce
+#        storageClassName: longhorn
+#        resources:
+#          requests:
+#            storage: 5Gi
