@@ -124,7 +124,7 @@ spec:
           emptyDir: { }
       extraInitContainers:
         - name: init-clone-crowdsec-bouncer
-          image: crowdsecurity/lua-bouncer-plugin:v1.0.2
+          image: crowdsecurity/lua-bouncer-plugin:v1.0.4
           imagePullPolicy: IfNotPresent
           envFrom:
             - secretRef:
