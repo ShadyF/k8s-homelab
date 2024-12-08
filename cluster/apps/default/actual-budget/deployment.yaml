@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: actual-budget
-          image: actualbudget/actual-server:24.11.0
+          image: actualbudget/actual-server:24.12.0
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5006
