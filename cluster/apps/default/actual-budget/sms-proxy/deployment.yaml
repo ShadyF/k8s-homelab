@@ -21,7 +21,7 @@ spec:
       # TODO: Add readiness and liveness probes
       containers:
         - name: proxy
-          image: ghcr.io/shadyf/actual-budget-sms-proxy:v1.3.8
+          image: ghcr.io/shadyf/actual-budget-sms-proxy:v1.3.9
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
