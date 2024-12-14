@@ -10,7 +10,7 @@ spec:
     spec:
       # renovate: registryUrl=https://bjw-s.github.io/helm-charts/
       chart: app-template
-      version: 3.4.0
+      version: 3.5.1
       interval: 15m
       sourceRef:
         kind: HelmRepository
@@ -24,7 +24,7 @@ spec:
           app:
             image:
               repository: docker.io/library/redis
-              tag: 7.4.0
+              tag: 7.4.1
 
             resources:
               requests:

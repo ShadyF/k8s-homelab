@@ -10,7 +10,7 @@ spec:
     spec:
       # renovate: registryUrl=https://bjw-s.github.io/helm-charts/
       chart: app-template
-      version: 3.4.0
+      version: 3.5.1
       interval: 15m
       sourceRef:
         kind: HelmRepository
@@ -30,7 +30,7 @@ spec:
           app:
             image:
               repository: ghcr.io/paperless-ngx/paperless-ngx
-              tag: 2.12.1
+              tag: 2.13.5
 
             env:
               COMPOSE_PROJECT_NAME: paperless

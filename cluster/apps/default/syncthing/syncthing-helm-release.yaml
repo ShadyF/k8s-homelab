@@ -19,7 +19,7 @@ spec:
     # https://github.com/k8s-at-home/charts/blob/master/charts/stable/syncthing/values.yaml
     image:
       repository: syncthing/syncthing
-      tag: 1.27.12
+      tag: 1.28.1
 
     ingress:
       main:
