@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: wstunnel
-          image: ghcr.io/erebe/wstunnel:v10.1.6
+          image: ghcr.io/erebe/wstunnel:v10.1.7
           imagePullPolicy: IfNotPresent
           # Got this from source code's dockerfile
           command: ["/bin/sh", "-c", "exec /home/app/wstunnel server ws://[::]:48513 --restrict-to wg-svc:51820"]
