@@ -28,7 +28,7 @@ spec:
   values:
     image:
       repository: ghcr.io/onedr0p/prowlarr-develop
-      tag: 1.28.0.4862
+      tag: 1.28.2.4885
     env:
       TZ: "Africa/Cairo"
     ingress:
