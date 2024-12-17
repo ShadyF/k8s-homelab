@@ -96,7 +96,7 @@ spec:
         command: [ "ss-local" ]
         # nl-ams-br-001
         # IP Should be added to firewall rules in gluetun
-        args: [ "-s",  "185.65.134.66", "-p", "443", "-l", "1080", "-b", "0.0.0.0", "-k", "mullvad", "-m", "aes-256-gcm" ]
+        args: [ "-s",  "193.32.127.117", "-p", "443", "-l", "1080", "-b", "0.0.0.0", "-k", "mullvad", "-m", "aes-256-gcm" ]
         imagePullPolicy: IfNotPresent
         ports:
           - containerPort: 1080
@@ -130,7 +130,7 @@ spec:
                 key: OPENVPN_PASSWORD
           # Should be the same as the shadowsocks bridge server
           - name: FIREWALL_OUTBOUND_SUBNETS
-            value: "185.65.134.66/32"
+            value: "193.32.127.117/32"
           - name: OPENVPN_PROTOCOL
             value: "tcp"
           - name: OPENVPN_IPV6
