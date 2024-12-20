@@ -111,6 +111,7 @@ spec:
         image: qmcgaw/gluetun:v3.39.1
         imagePullPolicy: IfNotPresent
         securityContext:
+          privileged: true
           capabilities:
             add: [ "NET_ADMIN" ]
         env:
