@@ -8,7 +8,7 @@ packages = [{include = "k8s_homelab_ansible"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-ansible = "^10.0.0"
+ansible = "^11.0.0"
 
 
 [build-system]
