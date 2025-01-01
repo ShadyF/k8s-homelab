@@ -26,7 +26,7 @@ spec:
     env:
       TZ: "Africa/Cairo"
       # See https://www.devwithimagination.com/2019/08/21/plex-docker-and-the-problem-of-always-appearing-as-remote/
-      ADVERTISE_IP: "https://plex.${SECRET_DOMAIN}:443/,http://192.168.1.241:32400/"
+      ADVERTISE_IP: "https://plex.${SECRET_DOMAIN}:443/,http://192.168.1.245:32400/"
       ALLOWED_NETWORKS: "10.0.0.0/8,192.168.1.0/24"
     envFrom:
       - secretRef:
@@ -53,7 +53,6 @@ spec:
         enabled: true
         ingressClassName: "external"
         annotations:
-          nginx.ingress.kubernetes.io/connection-proxy-header: "upgrade"
           external-dns/is-public: "true"
           external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
         hosts:
