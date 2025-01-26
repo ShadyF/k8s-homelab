@@ -10,7 +10,7 @@ spec:
     spec:
       # renovate: registryUrl=https://bjw-s.github.io/helm-charts/
       chart: app-template
-      version: 3.6.0
+      version: 3.6.1
       interval: 15m
       sourceRef:
         kind: HelmRepository
@@ -42,7 +42,7 @@ spec:
           main:
             image:
               repository: ghcr.io/onedr0p/sonarr-develop
-              tag: 4.0.12.2825@sha256:ae7efba78efc1d4923578f97933e206dcdf43fb1fd2533cfa3be77ab6d0e74b1
+              tag: 4.0.12.2866@sha256:8690925866b385cbce810ae83151b0151fc3fe3579c21cd8410f081ff140c798
               pullPolicy: IfNotPresent
             env:
               TZ: Africa/Cairo
