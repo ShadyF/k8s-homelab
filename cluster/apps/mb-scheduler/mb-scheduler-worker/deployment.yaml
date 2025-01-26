@@ -33,7 +33,7 @@ spec:
           command: [ 'celery',  '-A', 'mb_heba_backend', 'worker' , '--loglevel=INFO' ]
           env:
             - name: DEBUG
-              value: "False"
+              value: "True"
             - name: CELERY_BROKER_URL
               value: redis://mb-scheduler-redis.mb-scheduler.svc.cluster.local:6379
           envFrom:

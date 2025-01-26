@@ -33,7 +33,7 @@ spec:
           #              containerPort: 8000
           env:
             - name: DEBUG
-              value: "False"
+              value: "True"
           envFrom:
             - secretRef:
                 name: mb-scheduler-backend-secrets
