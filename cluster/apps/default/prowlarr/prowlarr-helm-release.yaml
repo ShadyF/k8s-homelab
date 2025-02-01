@@ -54,7 +54,7 @@ spec:
         existingClaim: prowlarr-config-pvc
       media:
         enabled: true
-        existingClaim: nfs-media-pvc
+        existingClaim: nfs-big-media-pvc
     resources:
       requests:
         cpu: 300m

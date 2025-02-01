@@ -59,7 +59,7 @@ spec:
       plex-nfs:
         enabled: true
         type: pvc
-        existingClaim: nfs-media-pvc
+        existingClaim: nfs-big-media-pvc
         mountPath: "/media_nfs"
       openvpn-config:
         enabled: true

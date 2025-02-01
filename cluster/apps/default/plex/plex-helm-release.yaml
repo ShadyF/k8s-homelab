@@ -73,9 +73,9 @@ spec:
       transcode:
         enabled: true
         type: emptyDir
-      nfs-media-pvc:
+      nfs-big-media-pvc:
         enabled: true
-        existingClaim: nfs-media-pvc
+        existingClaim: nfs-big-media-pvc
         # To be able to delete movies directly from plex
         readOnly: false
 
