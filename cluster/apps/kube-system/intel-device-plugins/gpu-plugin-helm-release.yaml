@@ -8,6 +8,7 @@ spec:
   interval: 15m
   chart:
     spec:
+      # renovate: registryUrl=https://intel.github.io/helm-charts
       chart: intel-device-plugins-gpu
       version: 0.31.1
       sourceRef:
