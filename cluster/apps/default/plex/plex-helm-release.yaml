@@ -32,11 +32,12 @@ spec:
       - secretRef:
           name: plex-secrets
     podSecurityContext:
-      fsGroup: 1001
-      supplementalGroups:
-        - 44
-        - 109
-        - 100
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+      fsGroupChangePolicy: OnRootMismatch
+      supplementalGroups: [ 44, 109, 303, 10000 ]
     service:
       main:
         # Not sure why this service is needed. See https://www.debontonline.com/2021/01/part-14-deploy-plexserver-yaml-with.html
