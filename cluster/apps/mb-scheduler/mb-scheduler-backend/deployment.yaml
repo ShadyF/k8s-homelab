@@ -48,7 +48,7 @@ spec:
               memory: 300Mi
         # NGINX container to server static files
         - name: nginx
-          image: nginx:1.27.3
+          image: nginx:1.27.4
           ports:
             - protocol: TCP
               containerPort: 80
