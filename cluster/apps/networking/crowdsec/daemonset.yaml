@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: crowdsec-agent
-          image: crowdsecurity/crowdsec:v1.6.4
+          image: crowdsecurity/crowdsec:v1.6.5
           imagePullPolicy: IfNotPresent
           env:
             - name: COLLECTIONS
