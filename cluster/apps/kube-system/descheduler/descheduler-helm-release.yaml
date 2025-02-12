@@ -27,55 +27,56 @@ spec:
     keepHistory: false
   values:
     kind: Deployment
-    #   deschedulingInterval: 1m
+    deschedulingInterval: 5m
+
     deschedulerPolicy:
-      # allows eviction of pods with local storage
-      evictLocalStoragePods: true
-      strategies:
-        RemoveDuplicates:
-          enabled: true
-        RemovePodsViolatingNodeTaints:
-          enabled: true
-        RemovePodsViolatingNodeAffinity:
-          enabled: true
-          params:
-            nodeAffinityType:
-              - requiredDuringSchedulingIgnoredDuringExecution
-        RemovePodsViolatingTopologySpreadConstraint:
-          enabled: true
-          params:
-            includeSoftConstraints: true
-        RemovePodsViolatingInterPodAntiAffinity:
-          enabled: true
-          params:
-            nodeFit: true
-        LowNodeUtilization:
-          enabled: true
-          params:
-            nodeResourceUtilizationThresholds:
-              # For ALL of these, node will be considered under-utilized
-              thresholds:
-                cpu: 25
-                memory: 50
-                pods: 20
-              # For ANY of these, node will be considered over-utilized
-              targetThresholds:
-                cpu: 70
-                memory: 80
-                pods: 40
-        RemoveFailedPods:
-          enabled: true
-          params:
-            failedPods:
-              includingInitContainers: true
-              excludeOwnerKinds: [ "Job" ]
-              minPodLifetimeSeconds: 3600
-        RemovePodsHavingTooManyRestarts:
-          enabled: true
-          params:
-            podsHavingTooManyRestarts:
-              podRestartThreshold: 100
-              includingInitContainers: true
+      metricsCollector:
+        enabled: true
+      profiles:
+        - name: default
+          pluginConfig:
+            - name: DefaultEvictor
+              args:
+                evictFailedBarePods: true
+                ignorePvcPods: true
+                evictLocalStoragePods: true
+                nodeFit: true
+            - name: RemoveDuplicates
+            - name: RemovePodsHavingTooManyRestarts
+              args:
+                podRestartThreshold: 100
+                includingInitContainers: true
+            - name: RemovePodsViolatingNodeAffinity
+              args:
+                nodeAffinityType:
+                  - requiredDuringSchedulingIgnoredDuringExecution
+            - name: RemovePodsViolatingNodeTaints
+            - name: RemovePodsViolatingInterPodAntiAffinity
+            - name: RemovePodsViolatingTopologySpreadConstraint
+            - name: LowNodeUtilization
+              args:
+                thresholds:
+                  "cpu" : 20
+                  "memory": 20
+                  "pods": 20
+                targetThresholds:
+                  "cpu" : 50
+                  "memory": 50
+                  "pods": 50
+                metricsUtilization:
+                  metricsServer: true
+          plugins:
+            balance:
+              enabled:
+                - RemoveDuplicates
+                - RemovePodsViolatingTopologySpreadConstraint
+                - LowNodeUtilization
+            deschedule:
+              enabled:
+                - RemovePodsHavingTooManyRestarts
+                - RemovePodsViolatingNodeTaints
+                - RemovePodsViolatingNodeAffinity
+                - RemovePodsViolatingInterPodAntiAffinity
     service:
       enabled: true
     # For prometheus, enable later
