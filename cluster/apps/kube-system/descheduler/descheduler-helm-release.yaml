@@ -60,8 +60,8 @@ spec:
                   "memory": 20
                   "pods": 20
                 targetThresholds:
-                  "cpu" : 50
-                  "memory": 50
+                  "cpu" : 60
+                  "memory": 70
                   "pods": 50
                 metricsUtilization:
                   metricsServer: true
