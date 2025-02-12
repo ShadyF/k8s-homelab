@@ -18,10 +18,12 @@ spec:
       interval: 5m
   # https://github.com/bitnami/charts/blob/master/bitnami/external-dns/values.yaml
   values:
-    image:
-      registry: registry.k8s.io
-      repository: external-dns/external-dns
-      tag: v0.15.1
+# Using image other than default of the helm chart causes a validation error on the helm chart level
+# Not sure if this is something specific to this chart of for bitnami charts in general
+#    image:
+#      registry: registry.k8s.io
+#      repository: external-dns/external-dns
+#      tag: v0.15.1
     logLevel: debug
     domainFilters:
       - "${SECRET_DOMAIN}"
