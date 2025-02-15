@@ -54,7 +54,7 @@ spec:
           stunnel:
             image:
               repository: alpine
-              tag: 3.21.2
+              tag: 3.21.3
               pullPolicy: IfNotPresent
             command: [ "sh", "/opt/start.sh" ]
 
