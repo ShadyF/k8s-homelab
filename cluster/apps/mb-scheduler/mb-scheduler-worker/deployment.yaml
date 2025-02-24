@@ -19,7 +19,7 @@ spec:
     spec:
       initContainers:
         - name: wait-for-database
-          image: ghcr.io/shadyf/mb-backend:sha-ab2e5bf
+          image: ghcr.io/shadyf/mb-backend:sha-960ca19
           envFrom:
             - secretRef:
                 name: mb-scheduler-backend-secrets
@@ -28,7 +28,7 @@ spec:
         # By default, this will run 4 workers in the same pod. Use the --concurrency flag to reduce that to 1 and scale
         # using kubernetes
         - name: celery-worker
-          image: ghcr.io/shadyf/mb-backend:sha-ab2e5bf
+          image: ghcr.io/shadyf/mb-backend:sha-960ca19
           imagePullPolicy: IfNotPresent
           command: [ 'celery',  '-A', 'mb_heba_backend', 'worker' , '--loglevel=INFO' ]
           env:
@@ -47,7 +47,7 @@ spec:
               memory: 350Mi
         # Consider using redbeat if going to scale workers and want a highly available celery-beat
         - name: celery-beat
-          image: ghcr.io/shadyf/mb-backend:sha-ab2e5bf
+          image: ghcr.io/shadyf/mb-backend:sha-960ca19
           imagePullPolicy: IfNotPresent
           command: [ 'celery', '-A' ,'mb_heba_backend','beat','-l','INFO', '--scheduler','django_celery_beat.schedulers:DatabaseScheduler' ]
           env:
