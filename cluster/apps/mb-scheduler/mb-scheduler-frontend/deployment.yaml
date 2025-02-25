@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/shadyf/mb-frontend:sha-78da92b
+          image: ghcr.io/shadyf/mb-frontend:sha-5272e50
           imagePullPolicy: IfNotPresent
           ports:
             - protocol: TCP
