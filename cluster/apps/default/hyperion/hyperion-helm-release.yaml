@@ -28,7 +28,7 @@ spec:
       http:
         enabled: true
         type: LoadBalancer
-        loadBalancerIP: 192.168.1.244
+        loadBalancerIP: 192.168.1.245
         externalTrafficPolicy: Local
         ports:
           listen:
