@@ -39,7 +39,7 @@ spec:
 
     ingress:
       main:
-        enabled: false
+        enabled: true
         ingressClassName: "internal"
         annotations:
           nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.networking.svc.cluster.local/oauth2/auth"
