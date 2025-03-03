@@ -25,17 +25,6 @@ spec:
       tag: 2.0.16
 
     service:
-      http:
-        enabled: true
-        type: LoadBalancer
-        loadBalancerIP: 192.168.1.246
-        externalTrafficPolicy: Local
-        ports:
-          listen:
-            enabled: true
-            port: 8090
-            protocol: TCP
-            targetPort: 8090
       flatbuffer:
         enabled: true
         type: LoadBalancer
