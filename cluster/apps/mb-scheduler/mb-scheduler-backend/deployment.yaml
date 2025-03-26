@@ -19,21 +19,21 @@ spec:
     spec:
       initContainers:
         - name: wait-for-database
-          image: ghcr.io/shadyf/mb-backend:sha-960ca19
+          image: ghcr.io/shadyf/mb-backend:sha-42ba302
           envFrom:
             - secretRef:
                 name: mb-scheduler-backend-secrets
           command: [ 'python', 'manage.py', 'wait_for_database' ]
       containers:
         - name: django
-          image: ghcr.io/shadyf/mb-backend:sha-960ca19
+          image: ghcr.io/shadyf/mb-backend:sha-42ba302
           imagePullPolicy: IfNotPresent
           #          ports:
           #            - protocol: TCP
           #              containerPort: 8000
           env:
             - name: DEBUG
-              value: "False"
+              value: "True"
           envFrom:
             - secretRef:
                 name: mb-scheduler-backend-secrets
