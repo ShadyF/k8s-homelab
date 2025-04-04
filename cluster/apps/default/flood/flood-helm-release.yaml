@@ -1,93 +1,93 @@
-apiVersion: helm.toolkit.fluxcd.io/v2
-kind: HelmRelease
-metadata:
-  name: flood
-  namespace: default
-spec:
-  interval: 5m
-  chart:
-    spec:
-      # renovate: registryUrl=https://k8s-at-home.com/charts/
-      chart: flood
-      version: 6.4.2
-      sourceRef:
-        kind: HelmRepository
-        name: k8s-at-home-charts
-        namespace: flux-system
-      interval: 5m
-  dependsOn:
-    - name: longhorn
-      namespace: longhorn-system
-  values:
-    image:
-      repository: jesec/flood
-      tag: master
-
-    env:
-      - name: FLOOD_OPTION_AUTH
-        value: "none"
-      - name: FLOOD_OPTION_QBURL
-        value: "http://qbittorrent.default.svc.cluster.local:8080"
-      - name: FLOOD_OPTION_RUNDIR
-        value: "/config"
-      - name: FLOOD_OPTION_QBUSER
-        value: dummy
-      - name: FLOOD_OPTION_QBPASS
-        value: dummy2
-
-    ingress:
-      main:
-        enabled: true
-        ingressClassName: "external"
-        annotations:
-          nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.networking.svc.cluster.local/oauth2/auth"
-          nginx.ingress.kubernetes.io/auth-signin: "https://auth.${SECRET_DOMAIN}/oauth2/sign_in"
-          external-dns/is-public: "true"
-          external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
-        hosts:
-          - host: "flood.${SECRET_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-        tls:
-          - hosts:
-              - "flood.${SECRET_DOMAIN}"
-
-    persistence:
-      config:
-        enabled: true
-        existingClaim: flood-config-pvc-2
-      # PVC from qbittorrent
-      downloads:
-        enabled: true
-        existingClaim: nfs-media-downloads-pvc
-        readOnly: true
-
-    probes:
-      liveness:
-        enabled: true
-        initialDelaySeconds: 30
-        failureThreshold: 5
-        timeoutSeconds: 10
-      readiness:
-        enabled: true
-        initialDelaySeconds: 30
-        failureThreshold: 5
-        timeoutSeconds: 10
-      startup:
-        enabled: true
-        initialDelaySeconds: 5
-        failureThreshold: 30
-        periodSeconds: 10
-
-    resources:
-      requests:
-        cpu: 10m
-        memory: 120Mi
-      limits:
-        memory: 120Mi
-
-    podSecurityContext:
-      runAsUser: 1001
-      runAsGroup: 1001
-      fsGroup: 1001
+#apiVersion: helm.toolkit.fluxcd.io/v2
+#kind: HelmRelease
+#metadata:
+#  name: flood
+#  namespace: default
+#spec:
+#  interval: 5m
+#  chart:
+#    spec:
+#      # renovate: registryUrl=https://k8s-at-home.com/charts/
+#      chart: flood
+#      version: 6.4.2
+#      sourceRef:
+#        kind: HelmRepository
+#        name: k8s-at-home-charts
+#        namespace: flux-system
+#      interval: 5m
+#  dependsOn:
+#    - name: longhorn
+#      namespace: longhorn-system
+#  values:
+#    image:
+#      repository: jesec/flood
+#      tag: master
+#
+#    env:
+#      - name: FLOOD_OPTION_AUTH
+#        value: "none"
+#      - name: FLOOD_OPTION_QBURL
+#        value: "http://qbittorrent.default.svc.cluster.local:8080"
+#      - name: FLOOD_OPTION_RUNDIR
+#        value: "/config"
+#      - name: FLOOD_OPTION_QBUSER
+#        value: dummy
+#      - name: FLOOD_OPTION_QBPASS
+#        value: dummy2
+#
+#    ingress:
+#      main:
+#        enabled: true
+#        ingressClassName: "external"
+#        annotations:
+#          nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.networking.svc.cluster.local/oauth2/auth"
+#          nginx.ingress.kubernetes.io/auth-signin: "https://auth.${SECRET_DOMAIN}/oauth2/sign_in"
+#          external-dns/is-public: "true"
+#          external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
+#        hosts:
+#          - host: "flood.${SECRET_DOMAIN}"
+#            paths:
+#              - path: /
+#                pathType: Prefix
+#        tls:
+#          - hosts:
+#              - "flood.${SECRET_DOMAIN}"
+#
+#    persistence:
+#      config:
+#        enabled: true
+#        existingClaim: flood-config-pvc-2
+#      # PVC from qbittorrent
+#      downloads:
+#        enabled: true
+#        existingClaim: nfs-media-downloads-pvc
+#        readOnly: true
+#
+#    probes:
+#      liveness:
+#        enabled: true
+#        initialDelaySeconds: 30
+#        failureThreshold: 5
+#        timeoutSeconds: 10
+#      readiness:
+#        enabled: true
+#        initialDelaySeconds: 30
+#        failureThreshold: 5
+#        timeoutSeconds: 10
+#      startup:
+#        enabled: true
+#        initialDelaySeconds: 5
+#        failureThreshold: 30
+#        periodSeconds: 10
+#
+#    resources:
+#      requests:
+#        cpu: 10m
+#        memory: 120Mi
+#      limits:
+#        memory: 120Mi
+#
+#    podSecurityContext:
+#      runAsUser: 1001
+#      runAsGroup: 1001
+#      fsGroup: 1001
