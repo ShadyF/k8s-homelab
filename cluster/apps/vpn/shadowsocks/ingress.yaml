@@ -4,7 +4,7 @@ metadata:
   name: shadowsocks-rust-ingress
   namespace: vpn
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
     external-dns/is-public: "true"
