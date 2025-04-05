@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tcp-services
+  namespace: networking
+data:
+  8388: "vpn/shadowsocks-rust-svc:8388"
