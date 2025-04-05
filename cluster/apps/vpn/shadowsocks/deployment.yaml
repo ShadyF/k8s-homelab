@@ -18,7 +18,7 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: shadowsocks-rust
+            name: shadowsocks-rust-configmap
         - name: plugins
           emptyDir: { }
       containers:
