@@ -22,6 +22,6 @@ spec:
                 name: shadowsocks-rust-svc
                 port:
                   number: 8388
-  tls:
-    - hosts:
-        - "ss.${SECRET_DOMAIN}"
+#  tls:
+#    - hosts:
+#        - "ss.${SECRET_DOMAIN}"
