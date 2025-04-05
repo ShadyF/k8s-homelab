@@ -3,9 +3,6 @@ kind: Service
 metadata:
   name: ingress-nginx-svc
   namespace: networking
-  labels:
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/part-of: ingress-nginx
 spec:
   type: LoadBalancer
   ports:
@@ -23,4 +20,5 @@ spec:
       protocol: TCP
   selector:
     app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/part-of: ingress-nginx
+    app.kubernetes.io/instance: ingress-nginx
+    app.kubernetes.io/component: controller
