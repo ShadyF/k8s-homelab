@@ -19,10 +19,9 @@ spec:
             path: /
             backend:
               service:
-                name: ss-8388
+                name: shadowsocks-rust-svc
                 port:
                   number: 8388
   tls:
     - hosts:
         - "ss.${SECRET_DOMAIN}"
-  #      secretName: wstunnel-tls
