@@ -24,7 +24,7 @@ spec:
       containers:
         - name: shadowsocks-rust
           image: ghcr.io/shadowsocks/ssserver-rust:v1.23.0
-          command: [ "ssserver", "-c", "/etc/shadowsocks-rust/config.json", "-vv" ]
+          command: [ "ssserver", "-c", "/etc/shadowsocks-rust/config.json", "-v" ]
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: config
