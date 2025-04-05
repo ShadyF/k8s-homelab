@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: shadowsocks-rust-svc
+spec:
+  selector:
+    app: shadowsocks-rust
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: ss-8388
+      protocol: TCP
+      port: 8388
