@@ -47,19 +47,6 @@ spec:
         # Also see https://metallb.universe.tf/usage/#traffic-policies for what happens when used
         # in conjuction with MetalLB
         externalTrafficPolicy: Local
-        ports:
-          - name: http
-            port: 80
-            protocol: TCP
-            targetPort: 80
-          - name: https
-            port: 443
-            protocol: TCP
-            targetPort: 443
-          - name: shadowsocks
-            port: 8388
-            protocol: TCP
-            targetPort: 8388
       config:
         #        custom-http-errors: >-
         #          401,403,404,500,501,502,503
