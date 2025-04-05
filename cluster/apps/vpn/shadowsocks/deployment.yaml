@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: shadowsocks-rust-deployment
+  name: shadowsocks-rust
   namespace: vpn
   labels:
     app: shadowsocks-rust
@@ -24,6 +24,7 @@ spec:
       containers:
         - name: shadowsocks-rust
           image: ghcr.io/shadowsocks/ssserver-rust:v1.23.0
+          command: [ "ssserver", "-c", "/etc/shadowsocks-rust/config.json", "-vvv" ]
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: config
