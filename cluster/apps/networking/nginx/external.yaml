@@ -117,7 +117,7 @@ spec:
       # Wildcare certificate, so we don't have to define a certificate for each ingress we create
       extraArgs:
         default-ssl-certificate: "networking/${SECRET_DOMAIN/./-}-tls"
-        tcp-services-configmap: "networking/tcp-services" # Added this line
+#        tcp-services-configmap: "networking/tcp-services" # Added this line
 
       # Needed for crowdsec
       extraVolumes:
