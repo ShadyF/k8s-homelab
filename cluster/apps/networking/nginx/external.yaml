@@ -47,28 +47,9 @@ spec:
         # Also see https://metallb.universe.tf/usage/#traffic-policies for what happens when used
         # in conjuction with MetalLB
         externalTrafficPolicy: Local
-        ports: [] # Start with an empty list
-
-    # Explicitly define the ports under controller.service.ports
-    controller:
-      service:
-        ports:
-        - name: http
-          port: 80
-          protocol: TCP
-          targetPort: 80
-        - name: https
-          port: 443
-          protocol: TCP
-          targetPort: 443
-        - name: shadowsocks
-          port: 8388
-          protocol: TCP
-          targetPort: 8388
-
       config:
-        #        custom-http-errors: >-
-        #          401,403,404,500,501,502,503
+#        custom-http-errors: >-
+#          401,403,404,500,501,502,503
         ssl-protocols: "TLSv1.3 TLSv1.2"
         # Same size defined in cloudflare
         proxy-body-size: "100m"
@@ -118,7 +99,7 @@ spec:
           "gzip_ratio": "$gzip_ratio",
           "http_cf_ray": "$http_cf_ray"
         }'
-        #         "geoip_country_code": "$geoip2_city_country_code"
+#         "geoip_country_code": "$geoip2_city_country_code"
         # Needed for crowdsec
         plugins: "crowdsec"
         lua-shared-dicts: "crowdsec_cache: 50m"
@@ -131,8 +112,8 @@ spec:
           enabled: true
           namespaceSelector:
             any: true
-      #        prometheusRule:
-      #          enabled: true
+#        prometheusRule:
+#          enabled: true
       # Wildcare certificate, so we don't have to define a certificate for each ingress we create
       extraArgs:
         default-ssl-certificate: "networking/${SECRET_DOMAIN/./-}-tls"
