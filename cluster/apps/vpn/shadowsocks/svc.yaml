@@ -7,7 +7,7 @@ spec:
   selector:
     app: shadowsocks-rust
   type: ClusterIP
-  clusterIP: None
+  #  clusterIP: None
   ports:
     - name: ss-8388
       protocol: TCP
