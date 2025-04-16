@@ -105,7 +105,7 @@ spec:
         enabled: true
         image:
           repository: grafana/promtail
-          tag: 3.4.2
+          tag: 3.4.3
         loki: http://loki.monitoring.svc.cluster.local:3100/loki/api/v1/push
         logs:
           - name: promtail/plex
