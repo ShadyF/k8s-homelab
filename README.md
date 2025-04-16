@@ -49,18 +49,50 @@ _Note: Flux always syncs these directories in the above order. (base -> crds -> 
 - [SOPS](https://github.com/mozilla/sops): Needed for secret management. Sensitive data is encrypted in the git repo and
   is decrypted by Flux when they're synced with the cluster.
 - [Longhorn](https://github.com/longhorn/longhorn): Distributed block storage.
+- [CrowdSec](https://www.crowdsec.net/): Security automation tool that detects and responds to attacks.
+- [Kured](https://github.com/weaveworks/kured): Kubernetes Reboot Daemon that performs safe automatic node reboots.
+- [Descheduler](https://github.com/kubernetes-sigs/descheduler): Pod descheduler for Kubernetes to improve scheduling.
+- [Node Feature Discovery](https://github.com/kubernetes-sigs/node-feature-discovery): Detects hardware features in nodes.
+- [Intel Device Plugins](https://github.com/intel/intel-device-plugins-for-kubernetes): Plugins for Intel hardware.
+- [Reloader](https://github.com/stakater/Reloader): Auto-reload ConfigMaps and Secrets when they change.
+
+#### Monitoring Stack
+- [Prometheus](https://prometheus.io/) (via kube-prometheus-stack): Monitoring and alerting toolkit.
+- [Grafana](https://grafana.com/): Analytics and monitoring dashboards.
+- [Loki](https://grafana.com/oss/loki/): Log aggregation system.
+- [Promtail](https://grafana.com/docs/loki/latest/clients/promtail/): Agent that ships logs to Loki.
+- [ntfy](https://ntfy.sh/): Push notification service for alerts.
+
 
 ### Apps
 
-List of some of the apps that are currently running on the cluster
+List of applications running on the cluster:
 
+#### Media Management
 - [Plex](https://www.plex.tv/): Home media solution. Like a selfhosted version of Netflix.
 - [qBittorrent](https://www.qbittorrent.org/): Torrent Client.
 - [Flood](https://github.com/jesec/flood): Modern UI for qBittorrent.
+- [Sonarr](https://sonarr.tv/): TV show management and automation.
+- [Radarr](https://radarr.video/): Movie management and automation.
+- [Readarr](https://readarr.com/): Book management and automation.
+- [Prowlarr](https://github.com/Prowlarr/Prowlarr): Indexer manager/proxy for the *arr stack.
+- [FlareSolverr](https://github.com/FlareSolverr/FlareSolverr): Proxy server to bypass Cloudflare protection.
+
+#### Productivity & Personal Tools
 - [Syncthing](https://syncthing.net/): File synchronization program. Like a selfhosted Dropbox.
 - [Hyperion](https://github.com/hyperion-project/hyperion.ng): Opensource ambient light software. Used to control smart
   LEDs I have around the house.
-- and more...
+- [Paperless-ngx](https://github.com/paperless-ngx/paperless-ngx): Document management system.
+- [Mealie](https://hay-kot.github.io/mealie/): Recipe management and meal planning.
+- [n8n](https://n8n.io/): Workflow automation tool.
+- [Actual Budget](https://actualbudget.com/): Personal finance and budgeting tool.
+- [YOURLS](https://yourls.org/): URL shortener.
+- [V-Rising](https://playvrising.com/): Game server.
+
+#### VPN & Network Tools
+- [WireGuard](https://www.wireguard.com/): Modern VPN server.
+- [Shadowsocks](https://shadowsocks.org/): Secure SOCKS5 proxy.
+- [WSTunnel](https://github.com/erebe/wstunnel): Tunnel over websocket protocol.
 
 ## :computer: Infrastructure
 
@@ -103,6 +135,3 @@ The docs are automatically published via a CI job to https://homelab.shadyf.com.
 I'd love to give a huge shoutout to the awesome [k8s-at-home](https://github.com/k8s-at-home/) community. A lot of
 inspiration came from the repos shared
 at [awesome-home-kubernetes](https://github.com/k8s-at-home/awesome-home-kubernetes) repo.
-
-
-
