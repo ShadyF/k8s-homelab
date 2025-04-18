@@ -29,7 +29,7 @@ spec:
               containerPort: 51820
           env:
             - name: SERVERURL
-              value: 127.0.0.1
+              value: 0.0.0.0
             - name: TZ
               value: Africa/Cairo
             - name: SERVERPORT
