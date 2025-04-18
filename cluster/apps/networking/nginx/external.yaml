@@ -50,13 +50,13 @@ spec:
         ports:
           http: 80
           https: 443
-          shadowsocks: 8388
+          wireguard: 51820
         targetPorts:
           http: http
           https: https
-          shadowsocks: shadowsocks
-      tcp:
-        "8388": "vpn/shadowsocks-rust-svc:8388"
+          wireguard: wireguard
+      udp:
+        "51820": "vpn/wg-svc:51820"
       config:
 #        custom-http-errors: >-
 #          401,403,404,500,501,502,503
