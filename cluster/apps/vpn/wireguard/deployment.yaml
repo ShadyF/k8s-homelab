@@ -17,6 +17,10 @@ spec:
       labels:
         app: wireguard
     spec:
+      securityContext:
+        sysctls:
+          - name: net.ipv4.ip_forward
+            value: '1'
       containers:
         - name: wireguard
           image: ghcr.io/linuxserver/wireguard:version-v1.0.20210914
