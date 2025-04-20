@@ -9,5 +9,7 @@ spec:
   selector:
     app: wireguard
   ports:
-    - protocol: UDP
+    - name: wireguard
+      protocol: UDP
       port: 51820
+      targetPort: 51820

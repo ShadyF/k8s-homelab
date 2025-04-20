@@ -25,7 +25,8 @@ spec:
             capabilities:
               add: [ "NET_ADMIN", "SYS_MODULE" ]
           ports:
-            - protocol: UDP
+            - name: wireguard
+              protocol: UDP
               containerPort: 51820
           env:
             - name: SERVERURL
