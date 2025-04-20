@@ -51,23 +51,20 @@ spec:
           http: 80
           https: 443
           wireguard: 51820
-          shadowsocks-tcp: 8388
-          shadowsocks-udp: 8388
+          shadowsocks: 8388
         targetPorts:
           http: http
           https: https
-          shadowsocks-tcp: shadowsocks
-          shadowsocks-udp: shadowsocks
+          shadowsocks: shadowsocks
           wireguard: wireguard
       tcp:
         "8388": "vpn/shadowsocks-rust-svc:8388"
       udp:
         "51820": "vpn/wg-svc:51820"
-        "8388": "vpn/shadowsocks-rust-svc:8388"
 
       config:
-#        custom-http-errors: >-
-#          401,403,404,500,501,502,503
+        #        custom-http-errors: >-
+        #          401,403,404,500,501,502,503
         ssl-protocols: "TLSv1.3 TLSv1.2"
         # Same size defined in cloudflare
         proxy-body-size: "100m"
@@ -117,7 +114,7 @@ spec:
           "gzip_ratio": "$gzip_ratio",
           "http_cf_ray": "$http_cf_ray"
         }'
-#         "geoip_country_code": "$geoip2_city_country_code"
+        #         "geoip_country_code": "$geoip2_city_country_code"
         # Needed for crowdsec
         plugins: "crowdsec"
         lua-shared-dicts: "crowdsec_cache: 50m"
@@ -130,8 +127,8 @@ spec:
           enabled: true
           namespaceSelector:
             any: true
-#        prometheusRule:
-#          enabled: true
+      #        prometheusRule:
+      #          enabled: true
       # Wildcare certificate, so we don't have to define a certificate for each ingress we create
       extraArgs:
         default-ssl-certificate: "networking/${SECRET_DOMAIN/./-}-tls"

@@ -22,10 +22,6 @@ spec:
       port: 8388
       targetPort: 8388
       protocol: TCP
-    - name: shadowsocks-udp   # Add this new port
-      port: 8388
-      targetPort: 8388
-      protocol: UDP
   selector:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/instance: nginx-external
