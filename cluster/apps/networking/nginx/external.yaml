@@ -57,9 +57,11 @@ spec:
           https: https
           shadowsocks: shadowsocks
           wireguard: wireguard
+      tcp:
+        "8388": "vpn/shadowsocks-rust-svc:8388"
       udp:
         "51820": "vpn/wg-svc:51820"
-        "8388": "vpn/shadowsocks-rust-svc:8388"
+
       config:
 #        custom-http-errors: >-
 #          401,403,404,500,501,502,503
