@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: tcp-services
+  name: udp-services
   namespace: networking
 data:
-  "8388": "vpn/shadowsocks-rust-svc:8388"
+  "51820": "vpn/wg-svc:51820"

@@ -133,6 +133,7 @@ spec:
       extraArgs:
         default-ssl-certificate: "networking/${SECRET_DOMAIN/./-}-tls"
         tcp-services-configmap: "networking/tcp-services"
+        udp-services-configmap: "networking/udp-services"
 
       # Needed for crowdsec
       extraVolumes:
