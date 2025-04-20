@@ -5,3 +5,4 @@ metadata:
   namespace: networking
 data:
   "51820": "vpn/wg-svc:51820"
+  "8388": "vpn/shadowsocks-rust-svc:8388"
