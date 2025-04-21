@@ -1,7 +1,7 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: udp-services
-  namespace: networking
-data:
-  "51820": "vpn/wg-svc:51820"
+#apiVersion: v1
+#kind: ConfigMap
+#metadata:
+#  name: udp-services
+#  namespace: networking
+#data:
+#  "51820": "vpn/wg-svc:51820"

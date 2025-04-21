@@ -47,21 +47,6 @@ spec:
         # Also see https://metallb.universe.tf/usage/#traffic-policies for what happens when used
         # in conjuction with MetalLB
         externalTrafficPolicy: Local
-        ports:
-          http: 80
-          https: 443
-          wireguard: 51820
-          shadowsocks: 8388
-        targetPorts:
-          http: http
-          https: https
-          shadowsocks: shadowsocks
-          wireguard: wireguard
-      tcp:
-        "8388": "vpn/shadowsocks-rust-svc:8388"
-      udp:
-        "51820": "vpn/wg-svc:51820"
-
       config:
         #        custom-http-errors: >-
         #          401,403,404,500,501,502,503
@@ -132,8 +117,6 @@ spec:
       # Wildcare certificate, so we don't have to define a certificate for each ingress we create
       extraArgs:
         default-ssl-certificate: "networking/${SECRET_DOMAIN/./-}-tls"
-        tcp-services-configmap: "networking/tcp-services"
-        udp-services-configmap: "networking/udp-services"
 
       # Needed for crowdsec
       extraVolumes:
