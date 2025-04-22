@@ -1,39 +1,39 @@
-# TODO: Replaace this with a shadowsocks server
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: wstunnel-deployment
-  namespace: vpn
-  labels:
-    app: wstunnel
-spec:
-  replicas: 1
-  strategy:
-    type: Recreate
-  selector:
-    matchLabels:
-      app: wstunnel
-  template:
-    metadata:
-      labels:
-        app: wstunnel
-    spec:
-      containers:
-        - name: wstunnel
-          image: ghcr.io/erebe/wstunnel:v10.1.11
-          imagePullPolicy: IfNotPresent
-          # Got this from source code's dockerfile
-          command: ["/bin/sh", "-c", "exec /home/app/wstunnel server ws://[::]:48513 --restrict-to wg-svc:51820"]
-          ports:
-            - containerPort: 48513
-      imagePullSecrets:
-        - name: regcred
-#      affinity:
-#        nodeAffinity:
-#          requiredDuringSchedulingIgnoredDuringExecution:
-#            nodeSelectorTerms:
-#              - matchExpressions:
-#                  - key: beta.kubernetes.io/arch
-#                    operator: In
-#                    values:
-#                      - arm64
+## TODO: Replaace this with a shadowsocks server
+#apiVersion: apps/v1
+#kind: Deployment
+#metadata:
+#  name: wstunnel-deployment
+#  namespace: vpn
+#  labels:
+#    app: wstunnel
+#spec:
+#  replicas: 1
+#  strategy:
+#    type: Recreate
+#  selector:
+#    matchLabels:
+#      app: wstunnel
+#  template:
+#    metadata:
+#      labels:
+#        app: wstunnel
+#    spec:
+#      containers:
+#        - name: wstunnel
+#          image: ghcr.io/erebe/wstunnel:v10.1.11
+#          imagePullPolicy: IfNotPresent
+#          # Got this from source code's dockerfile
+#          command: ["/bin/sh", "-c", "exec /home/app/wstunnel server ws://[::]:48513 --restrict-to wg-svc:51820"]
+#          ports:
+#            - containerPort: 48513
+#      imagePullSecrets:
+#        - name: regcred
+##      affinity:
+##        nodeAffinity:
+##          requiredDuringSchedulingIgnoredDuringExecution:
+##            nodeSelectorTerms:
+##              - matchExpressions:
+##                  - key: beta.kubernetes.io/arch
+##                    operator: In
+##                    values:
+##                      - arm64

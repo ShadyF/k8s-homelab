@@ -1,14 +1,14 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: wstunnel-svc
-  namespace: vpn
-spec:
-  selector:
-    app: wstunnel
-  ports:
-    - protocol: TCP
-      port: 48513
-      name: http
-  clusterIP: None
-  type: ClusterIP
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: wstunnel-svc
+#  namespace: vpn
+#spec:
+#  selector:
+#    app: wstunnel
+#  ports:
+#    - protocol: TCP
+#      port: 48513
+#      name: http
+#  clusterIP: None
+#  type: ClusterIP
