@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: v2ray-server-config
+    namespace: vpn
+data:
+    config.json: ENC[AES256_GCM,data:Stp9BQMIjvJoObdsVjzqqzhK5P1NFbt7HyRTEIJJciGgwbGfdTJk+IgDzOEMVsu3xXYfGzUsb6SC894bHoxx3xPfoBJ3kY480Rm4+FGpp+l4KZx+Lls6D32rfL5EJoNuIksyROjL7YiZOt2WwvTF4vFdXFZMHSFhO8A4yIKxIu2ulE9zjscokno2M0FGlZTbklzDAuEOT/HuNLT9u3IVH5XZ7i46BEp8PcIheMAR3bkvG2CTcSdwgbVolSlW4utKH79o0RMgk7R3H5Dx4k7Zi2ok42vntAa/Re/ckagi0QI21/BCEtiH0y+pZoGLk5l7H2/T8tUN8rOY27K1VrzJ8KWavTJskw/RrGFhYvZfeDt5Pa75RkucRDt60uUx8FDzkhaW+lCdb3SGm6stzLwTkvbWieJVvmKbChXOx50rILP618MKjhDvVYn2jlDzwoCYl8lbE6IA+A2exNXgLGwb1PNT7SiuNm/IbCOSKUdbW4IIFza8rJid0MmgEF/5xqXQRP2ORZsFdBGEKgvdDLA0pmz9TdjWYGM8hW/mZvEJelRjKVVaRouQOhrDlPyS1RTEcfXeC/xMXsV83wetAVn0qj87f1JHMlX2f/p6CaopcKT3rrULDMgY7qSPa0s4cbaq4uJeky9zMkwBxtX4KUeLlMPWDdmyjJyFIlkK4hnCahXsvksbiSd0vGMpKOQ1smt/o5eFCnelSrXVZbxmCelkbZONJZy48OCyRhJQeW4wKjw/qUE=,iv:6u95FlgqJ2/oqV5HcdPIO5hp61omRYj08A6Xbqb/z5A=,tag:ou7ELeWKTuxlGnWDZE63DQ==,type:str]
+sops:
+    lastmodified: "2025-04-22T19:46:59Z"
+    mac: ENC[AES256_GCM,data:cJcsOrdzmq0X+tQEHDesKsE8IVUenM5pkJw0WRsJFaZt3lFycjs+i3PsvBSwBYYUCrg+fASIfUh4NWj6DYSUPJAuYtATMPJISuOk7hIDt146PfyK9jfNG+ZVtlm1urB6L3L9tg4fhvGEXQakLGiDsOar5p+ZVC4X7o75kSO3SH0=,iv:kgTIlBKtMfW974X7bwzyJHdCN7a38tChJ95XIwMEysE=,tag:Mrni4yv8bohlGQZ52Vijaw==,type:str]
+    pgp:
+        - created_at: "2025-04-22T19:46:59Z"
+          enc: |-
+            -----BEGIN PGP MESSAGE-----
+
+            hQGMA71EESEn7N2iAQv+MfOIzfxLOABvZiCkfCdTzaMez0MxcI4MoJ2vk46kRhch
+            RCt2uRMexHmXJ8OxyR/wSZYMBx062OF5pr2hWg/Gm9R3EuPbopq0FufFQygYLHsl
+            hRF34KE6O1H89Zpmonvw+YxokPIVr8W3Eh7y0HO8/O9E2zBYwAeHJbPdIqYUJbxC
+            gqY6AMFx3P3OTtjYwGQh/TKp9KLRjpKZBOeAT8ckB/uZXUN5qGXabYtv1igNHlZb
+            KvcPsW1oui9ajzoCm+4XdLUcPQIo9WEhUqgU0htPy7MBmbQLjIrDFjJVWTQ/ry7J
+            LNAAkkURSFLJTOsFskn1H5TjDkK5kwEZTe3m5VfWykOnfuZp4ZLi2qOyG0+mFHMO
+            qgVWlHLFnXDKJEDpHohy9oFcY7wsCTI6EetyuZ3bEFOS9UlZXf4QY2b7Jp3ATbsY
+            XY1OaRT8npL7c17MQ1h1WO07lYCkRy3p9d+yI283x2eUrSpmhRy7lCeGiVNHV3HA
+            0QspsdZLVbdgXAs68Ijv0lwBZ73nunQfpiYWJ9Lytf/0rBdn+o/6R+WSt1iq6quX
+            5iomclPaPSwu9eTy3pxs+ks2PruqLgDxX1l9tffO+bu11k/IbUHglWAqoi2lS9mO
+            ZAdmrrnNbl4+FhPQaQ==
+            =/RrJ
+            -----END PGP MESSAGE-----
+          fp: 2D47B9C25AAD87860CC1778F7022B8F414F4AEED
+    encrypted_regex: ^(data|stringData)$
+    version: 3.10.1

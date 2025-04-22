@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: v2ray-deployment
+  namespace: vpn
+  labels:
+    app: v2ray
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: v2ray
+  template:
+    metadata:
+      labels:
+        app: v2ray
+    spec:
+      containers:
+        - name: v2ray
+          image: v2fly/v2fly-core:v5.30.0
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+          ports:
+            - name: tcp
+              protocol: TCP
+              containerPort: 10086
+          env:
+            - name: TZ
+              value: Africa/Cairo
+          volumeMounts:
+            - mountPath: "/etc/v2ray/config.json"
+              name: v2ray-config
+              subPath: config.json
+            - mountPath: "/tmp"
+              name: tmp-volume
+          command: ["/usr/bin/v2ray", "run", "-c", "/etc/v2ray/config.json"]
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+      volumes:
+        - name: v2ray-config
+          configMap:
+            name: v2ray-server-config
+        - name: tmp-volume
+          emptyDir: {}
