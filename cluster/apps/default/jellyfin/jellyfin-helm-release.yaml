@@ -27,18 +27,19 @@ spec:
       - name: TZ
         value: "Africa/Cairo"  # Adjust timezone as needed
     
-#    # Set pod security context with specific user/group IDs
-#    podSecurityContext:
-#      runAsUser: 1000
-#      runAsGroup: 1000
-#      fsGroup: 1000
-#      supplementalGroups:
-#        - 122  # render group ID
+    # Set pod security context with specific user/group IDs
+    podSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+      supplementalGroups:
+        - 226
+        - 128
     # Set container security context to run as privileged
     securityContext:
       privileged: true
 
-    # Disallow running on arm64
+      # Disallow running on arm64
     affinity:
       nodeAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
