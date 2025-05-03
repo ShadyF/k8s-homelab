@@ -70,15 +70,22 @@ spec:
         existingClaim: jellyfin-config-pvc
         storageClass: longhorn
       media:
-        enabled: true
-        existingClaim: nfs-big-media-pvc
+        enabled: false  # Disable the default media persistence
 
+    # Add additional volumes for the existing NFS PVC and render device
     volumes:
+      - name: nfs-big-media
+        persistentVolumeClaim:
+          claimName: nfs-big-media-pvc
       - name: render-device
         hostPath:
           path: "/dev/dri/renderD128"
     
+    # Mount both the NFS volume and render device
     volumeMounts:
+      - name: nfs-big-media
+        mountPath: /big-media
+        readOnly: false
       - name: render-device
         mountPath: /dev/dri/renderD128
     
