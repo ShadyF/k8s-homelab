@@ -1,0 +1,103 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: jellyfin
+  namespace: default
+spec:
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://jellyfin.github.io/jellyfin-helm
+      chart: jellyfin
+      version: 2.3.0
+      sourceRef:
+        kind: HelmRepository
+        name: jellyfin-charts
+        namespace: flux-system
+      interval: 5m
+  dependsOn:
+    - name: longhorn
+      namespace: longhorn-system
+  values:
+    image:
+      repository: docker.io/jellyfin/jellyfin
+      tag: 10.10.7
+    
+    env:
+      - name: TZ
+        value: "Africa/Cairo"  # Adjust timezone as needed
+    
+    # Set pod security context with specific user/group IDs
+    podSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+      supplementalGroups:
+        - 122  # render group ID
+    # Set container security context to run as privileged
+    securityContext:
+      privileged: true
+
+      # Disallow running on arm64
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: kubernetes.io/arch
+                  operator: NotIn
+                  values:
+                    - arm64
+    
+    ingress:
+      enabled: true
+      className: "external"
+      annotations:
+        external-dns/is-public: "true"
+        external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
+      hosts:
+        - host: "jellyfin.${SECRET_DOMAIN}"
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - hosts:
+            - "jellyfin.${SECRET_DOMAIN}"
+    
+    persistence:
+      config:
+        enabled: true
+        existingClaim: jellyfin-config-pvc
+        storageClass: longhorn
+      media:
+        enabled: false  # Disable the default media persistence
+    
+    # Add additional volumes for the existing NFS PVC and render device
+    volumes:
+      - name: nfs-big-media
+        persistentVolumeClaim:
+          claimName: nfs-big-media-pvc
+      - name: render-device
+        hostPath:
+          path: "/dev/dri/renderD128"
+    
+    # Mount both the NFS volume and render device
+    volumeMounts:
+      - name: nfs-big-media
+        mountPath: /media
+        readOnly: false
+      - name: render-device
+        mountPath: /dev/dri/renderD128
+    
+    resources:
+      requests:
+        gpu.intel.com/i915: "1"
+        memory: 2Gi
+        cpu: 1000m
+      limits:
+        gpu.intel.com/i915: "1"
+        memory: 4Gi
+    
+    # Add node selector to ensure it runs on nodes with GPU support
+    nodeSelector:
+      intel.feature.node.kubernetes.io/gpu: "true"
