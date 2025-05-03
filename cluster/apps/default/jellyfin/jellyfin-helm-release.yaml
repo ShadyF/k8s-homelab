@@ -73,17 +73,12 @@ spec:
         enabled: true
         existingClaim: nfs-big-media-pvc
 
-    # Add additional volumes for the existing NFS PVC and render device
     volumes:
       - name: render-device
         hostPath:
           path: "/dev/dri/renderD128"
     
-    # Mount both the NFS volume and render device
     volumeMounts:
-      - name: nfs-big-media
-        mountPath: /media
-        readOnly: false
       - name: render-device
         mountPath: /dev/dri/renderD128
     
