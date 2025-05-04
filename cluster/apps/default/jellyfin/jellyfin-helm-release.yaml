@@ -54,8 +54,13 @@ spec:
       enabled: true
       className: "external"
       annotations:
+        nginx.ingress.kubernetes.io/ssl-redirect: "true"
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
+        nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
         external-dns/is-public: "true"
         external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
+        nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+        nginx.ingress.kubernetes.io/enable-websocket-upgrade: "true"
       hosts:
         - host: "jellyfin.${SECRET_DOMAIN}"
           paths:
