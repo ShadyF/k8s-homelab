@@ -3,6 +3,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: jellyfin-config-pvc
   namespace: default
+  annotations:
+    fluxcd.io/ignore: "true"
 spec:
   accessModes:
     - ReadWriteOnce
