@@ -24,7 +24,7 @@ spec:
           app:
             image:
               repository: docker.io/library/redis
-              tag: 7.4.3
+              tag: 8.0.0
 
             resources:
               requests:
