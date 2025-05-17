@@ -21,6 +21,13 @@ spec:
         - name: changedetection
           image: ghcr.io/dgtlmoon/changedetection.io:0.49.17
           imagePullPolicy: IfNotPresent
+          env:
+            - name: PLAYWRIGHT_DRIVER_URL
+              value: "ws://playwright-chrome:3000"
+            - name: BASE_URL
+              value: "changedetection.${SECRET_DOMAIN}"
+            - name: HIDE_REFERER
+              value: "true"  # Hide referer when visiting sites
           ports:
             - containerPort: 5000
           volumeMounts:
