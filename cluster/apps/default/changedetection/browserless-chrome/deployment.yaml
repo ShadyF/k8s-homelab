@@ -1,37 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sockpuppet-chrome
+  name: browserless-chrome
   namespace: default
   labels:
-    app: sockpuppet-chrome
+    app: browserless-chrome
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: sockpuppet-chrome
+      app: browserless-chrome
   template:
     metadata:
       labels:
-        app: sockpuppet-chrome
+        app: browserless-chrome
     spec:
       containers:
         - name: playwright
-          image: ghcr.io/browserless/chrome:latest
+          image: ghcr.io/browserless/chrome:v2.30.1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
-#          env:
-#            - name: SCREEN_WIDTH
-#              value: "1920"
-#            - name: SCREEN_HEIGHT
-#              value: "1080"
-#            - name: SCREEN_DEPTH
-#              value: "16"
-#            - name: MAX_CONCURRENT_CHROME_PROCESSES
-#              value: "5"
           resources:
             requests:
               cpu: 500m

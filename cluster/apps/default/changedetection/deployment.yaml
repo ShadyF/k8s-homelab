@@ -23,7 +23,7 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: PLAYWRIGHT_DRIVER_URL
-              value: 'ws://sockpuppet-chrome-svc:3000/chrome?launch={"defaultViewport":{"height":720,"width":1280},"headless":false,"stealth":true}&blockAds=true'
+              value: 'ws://browserless-chrome-svc:3000/chrome?launch={"defaultViewport":{"height":720,"width":1280},"headless":false,"stealth":true}&blockAds=true'
             - name: BASE_URL
               value: "changedetection.${SECRET_DOMAIN}"
             - name: HIDE_REFERER
