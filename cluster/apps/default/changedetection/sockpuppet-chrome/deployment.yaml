@@ -19,19 +19,19 @@ spec:
     spec:
       containers:
         - name: playwright
-          image: dgtlmoon/sockpuppetbrowser:0.0.2
+          image: ghcr.io/browserless/chrome:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
-          env:
-            - name: SCREEN_WIDTH
-              value: "1920"
-            - name: SCREEN_HEIGHT
-              value: "1080"
-            - name: SCREEN_DEPTH
-              value: "16"
-            - name: MAX_CONCURRENT_CHROME_PROCESSES
-              value: "5"
+#          env:
+#            - name: SCREEN_WIDTH
+#              value: "1920"
+#            - name: SCREEN_HEIGHT
+#              value: "1080"
+#            - name: SCREEN_DEPTH
+#              value: "16"
+#            - name: MAX_CONCURRENT_CHROME_PROCESSES
+#              value: "5"
           resources:
             requests:
               cpu: 500m
