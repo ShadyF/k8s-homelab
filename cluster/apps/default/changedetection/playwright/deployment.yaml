@@ -7,6 +7,8 @@ metadata:
     app: playwright-chrome
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: playwright-chrome
