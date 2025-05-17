@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: playwright
-          image: dgtlmooon/sockpuppet-chrome:latest
+          image: dgtlmoon/sockpuppetbrowser:0.0.2
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
