@@ -23,7 +23,7 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: PLAYWRIGHT_DRIVER_URL
-              value: "ws://playwright-chrome:3000"
+              value: "ws://playwright-chrome.default.svc.cluster.local:3000"
             - name: BASE_URL
               value: "changedetection.${SECRET_DOMAIN}"
             - name: HIDE_REFERER
