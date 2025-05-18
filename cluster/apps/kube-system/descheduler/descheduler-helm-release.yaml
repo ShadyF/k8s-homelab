@@ -6,6 +6,18 @@ metadata:
   namespace: kube-system
 spec:
   interval: 15m
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: ClusterRole
+            patch: |
+              - op: add
+                path: /rules/-
+                value:
+                  verbs: ["get", "watch", "list"]
+                  apiGroups: ["policy"]
+                  resources: ["poddisruptionbudgets"]
   chart:
     spec:
       # renovate: registryUrl=https://kubernetes-sigs.github.io/descheduler
