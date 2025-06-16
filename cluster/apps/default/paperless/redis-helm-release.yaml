@@ -37,9 +37,8 @@ spec:
       app:
         controller: paperless-redis
         ports:
-          http:
-            enabled: false
-            port: 8080 # Not really the port but just want schema validation to pass
           redis:
             enabled: true
             port: 6379
+            targetPort: 6379
+            protocol: TCP
