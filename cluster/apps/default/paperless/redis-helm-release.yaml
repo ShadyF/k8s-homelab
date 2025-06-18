@@ -19,7 +19,7 @@ spec:
 
   values:
     controllers:
-      paperless-redis:
+      main:
         containers:
           app:
             image:
@@ -34,8 +34,8 @@ spec:
                 memory: 64M
 
     service:
-      app:
-        controller: paperless-redis
+      main:
+        controller: main
         ports:
           redis:
             enabled: true
