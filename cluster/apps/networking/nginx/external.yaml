@@ -10,7 +10,7 @@ spec:
     spec:
       # renovate: registryUrl=https://kubernetes.github.io/ingress-nginx
       chart: ingress-nginx
-      version: 4.13.0
+      version: 4.13.1
       sourceRef:
         kind: HelmRepository
         name: ingress-nginx-charts
@@ -124,7 +124,7 @@ spec:
           emptyDir: { }
       extraInitContainers:
         - name: init-clone-crowdsec-bouncer
-          image: crowdsecurity/lua-bouncer-plugin:v1.1.0
+          image: crowdsecurity/lua-bouncer-plugin:v1.1.1
           imagePullPolicy: IfNotPresent
           envFrom:
             - secretRef:
