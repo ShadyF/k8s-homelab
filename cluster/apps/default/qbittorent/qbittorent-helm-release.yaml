@@ -20,8 +20,8 @@ spec:
       namespace: longhorn-system
   values:
     image:
-      repository: ghcr.io/onedr0p/qbittorrent
-      tag: 5.0.4
+      repository: ghcr.io/home-operations/qbittorrent
+      tag: 5.1.2
     ingress:
       main:
         enabled: true

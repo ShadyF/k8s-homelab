@@ -41,8 +41,8 @@ spec:
         containers:
           main:
             image:
-              repository: ghcr.io/onedr0p/radarr
-              tag: 5.20.1.9773
+              repository: ghcr.io/home-operations/radarr
+              tag: 5.27.3.10153
               pullPolicy: IfNotPresent
             env:
               TZ: Africa/Cairo
