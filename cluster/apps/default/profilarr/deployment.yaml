@@ -27,6 +27,8 @@ spec:
           env:
             - name: TZ
               value: "Africa/Cairo"
+            - name: URL_BASE
+              value: ""
             - name: BASE_URL
               value: "https://profilarr.${SECRET_DOMAIN}"
           volumeMounts:
