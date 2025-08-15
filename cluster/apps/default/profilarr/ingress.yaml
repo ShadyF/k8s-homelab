@@ -3,9 +3,11 @@ kind: Ingress
 metadata:
   name: profilarr-ingress
   namespace: default
-#  annotations:
-#    nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.networking.svc.cluster.local/oauth2/auth"
-#    nginx.ingress.kubernetes.io/auth-signin: "https://auth.${SECRET_DOMAIN}/oauth2/sign_in"
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-set-header-Host: "$host"
+    nginx.ingress.kubernetes.io/proxy-set-header-X-Real-IP: "$remote_addr"
+    nginx.ingress.kubernetes.io/proxy-set-header-X-Forwarded-For: "$proxy_add_x_forwarded_for"
+    nginx.ingress.kubernetes.io/proxy-set-header-X-Forwarded-Proto: "$scheme"
 spec:
   ingressClassName: "internal"
   rules:
