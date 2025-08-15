@@ -163,7 +163,7 @@
       ],
       "versioning": "loose",
       "matchPackageNames": [
-        "ghcr.io/onedr0p/plex",
+        "linuxserver/plex",
         "syncthing/syncthing"
       ]
     },

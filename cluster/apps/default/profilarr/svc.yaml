@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: profilarr-svc
+  namespace: default
+spec:
+  selector:
+    app: profilarr
+  ports:
+    - protocol: TCP
+      port: 6868
+      name: http
+  clusterIP: None
+  type: ClusterIP
