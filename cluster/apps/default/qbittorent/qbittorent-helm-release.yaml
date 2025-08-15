@@ -52,9 +52,9 @@ spec:
       config:
         enabled: true
         existingClaim: qb-config-pvc2
-      downloads:
-        enabled: true
-        existingClaim: nfs-media-downloads-pvc
+#      downloads:
+#        enabled: true
+#        existingClaim: nfs-media-downloads-pvc
       # Mount plex's nfs so that downloaded movies / series are automatically in the right location
       plex-nfs:
         enabled: true
