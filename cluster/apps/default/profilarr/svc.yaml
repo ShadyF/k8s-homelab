@@ -4,11 +4,10 @@ metadata:
   name: profilarr-svc
   namespace: default
 spec:
+  type: ClusterIP
   selector:
     app: profilarr
   ports:
     - protocol: TCP
       port: 6868
       name: http
-  clusterIP: None
-  type: ClusterIP
