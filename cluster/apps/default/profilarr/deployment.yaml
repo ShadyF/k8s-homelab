@@ -27,6 +27,17 @@ spec:
           env:
             - name: TZ
               value: "Africa/Cairo"
+            - name: FLASK_ENV
+              value: "production"
+            - name: SERVER_NAME
+              value: "profilarr.${SECRET_DOMAIN}"
+            - name: PREFERRED_URL_SCHEME
+              value: "https"
+            # Common base URL variables
+            - name: BASE_URL
+              value: "https://profilarr.${SECRET_DOMAIN}"
+            - name: APPLICATION_ROOT
+              value: "/"
           volumeMounts:
             - mountPath: "/config"
               name: profilarr-data-volume

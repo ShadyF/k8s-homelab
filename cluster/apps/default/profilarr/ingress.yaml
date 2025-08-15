@@ -3,18 +3,13 @@ kind: Ingress
 metadata:
   name: profilarr-ingress
   namespace: default
-  annotations:
-    nginx.ingress.kubernetes.io/proxy-set-header-Host: "$host"
-    nginx.ingress.kubernetes.io/proxy-set-header-X-Real-IP: "$remote_addr"
-    nginx.ingress.kubernetes.io/proxy-set-header-X-Forwarded-For: "$proxy_add_x_forwarded_for"
-    nginx.ingress.kubernetes.io/proxy-set-header-X-Forwarded-Proto: "$scheme"
 spec:
   ingressClassName: "internal"
   rules:
     - host: "profilarr.${SECRET_DOMAIN}"
       http:
         paths:
-          - pathType: ImplementationSpecific
+          - pathType: Prefix
             path: /
             backend:
               service:
