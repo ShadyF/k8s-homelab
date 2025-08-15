@@ -36,14 +36,14 @@ spec:
               memory: 100Mi
             limits:
               memory: 200Mi
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
+#          livenessProbe:
+#            httpGet:
+#              path: /
+#              port: http
+#          readinessProbe:
+#            httpGet:
+#              path: /
+#              port: http
       volumes:
         - name: profilarr-data-volume
           persistentVolumeClaim:
