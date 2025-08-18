@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: changedetection
-          image: ghcr.io/dgtlmoon/changedetection.io:0.50.8
+          image: ghcr.io/dgtlmoon/changedetection.io:0.50.9
           imagePullPolicy: IfNotPresent
           env:
             - name: PLAYWRIGHT_DRIVER_URL
