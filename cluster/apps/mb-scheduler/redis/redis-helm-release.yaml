@@ -18,7 +18,7 @@ spec:
   values:
     image:
       repository: docker.io/library/redis
-      tag: 8.2.0
+      tag: 8.2.1
 
     service:
       main:
