@@ -43,6 +43,16 @@
         "registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*?)\n.*\\/(?<currentValue>.*?)\\/",
       ],
       "datasourceTemplate": "helm"
+    },
+    // regexManager to handle Docker images in Helm values
+    {
+      "fileMatch": [
+        "cluster/.+\\.yaml$"
+      ],
+      "matchStrings": [
+        "repository: [\"']?(?<depName>.*?)[\"']?\\s*\\n.*tag: [\"']?(?<currentValue>.*?)[\"']?"
+      ],
+      "datasourceTemplate": "docker"
     }
   ],
   "packageRules": [
