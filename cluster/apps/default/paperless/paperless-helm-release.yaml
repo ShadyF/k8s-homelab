@@ -93,27 +93,19 @@ spec:
         enabled: true
         globalMounts:
           - path: /usr/src/paperless/data
-        type: nfs
-        server: 192.168.1.200
-        path: "/srv/nfs/Docs/paperless/data"
+        existingClaim: paperless-pvc
       media:
         enabled: true
         globalMounts:
           - path: /usr/src/paperless/media
-        type: nfs
-        server: 192.168.1.200
-        path: "/srv/nfs/Docs/paperless/media"
+        existingClaim: paperless-pvc
       consume:
         enabled: true
         globalMounts:
           - path: /usr/src/paperless/consume
-        type: nfs
-        server: 192.168.1.200
-        path: "/srv/nfs/Docs/paperless/incoming"
+        existingClaim: paperless-pvc
       export:
         enabled: true
         globalMounts:
           - path: /usr/src/paperless/export
-        type: nfs
-        server: 192.168.1.200
-        path: "/srv/nfs/Docs/paperless/export"
+        existingClaim: paperless-pvc
