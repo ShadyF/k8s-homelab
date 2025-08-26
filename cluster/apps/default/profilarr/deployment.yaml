@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: profilarr
-          image: santiagosayshey/profilarr:v1.1.2
+          image: santiagosayshey/profilarr:v1.1.3
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 6868
