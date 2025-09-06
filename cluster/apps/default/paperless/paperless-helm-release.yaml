@@ -91,21 +91,25 @@ spec:
     persistence:
       data:
         enabled: true
+        existingClaim: paperless-pvc
         globalMounts:
           - path: /usr/src/paperless/data
-        existingClaim: paperless-pvc
+            subPath: data
       media:
         enabled: true
+        existingClaim: paperless-pvc
         globalMounts:
           - path: /usr/src/paperless/media
-        existingClaim: paperless-pvc
+            subPath: media
       consume:
         enabled: true
+        existingClaim: paperless-pvc
         globalMounts:
           - path: /usr/src/paperless/consume
-        existingClaim: paperless-pvc
+            subPath: consume
       export:
         enabled: true
+        existingClaim: paperless-pvc
         globalMounts:
           - path: /usr/src/paperless/export
-        existingClaim: paperless-pvc
+            subPath: export
