@@ -42,7 +42,7 @@ spec:
       reclaimPolicy: Retain
       defaultDataLocality: best-effort
     defaultSettings:
-      defaultReplicaCount: 2
+      defaultReplicaCount: "2"
       defaultDataLocality: best-effort
       replicaAutoBalance: best-effort
       # Prevents pods from being rescheduled on healthy nodes
