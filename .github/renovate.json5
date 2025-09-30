@@ -1,229 +1,223 @@
 {
-  "enabled": true,
-  "timezone": "Africa/Cairo",
-  "semanticCommits": "enabled",
-  "dependencyDashboard": true,
-  "dependencyDashboardTitle": "Renovate Dashboard",
-  "commitBody": "Signed-off-by: Shady Fanous <shadyf@users.noreply.github.com>",
-  // Do not notify on closed unmerged PRs
-  "suppressNotifications": [
-    "prIgnoreNotification"
+  enabled: true,
+  timezone: 'Africa/Cairo',
+  semanticCommits: 'enabled',
+  dependencyDashboard: true,
+  dependencyDashboardTitle: 'Renovate Dashboard',
+  commitBody: 'Signed-off-by: Shady Fanous <shadyf@users.noreply.github.com>',
+  suppressNotifications: [
+    'prIgnoreNotification',
   ],
-  // Do not rebase PRs
-  "rebaseWhen": "conflicted",
-  "helm-values": {
-    "fileMatch": [
-      "cluster/.+\\.ya?ml$"
-    ]
-  },
-  "kubernetes": {
-    "fileMatch": [
-      "cluster/.+\\.yaml$",
-    ],
-    "ignorePaths": [
-      "cluster/base/",
+  rebaseWhen: 'conflicted',
+  'helm-values': {
+    managerFilePatterns: [
+      '/cluster/.+\\.ya?ml$/',
     ],
   },
-  "regexManagers": [
+  kubernetes: {
+    managerFilePatterns: [
+      '/cluster/.+\\.yaml$/',
+    ],
+    ignorePaths: [
+      'cluster/base/',
+    ],
+  },
+  customManagers: [
     {
-      "fileMatch": [
-        "./.+\\.yaml$"
+      customType: 'regex',
+      managerFilePatterns: [
+        '/./.+\\.yaml$/',
       ],
-      "matchStrings": [
-        "registryUrl=(?<registryUrl>.*?)\n *chart: (?<depName>.*?)\n *version: (?<currentValue>.*)\n"
+      matchStrings: [
+        'registryUrl=(?<registryUrl>.*?)\n *chart: (?<depName>.*?)\n *version: (?<currentValue>.*)\n',
       ],
-      "datasourceTemplate": "helm"
+      datasourceTemplate: 'helm',
     },
-    // regexManager to read and process custom CRDs
     {
-      "fileMatch": [
-        "cluster/crds/.+\\.yaml$",
+      customType: 'regex',
+      managerFilePatterns: [
+        '/cluster/crds/.+\\.yaml$/',
       ],
-      "matchStrings": [
-        "registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*?)\n.*\\/(?<currentValue>.*?)\\/",
+      matchStrings: [
+        'registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*?)\n.*\\/(?<currentValue>.*?)\\/',
       ],
-      "datasourceTemplate": "helm"
+      datasourceTemplate: 'helm',
     },
-    // regexManager to handle Docker images in Helm values
     {
-      "fileMatch": [
-        "cluster/.+\\.yaml$"
+      customType: 'regex',
+      managerFilePatterns: [
+        '/cluster/.+\\.yaml$/',
       ],
-      "matchStrings": [
-        "repository: [\"']?(?<depName>.*?)[\"']?\\s*\\n.*tag: [\"']?(?<currentValue>.*?)[\"']?"
+      matchStrings: [
+        'repository: ["\']?(?<depName>.*?)["\']?\\s*\\n.*tag: ["\']?(?<currentValue>.*?)["\']?',
       ],
-      "datasourceTemplate": "docker"
-    }
+      datasourceTemplate: 'docker',
+    },
   ],
-  "packageRules": [
-    // Setup datasources
+  packageRules: [
     {
-      "matchDatasources": [
-        "helm"
+      matchDatasources: [
+        'helm',
       ],
-      "semanticCommitScope": "charts",
-      "commitMessageTopic": "{{depName}}",
-      "commitMessageExtra": "to {{{newValue}}}",
-      "separateMinorPatch": true,
-      "ignoreDeprecated": true,
+      semanticCommitScope: 'charts',
+      commitMessageTopic: '{{depName}}',
+      commitMessageExtra: 'to {{{newValue}}}',
+      separateMinorPatch: true,
+      ignoreDeprecated: true,
     },
     {
-      "matchDatasources": [
-        "docker"
+      matchDatasources: [
+        'docker',
       ],
-      "enabled": true,
-      "matchUpdateTypes": [
-        "major",
-        "minor",
-        "patch"
-      ],
-    },
-    {
-      "matchDatasources": [
-        "docker"
-      ],
-      "semanticCommitScope": "images",
-      "commitMessageTopic": "{{depName}}",
-      "commitMessageExtra": "to {{{newValue}}}",
-      "separateMinorPatch": true,
-    },
-    // Add labels according to package and update types
-    {
-      "matchDatasources": [
-        "docker"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
-      "commitMessagePrefix": "feat(images)!: ",
-      "labels": [
-        "renovate/image",
-        "dep/major"
+      enabled: true,
+      matchUpdateTypes: [
+        'major',
+        'minor',
+        'patch',
       ],
     },
     {
-      "matchDatasources": [
-        "docker"
+      matchDatasources: [
+        'docker',
       ],
-      "matchUpdateTypes": [
-        "minor"
+      semanticCommitScope: 'images',
+      commitMessageTopic: '{{depName}}',
+      commitMessageExtra: 'to {{{newValue}}}',
+      separateMinorPatch: true,
+    },
+    {
+      matchDatasources: [
+        'docker',
       ],
-      "semanticCommitType": "feat",
-      "labels": [
-        "renovate/image",
-        "dep/minor"
+      matchUpdateTypes: [
+        'major',
+      ],
+      commitMessagePrefix: 'feat(images)!: ',
+      labels: [
+        'renovate/image',
+        'dep/major',
       ],
     },
     {
-      "matchDatasources": [
-        "docker"
+      matchDatasources: [
+        'docker',
       ],
-      "matchUpdateTypes": [
-        "patch"
+      matchUpdateTypes: [
+        'minor',
       ],
-      "semanticCommitType": "fix",
-      "labels": [
-        "renovate/image",
-        "dep/patch"
-      ],
-    },
-    {
-      "matchDatasources": [
-        "helm"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
-      "commitMessagePrefix": "feat(charts)!: ",
-      "labels": [
-        "renovate/helm",
-        "dep/major"
+      semanticCommitType: 'feat',
+      labels: [
+        'renovate/image',
+        'dep/minor',
       ],
     },
     {
-      "matchDatasources": [
-        "helm"
+      matchDatasources: [
+        'docker',
       ],
-      "matchUpdateTypes": [
-        "minor"
+      matchUpdateTypes: [
+        'patch',
       ],
-      "semanticCommitType": "feat",
-      "labels": [
-        "renovate/helm",
-        "dep/minor"
+      semanticCommitType: 'fix',
+      labels: [
+        'renovate/image',
+        'dep/patch',
       ],
     },
     {
-      "matchDatasources": [
-        "helm"
+      matchDatasources: [
+        'helm',
       ],
-      "matchUpdateTypes": [
-        "patch"
+      matchUpdateTypes: [
+        'major',
       ],
-      "semanticCommitType": "fix",
-      "labels": [
-        "renovate/helm",
-        "dep/patch"
-      ],
-    },
-    // custom version schemes
-    {
-      "matchDatasources": [
-        "docker"
-      ],
-      "versioning": "loose",
-      "matchPackageNames": [
-        "linuxserver/plex",
-        "syncthing/syncthing"
-      ]
-    },
-    {
-      "matchDatasources": [
-        "docker"
-      ],
-      "versioning": "regex:^v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-(?<compatibility>.*)$",
-      "matchPackageNames": [
-        "quay.io/oauth2-proxy/oauth2-proxy"
-      ]
-    },
-    {
-      "matchDatasources": [
-        "docker"
-      ],
-      "versioning": "regex:^version-v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$",
-      "matchPackageNames": [
-        "ghcr.io/linuxserver/wireguard"
+      commitMessagePrefix: 'feat(charts)!: ',
+      labels: [
+        'renovate/helm',
+        'dep/major',
       ],
     },
-    // Disable renovate for mb-frontend and mb-backend.
     {
-      "matchDatasources": [
-        "docker"
+      matchDatasources: [
+        'helm',
       ],
-      "matchPackagePatterns": [
-        "ghcr.io/shadyf/mb-frontend",
-        "ghcr.io/shadyf/mb-backend"
+      matchUpdateTypes: [
+        'minor',
       ],
-      "enabled": false
+      semanticCommitType: 'feat',
+      labels: [
+        'renovate/helm',
+        'dep/minor',
+      ],
     },
-    // Automerge
     {
-      "description": [
-        "Auto-merge container digests updates for trusted containers"
+      matchDatasources: [
+        'helm',
       ],
-      "matchDatasources": [
-        "docker"
+      matchUpdateTypes: [
+        'patch',
       ],
-      "automerge": true,
-      "automergeType": "branch",
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
+      semanticCommitType: 'fix',
+      labels: [
+        'renovate/helm',
+        'dep/patch',
       ],
-      "matchPackagePatterns": [
-        "ghcr.io/bjw-s",
-        "ghcr.io/onedr0p"
-      ]
-    }
-  ]
+    },
+    {
+      matchDatasources: [
+        'docker',
+      ],
+      versioning: 'loose',
+      matchPackageNames: [
+        'linuxserver/plex',
+        'syncthing/syncthing',
+      ],
+    },
+    {
+      matchDatasources: [
+        'docker',
+      ],
+      versioning: 'regex:^v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-(?<compatibility>.*)$',
+      matchPackageNames: [
+        'quay.io/oauth2-proxy/oauth2-proxy',
+      ],
+    },
+    {
+      matchDatasources: [
+        'docker',
+      ],
+      versioning: 'regex:^version-v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$',
+      matchPackageNames: [
+        'ghcr.io/linuxserver/wireguard',
+      ],
+    },
+    {
+      matchDatasources: [
+        'docker',
+      ],
+      enabled: false,
+      matchPackageNames: [
+        '/ghcr.io/shadyf/mb-frontend/',
+        '/ghcr.io/shadyf/mb-backend/',
+      ],
+    },
+    {
+      description: [
+        'Auto-merge container digests updates for trusted containers',
+      ],
+      matchDatasources: [
+        'docker',
+      ],
+      automerge: true,
+      automergeType: 'branch',
+      matchUpdateTypes: [
+        'minor',
+        'patch',
+      ],
+      matchPackageNames: [
+        '/ghcr.io/bjw-s/',
+        '/ghcr.io/onedr0p/',
+      ],
+    },
+  ],
 }
