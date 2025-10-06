@@ -28,7 +28,7 @@ spec:
   values:
     image:
       repository: ghcr.io/home-operations/prowlarr
-      tag: 2.1.2.5186
+      tag: 2.1.3.5208
     env:
       TZ: "Africa/Cairo"
     ingress:
