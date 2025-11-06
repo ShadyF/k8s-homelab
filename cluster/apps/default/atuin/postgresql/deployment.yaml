@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: atuin-postgres
+  name: atuin-postgresl
   namespace: default
 spec:
   replicas: 1
@@ -9,18 +9,14 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app: atuin-postgres
+      app: atuin-postgresl
   template:
     metadata:
       labels:
-        app: atuin-postgres
+        app: atuin-postgresl
     spec:
-      securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
       containers:
-        - name: postgres
+        - name: postgresl
           image: postgres:18
           ports:
             - containerPort: 5432
@@ -56,4 +52,4 @@ spec:
       volumes:
         - name: database
           persistentVolumeClaim:
-            claimName: atuin-postgres-data
+            claimName: atuin-postgresl-data
