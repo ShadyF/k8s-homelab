@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: atuin-postgres
+  namespace: default
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: atuin-postgres
+  template:
+    metadata:
+      labels:
+        app: atuin-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:18
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: atuin
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: atuin-postgres-secrets
+                  key: ATUIN_DB_PASSWORD
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: atuin-postgres-secrets
+                  key: ATUIN_DB_USERNAME
+          lifecycle:
+            preStop:
+              exec:
+                # This ensures graceful shutdown see: https://stackoverflow.com/a/75829325/3437018
+                # Potentially consider using a `StatefulSet` instead of a `Deployment`
+                command: [ "/usr/local/bin/pg_ctl", "stop", "-D", "/var/lib/postgresql/data", "-w", "-t", "60", "-m", "fast" ]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 250m
+              memory: 600Mi
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data/
+              name: database
+      volumes:
+        - name: database
+          persistentVolumeClaim:
+            claimName: atuin-postgres-data

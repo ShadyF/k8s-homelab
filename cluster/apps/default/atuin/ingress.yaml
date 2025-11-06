@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: atuin
+  namespace: default
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-production
+    external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
+spec:
+  ingressClassName: nginx-external
+  rules:
+    - host: "atuin.${SECRET_DOMAIN}"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: atuin
+                port:
+                  number: 8888
+  tls:
+    - hosts:
+        - "atuin.${SECRET_DOMAIN}"
+      secretName: atuin-tls

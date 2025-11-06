@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: atuin
+  namespace: default
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: atuin
+  template:
+    metadata:
+      labels:
+        app: atuin
+    spec:
+      containers:
+        - name: atuin
+          image: ghcr.io/atuinsh/atuin:v18.10.0
+          args:
+            - server
+            - start
+          env:
+            - name: ATUIN_DB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: atuin-secrets
+                  key: ATUIN_DB_URI
+            - name: ATUIN_HOST
+              value: 0.0.0.0
+            - name: ATUIN_PORT
+              value: "8888"
+            - name: ATUIN_OPEN_REGISTRATION
+              valueFrom:
+                secretKeyRef:
+                  name: atuin-secrets
+                  key: ATUIN_OPEN_REGISTRATION
+          ports:
+            - containerPort: 8888
+              name: http
+          resources:
+            limits:
+              cpu: 250m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          volumeMounts:
+            - mountPath: /config
+              name: atuin-config
+      volumes:
+        - name: atuin-config
+          persistentVolumeClaim:
+            claimName: atuin-config
