@@ -15,6 +15,10 @@ spec:
       labels:
         app: atuin
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       containers:
         - name: atuin
           image: ghcr.io/atuinsh/atuin:v18.10.0
@@ -37,7 +41,7 @@ spec:
                   name: atuin-secrets
                   key: ATUIN_OPEN_REGISTRATION
           ports:
-            - containerPort: 8888
+            - containerPort: &port 8888
               name: http
           resources:
             limits:
@@ -46,6 +50,23 @@ spec:
             requests:
               cpu: 100m
               memory: 128Mi
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: *port
+            failureThreshold: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: *port
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          readinessProbe:
+            tcpSocket:
+              port: *port
+            initialDelaySeconds: 15
+            periodSeconds: 10
           volumeMounts:
             - mountPath: /config
               name: atuin-config
