@@ -26,12 +26,12 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: atuin-postgres-secrets
+                  name: atuin-postgresql-secrets
                   key: ATUIN_DB_PASSWORD
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: atuin-postgres-secrets
+                  name: atuin-postgresql-secrets
                   key: ATUIN_DB_USERNAME
           lifecycle:
             preStop:
