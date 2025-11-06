@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: atuin-postgresl-data
+  name: atuin-postgresql-data
   namespace: default
 spec:
   accessModes:
