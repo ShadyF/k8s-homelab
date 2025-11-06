@@ -47,7 +47,7 @@ spec:
               cpu: 250m
               memory: 600Mi
           volumeMounts:
-            - mountPath: /var/lib/postgresql/data/
+            - mountPath: /var/lib/postgresql
               name: database
       volumes:
         - name: database
