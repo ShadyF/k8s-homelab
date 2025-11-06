@@ -22,7 +22,7 @@ spec:
     # https://github.com/k8s-at-home/charts/blob/master/charts/stable/syncthing/values.yaml
     image:
       repository: sirfragalot/hyperion.ng
-      tag: 2.0.16
+      tag: 2.1.1
 
     service:
       flatbuffer:

@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: playwright
-          image: ghcr.io/browserless/chrome:v2.37.0
+          image: ghcr.io/browserless/chrome:v2.38.2
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
