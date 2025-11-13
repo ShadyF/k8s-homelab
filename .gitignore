@@ -4,3 +4,5 @@
 # Python venv
 venv/
 .aider*
+/.pki/
+/.cache/
