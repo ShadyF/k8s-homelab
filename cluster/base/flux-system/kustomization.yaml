@@ -21,5 +21,4 @@ patches:
     target:
       kind: Deployment
       name: helm-controller
-patchesStrategicMerge:
-  - gotk-patches.yaml
+  - path: gotk-patches.yaml
