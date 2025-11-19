@@ -91,25 +91,37 @@ spec:
     persistence:
       data:
         enabled: true
-        existingClaim: paperless-pvc
-        globalMounts:
-          - path: /usr/src/paperless/data
-            subPath: data
+        type: custom
+        volumeSpec:
+          persistentVolumeClaim:
+            claimName: paperless-pvc
+            accessMode: ReadWriteOnce
+        mountPath: /usr/src/paperless/data
+        subPath: data
       media:
         enabled: true
-        existingClaim: paperless-pvc
-        globalMounts:
-          - path: /usr/src/paperless/media
-            subPath: media
+        type: custom
+        volumeSpec:
+          persistentVolumeClaim:
+            claimName: paperless-pvc
+            accessMode: ReadWriteOnce
+        mountPath: /usr/src/paperless/media
+        subPath: media
       consume:
         enabled: true
-        existingClaim: paperless-pvc
-        globalMounts:
-          - path: /usr/src/paperless/consume
-            subPath: consume
+        type: custom
+        volumeSpec:
+          persistentVolumeClaim:
+            claimName: paperless-pvc
+            accessMode: ReadWriteOnce
+        mountPath: /usr/src/paperless/consume
+        subPath: consume
       export:
         enabled: true
-        existingClaim: paperless-pvc
-        globalMounts:
-          - path: /usr/src/paperless/export
-            subPath: export
+        type: custom
+        volumeSpec:
+          persistentVolumeClaim:
+            claimName: paperless-pvc
+            accessMode: ReadWriteOnce
+        mountPath: /usr/src/paperless/export
+        subPath: export
