@@ -91,22 +91,10 @@ spec:
 
     persistence:
       data:
-        enabled: true
-        type: persistentVolumeClaim
         existingClaim: paperless-data-pvc
-        mountPath: /usr/src/paperless/data
       media:
-        enabled: true
-        type: persistentVolumeClaim
         existingClaim: paperless-media-pvc
-        mountPath: /usr/src/paperless/media
       consume:
-        enabled: true
-        type: persistentVolumeClaim
         existingClaim: paperless-consume-pvc
-        mountPath: /usr/src/paperless/consume
       export:
-        enabled: true
-        type: persistentVolumeClaim
         existingClaim: paperless-export-pvc
-        mountPath: /usr/src/paperless/export
