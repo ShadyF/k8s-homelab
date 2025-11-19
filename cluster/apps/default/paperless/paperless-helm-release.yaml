@@ -93,7 +93,7 @@ spec:
       data:
         enabled: true
         type: persistentVolumeClaim
-        existingClaim: paperless-pvc
+        existingClaim: paperless-pvc-rwx
         advancedMounts:
           paperless:
             app:
@@ -102,7 +102,7 @@ spec:
       media:
         enabled: true
         type: persistentVolumeClaim
-        existingClaim: paperless-pvc
+        existingClaim: paperless-pvc-rwx
         advancedMounts:
           paperless:
             app:
@@ -111,7 +111,7 @@ spec:
       consume:
         enabled: true
         type: persistentVolumeClaim
-        existingClaim: paperless-pvc
+        existingClaim: paperless-pvc-rwx
         advancedMounts:
           paperless:
             app:
@@ -120,9 +120,8 @@ spec:
       export:
         enabled: true
         type: persistentVolumeClaim
-        existingClaim: paperless-pvc
+        existingClaim: paperless-pvc-rwx
         advancedMounts:
           paperless:
             app:
               - path: /usr/src/paperless/export
-                subPath: export
