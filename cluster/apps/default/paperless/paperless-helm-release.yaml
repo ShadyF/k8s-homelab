@@ -93,35 +93,20 @@ spec:
       data:
         enabled: true
         type: persistentVolumeClaim
-        existingClaim: paperless-pvc-rwx
-        advancedMounts:
-          paperless:
-            app:
-              - path: /usr/src/paperless/data
-                subPath: data
+        existingClaim: paperless-data-pvc
+        mountPath: /usr/src/paperless/data
       media:
         enabled: true
         type: persistentVolumeClaim
-        existingClaim: paperless-pvc-rwx
-        advancedMounts:
-          paperless:
-            app:
-              - path: /usr/src/paperless/media
-                subPath: media
+        existingClaim: paperless-media-pvc
+        mountPath: /usr/src/paperless/media
       consume:
         enabled: true
         type: persistentVolumeClaim
-        existingClaim: paperless-pvc-rwx
-        advancedMounts:
-          paperless:
-            app:
-              - path: /usr/src/paperless/consume
-                subPath: consume
+        existingClaim: paperless-consume-pvc
+        mountPath: /usr/src/paperless/consume
       export:
         enabled: true
         type: persistentVolumeClaim
-        existingClaim: paperless-pvc-rwx
-        advancedMounts:
-          paperless:
-            app:
-              - path: /usr/src/paperless/export
+        existingClaim: paperless-export-pvc
+        mountPath: /usr/src/paperless/export
