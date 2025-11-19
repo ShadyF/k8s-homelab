@@ -26,6 +26,7 @@ spec:
   values:
     controllers:
       paperless:
+        replicas: 1
         containers:
           app:
             image:
@@ -95,7 +96,7 @@ spec:
         volumeSpec:
           persistentVolumeClaim:
             claimName: paperless-pvc
-            accessMode: ReadWriteOnce
+            accessMode: ReadWriteMany
         mountPath: /usr/src/paperless/data
         subPath: data
       media:
@@ -104,7 +105,7 @@ spec:
         volumeSpec:
           persistentVolumeClaim:
             claimName: paperless-pvc
-            accessMode: ReadWriteOnce
+            accessMode: ReadWriteMany
         mountPath: /usr/src/paperless/media
         subPath: media
       consume:
@@ -113,7 +114,7 @@ spec:
         volumeSpec:
           persistentVolumeClaim:
             claimName: paperless-pvc
-            accessMode: ReadWriteOnce
+            accessMode: ReadWriteMany
         mountPath: /usr/src/paperless/consume
         subPath: consume
       export:
@@ -122,6 +123,6 @@ spec:
         volumeSpec:
           persistentVolumeClaim:
             claimName: paperless-pvc
-            accessMode: ReadWriteOnce
+            accessMode: ReadWriteMany
         mountPath: /usr/src/paperless/export
         subPath: export
