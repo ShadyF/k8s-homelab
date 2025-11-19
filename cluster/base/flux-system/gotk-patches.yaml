@@ -9,6 +9,7 @@ metadata:
 spec:
   ignore: |
     *.md
+    cluster/apps/mb-scheduler/
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
