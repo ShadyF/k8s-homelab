@@ -25,10 +25,6 @@ spec:
     remediation:
       retries: 3
   values:
-    image:
-      repository: "quay.io/oauth2-proxy/oauth2-proxy"
-      tag: "v7.12.0"
-
     config:
       existingSecret: oauth2-proxy-client-secrets
       # Override configFile to disable all email domains to be used
