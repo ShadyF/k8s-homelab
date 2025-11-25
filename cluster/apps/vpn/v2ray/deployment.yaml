@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: v2ray
-          image: v2fly/v2fly-core:v5.30.0
+          image: v2fly/v2fly-core:v5.41.0
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsUser: 1000
