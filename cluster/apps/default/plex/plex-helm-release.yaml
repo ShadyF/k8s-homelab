@@ -22,7 +22,7 @@ spec:
   values:
     image:
       repository: linuxserver/plex
-      tag: 1.42.2.10156-f737b826c-ls285
+      tag: 1.42.2.10156-f737b826c-ls286
     env:
       TZ: "Africa/Cairo"
       # See https://www.devwithimagination.com/2019/08/21/plex-docker-and-the-problem-of-always-appearing-as-remote/
@@ -106,7 +106,7 @@ spec:
         enabled: true
         image:
           repository: grafana/promtail
-          tag: 3.6.0
+          tag: 3.6.2
         loki: http://loki.monitoring.svc.cluster.local:3100/loki/api/v1/push
         logs:
           - name: promtail/plex
