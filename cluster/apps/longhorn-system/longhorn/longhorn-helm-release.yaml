@@ -47,7 +47,8 @@ spec:
       replicaAutoBalance: best-effort
       # Prevents pods from being rescheduled on healthy nodes
       nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
-      nodeDrainPolicy: block-for-eviction-if-contains-last-replica
+      # Allows kured to be able to work with longhorn
+      nodeDrainPolicy: allow-if-replica-is-stopped
     ingress:
       enabled: true
       host: "longhorn.${SECRET_DOMAIN}"
