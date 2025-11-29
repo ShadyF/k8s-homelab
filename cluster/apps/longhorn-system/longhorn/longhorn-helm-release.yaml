@@ -49,8 +49,6 @@ spec:
       nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
       # Allows kured to be able to work with longhorn
       nodeDrainPolicy: allow-if-replica-is-stopped
-      # Configure backup target (NFS)
-      backupTarget: "nfs://192.168.1.213:/srv/nfs/longhorn-backups"
       # Make the daily backup job the default for all volumes via group selector
       defaultRecurringJobSelector:
         - name: "default"
