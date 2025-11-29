@@ -55,6 +55,8 @@ spec:
       defaultRecurringJobSelector:
         - name: "default"
           isGroup: true
+    defaultBackupStore:
+      backupTarget: "nfs://192.168.1.213:/srv/nfs/longhorn-backups"
     ingress:
       enabled: true
       host: "longhorn.${SECRET_DOMAIN}"
