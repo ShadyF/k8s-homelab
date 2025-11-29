@@ -67,12 +67,3 @@ spec:
         external-dns/is-public: "false"
         nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.networking.svc.cluster.local/oauth2/auth"
         nginx.ingress.kubernetes.io/auth-signin: "https://auth.${SECRET_DOMAIN}/oauth2/sign_in"
-    # Define a recurring job that backs up all volumes daily at 3 AM
-    recurringJobs:
-      - name: "backup-daily-3am"
-        task: "backup"
-        cron: "0 3 * * *"
-        retain: 14
-        concurrency: 1
-        groups:
-          - "default"
