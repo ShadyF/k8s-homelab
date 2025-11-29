@@ -23,7 +23,7 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
-  # https://github.com/longhorn/charts/blob/v1.5.x/charts/longhorn/values.yaml
+  # https://github.com/longhorn/charts/blob/v1.10.x/charts/longhorn/values.yaml
   values:
     # https://github.com/longhorn/longhorn/issues/1861#issuecomment-716459507
     csi:
@@ -49,6 +49,12 @@ spec:
       nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
       # Allows kured to be able to work with longhorn
       nodeDrainPolicy: allow-if-replica-is-stopped
+      # Configure backup target (NFS)
+      backupTarget: "nfs://192.168.1.213:/srv/nfs/longhorn-backups"
+      # Make the daily backup job the default for all volumes via group selector
+      defaultRecurringJobSelector:
+        - name: "default"
+          isGroup: true
     ingress:
       enabled: true
       host: "longhorn.${SECRET_DOMAIN}"
@@ -59,3 +65,12 @@ spec:
         external-dns/is-public: "false"
         nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.networking.svc.cluster.local/oauth2/auth"
         nginx.ingress.kubernetes.io/auth-signin: "https://auth.${SECRET_DOMAIN}/oauth2/sign_in"
+    # Define a recurring job that backs up all volumes daily at 3 AM
+    recurringJobs:
+      - name: "backup-daily-3am"
+        task: "backup"
+        cron: "0 3 * * *"
+        retain: 14
+        concurrency: 1
+        groups:
+          - "default"
