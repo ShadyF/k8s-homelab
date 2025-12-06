@@ -34,6 +34,7 @@ spec:
       - name: CF_API_EMAIL
         value: "${SECRET_EMAIL}"
     policy: sync
+    txtOwnerId: default
     txtPrefix: "k8s."
     annotationFilter: "external-dns/is-public in (true)"
     resources:
