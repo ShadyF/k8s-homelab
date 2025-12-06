@@ -19,15 +19,13 @@ spec:
     # https://github.com/k8s-at-home/charts/blob/master/charts/stable/syncthing/values.yaml
     image:
       repository: syncthing/syncthing
-      tag: 2.0.12-rc.1
+      tag: 2.0.12
 
     ingress:
       main:
         enabled: true
         ingressClassName: "internal"
         annotations:
-          nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.networking.svc.cluster.local/oauth2/auth"
-          nginx.ingress.kubernetes.io/auth-signin: "https://auth.${SECRET_DOMAIN}/oauth2/sign_in"
           external-dns/is-public: "false"
         hosts:
           - host: "syncthing.${SECRET_DOMAIN}"
