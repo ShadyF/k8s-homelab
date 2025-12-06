@@ -36,7 +36,6 @@ spec:
     policy: sync
     txtOwnerId: default
     txtPrefix: "k8s."
-    annotationFilter: "external-dns/is-public in (true)"
     resources:
       requests:
         cpu: 10m
@@ -47,6 +46,7 @@ spec:
       enabled: true
     extraArgs:
       - "--cloudflare-proxied"
+      - '--annotation-filter=external-dns/is-public in (true)'
 #    affinity:
 #      nodeAffinity:
 #        requiredDuringSchedulingIgnoredDuringExecution:
