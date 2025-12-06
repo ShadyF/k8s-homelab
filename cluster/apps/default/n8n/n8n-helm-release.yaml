@@ -65,7 +65,6 @@ spec:
       port: 443
       protocol: https
 
-
     extraEnvSecrets:
       DB_POSTGRESDB_USER:
         name: n8n-secrets
@@ -85,6 +84,9 @@ spec:
       N8N_HOST:
         name: n8n-secrets
         key: N8N_HOST
+
+    extraEnv:
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "true"
 
 # Removed persistence because n8n-pvc was not even used.
 # Have a hunch it isn't used because we're using a PSQL database for persistence
