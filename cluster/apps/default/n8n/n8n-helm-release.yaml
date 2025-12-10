@@ -28,7 +28,7 @@ spec:
     image:
       repository: n8nio/n8n
       pullPolicy: IfNotPresent
-      tag: 1.123.3
+      tag: 2.0.0
 
     deploymentStrategy:
       type: "Recreate"
