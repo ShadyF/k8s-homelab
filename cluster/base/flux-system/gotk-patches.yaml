@@ -10,6 +10,7 @@ spec:
   ignore: |
     *.md
     cluster/apps/mb-scheduler/
+    cluster/apps/n8n
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
