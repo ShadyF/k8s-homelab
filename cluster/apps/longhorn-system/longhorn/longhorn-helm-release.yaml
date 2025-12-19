@@ -48,7 +48,7 @@ spec:
       # Prevents pods from being rescheduled on healthy nodes
       nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
       # Allows kured to be able to work with longhorn
-      nodeDrainPolicy: allow-if-replica-is-stopped
+      nodeDrainPolicy: block-if-contains-last-replica
       # Make the daily backup job the default for all volumes via group selector
       defaultRecurringJobSelector:
         - name: "default"
