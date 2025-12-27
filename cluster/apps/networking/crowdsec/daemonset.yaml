@@ -50,9 +50,9 @@ spec:
           resources:
             requests:
               cpu: 10m
-              memory: 100Mi
+              memory: 150Mi
             limits:
-              memory: 100Mi
+              memory: 150Mi
           volumeMounts:
             - name: s02-whitelist
               mountPath: /etc/crowdsec/parsers/s02-enrich/whitelist.yaml
