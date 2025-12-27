@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: n8n-postgresql
+  namespace: default
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: n8n-postgresql
+  template:
+    metadata:
+      labels:
+        app: n8n-postgresql
+    spec:
+      containers:
+        - name: postgresql
+          image: postgres:15
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: n8n-postgresql-secrets
+                  key: N8N_DB_PASSWORD
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: n8n-postgresql-secrets
+                  key: N8N_DB_USERNAME
+          lifecycle:
+            preStop:
+              exec:
+                command: [ "/usr/local/bin/pg_ctl", "stop", "-D", "/var/lib/postgresql/data", "-w", "-t", "60", "-m", "fast" ]
+          resources:
+            requests:
+              cpu: 26m
+              memory: 100Mi
+            limits:
+              memory: 100Mi
+          volumeMounts:
+            - mountPath: /var/lib/postgresql
+              name: database
+      volumes:
+        - name: database
+          persistentVolumeClaim:
+            claimName: n8n-postgresql-data
