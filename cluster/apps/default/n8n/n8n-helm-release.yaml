@@ -95,9 +95,9 @@ spec:
     resources:
       requests:
         cpu: 14m
-        memory: 500Mi
+        memory: 768Mi
       limits:
-        memory: 500Mi
+        memory: 768Mi
 
     scaling:
       enabled: false
