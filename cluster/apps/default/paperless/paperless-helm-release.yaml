@@ -92,9 +92,17 @@ spec:
     persistence:
       data:
         existingClaim: paperless-data-pvc
+        globalMounts:
+          - path: /usr/src/paperless/data
       media:
         existingClaim: paperless-media-pvc
+        globalMounts:
+          - path: /usr/src/paperless/media
       consume:
         existingClaim: paperless-consume-pvc
+        globalMounts:
+          - path: /usr/src/paperless/consume
       export:
         existingClaim: paperless-export-pvc
+        globalMounts:
+          - path: /usr/src/paperless/export
