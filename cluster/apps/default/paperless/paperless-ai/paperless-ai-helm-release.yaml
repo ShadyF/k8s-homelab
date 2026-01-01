@@ -71,3 +71,9 @@ spec:
         tls:
           - hosts:
               - "paperless-ai.${SECRET_DOMAIN}"
+
+    persistence:
+      data:
+        existingClaim: paperless-ai-data-pvc
+        globalMounts:
+          - path: /app/data
