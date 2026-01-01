@@ -41,10 +41,11 @@ spec:
                   name: paperless-ai-secrets
             resources:
               requests:
-                cpu: 10m
-                memory: 128Mi
+                cpu: 500m
+                memory: 512Mi
               limits:
-                memory: 256Mi
+                cpu: "1000m"
+                memory: 2Gi
     service:
       app:
         controller: paperless-ai
