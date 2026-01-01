@@ -29,7 +29,7 @@ spec:
           app:
             image:
               repository: icereed/paperless-gpt
-              tag: 1.2.0
+              tag: v0.23.0
             env:
               PAPERLESS_BASE_URL: http://paperless.default.svc.cluster.local:8000
               LLM_PROVIDER: openai
