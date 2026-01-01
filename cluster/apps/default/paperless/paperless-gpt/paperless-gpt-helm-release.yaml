@@ -50,7 +50,7 @@ spec:
                 memory: 256Mi
               limits:
                 cpu: 500m
-                memory: 512Mi
+                memory: 750Mi
     service:
       app:
         controller: paperless-gpt
