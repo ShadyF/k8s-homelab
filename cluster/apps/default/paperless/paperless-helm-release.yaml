@@ -98,10 +98,10 @@ spec:
         existingClaim: paperless-media-pvc
         globalMounts:
           - path: /usr/src/paperless/media
-      consume:
-        existingClaim: paperless-consume-pvc
-        globalMounts:
-          - path: /usr/src/paperless/consume
+#      consume:
+#        existingClaim: paperless-consume-pvc
+#        globalMounts:
+#          - path: /usr/src/paperless/consume
       export:
         existingClaim: paperless-export-pvc
         globalMounts:
