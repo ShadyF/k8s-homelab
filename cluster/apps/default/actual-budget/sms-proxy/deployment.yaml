@@ -37,7 +37,7 @@ spec:
             - name: ACTUAL_SERVER_PORT
               value: "5006"
             - name: FX_FEE_PERCENT
-              value: "0.1"
+              value: "0.03"
             - name: MAIN_CURRENCY
               value: "egp"
           envFrom:
