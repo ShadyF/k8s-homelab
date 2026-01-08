@@ -82,9 +82,6 @@ spec:
         alertmanager:
           hostport: "http://alertmanager-operated.monitoring.svc.cluster.local:9093"
           minimumpriority: "warning"
-        ntfy:
-          url: "http://ntfy-alertmanager-svc.monitoring.svc.cluster.local:8080"
-          minimumpriority: "warning"
 
       grafana:
         dashboards:
