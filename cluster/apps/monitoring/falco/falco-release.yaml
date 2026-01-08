@@ -45,16 +45,12 @@ spec:
         # When this option is disabled, Falco falls back to the container annotations to grab the metadata.
         # In such a case, only the ID, name, namespace, labels of the pod will be available.
         enabled: true
-    # Enable K8s Metacollector to gather data from K8s
-    services:
-      k8s-metacollector:
-        enabled: true
 
     # Enable gRPC for Falcosidekick
-    falco:
-      grpc:
-        enabled: true
-        bind_address: "0.0.0.0:5060"
+#    falco:
+#      grpc:
+#        enabled: true
+#        bind_address: "0.0.0.0:5060"
 
     # Falcosidekick configuration
     falcosidekick:
@@ -63,6 +59,7 @@ spec:
       # Enable Web UI
       webui:
         enabled: true
+        replicaCount: 1
         ingress:
           enabled: true
           ingressClassName: "internal"
@@ -85,6 +82,12 @@ spec:
           url: "http://ntfy-alertmanager-svc.monitoring.svc.cluster.local:8080"
           minimumpriority: "warning"
 
+      grafana:
+        dashboards:
+          enabled: true
+      prometheusRules:
+        enabled: true
+
     # -- Enable the response actions using Falco Talon.
     responseActions:
       enabled: false
@@ -98,7 +101,7 @@ spec:
       enabled: true
     grafana:
       dashboards:
-        enabled: false
+        enabled: true
         configMaps:
           falco:
             name: falco-grafana-dashboard
