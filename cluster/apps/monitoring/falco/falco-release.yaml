@@ -1,0 +1,112 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: falco
+  namespace: monitoring
+spec:
+  interval: 15m
+  chart:
+    spec:
+      # renovate: registryUrl=https://falcosecurity.github.io/charts
+      chart: falco
+      version: 7.0.2
+      sourceRef:
+        kind: HelmRepository
+        name: falcosecurity-charts
+        namespace: flux-system
+  maxHistory: 3
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    # Use eBPF driver
+    driver:
+      enabled: true
+      kind: modern_ebpf
+
+    collectors:
+      enabled: true
+      containerEngine:
+        enabled: true
+      kubernetes:
+        # -- enabled specifies whether the Kubernetes metadata should be collected using the k8smeta plugin and the k8s-metacollector component.
+        # It will deploy the k8s-metacollector external component that fetches Kubernetes metadata and pushes them to Falco instances.
+        # For more info see:
+        # https://github.com/falcosecurity/k8s-metacollector
+        # https://github.com/falcosecurity/charts/tree/master/charts/k8s-metacollector
+        # When this option is disabled, Falco falls back to the container annotations to grab the metadata.
+        # In such a case, only the ID, name, namespace, labels of the pod will be available.
+        enabled: true
+    # Enable K8s Metacollector to gather data from K8s
+    services:
+      k8s-metacollector:
+        enabled: true
+
+    # Enable gRPC for Falcosidekick
+    falco:
+      grpc:
+        enabled: true
+        bind_address: "0.0.0.0:5060"
+
+    # Falcosidekick configuration
+    falcosidekick:
+      enabled: true
+      replicaCount: 1
+      # Enable Web UI
+      webui:
+        enabled: true
+        ingress:
+          enabled: true
+          ingressClassName: "internal"
+          annotations:
+            nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.networking.svc.cluster.local/oauth2/auth"
+            nginx.ingress.kubernetes.io/auth-signin: "https://auth.${SECRET_DOMAIN}/oauth2/sign_in"
+          hosts:
+            - host: "falco.${SECRET_DOMAIN}"
+              paths:
+                - path: /
+          tls:
+            - hosts:
+                - "falco.${SECRET_DOMAIN}"
+      # Configuration for outputs
+      config:
+        alertmanager:
+          hostport: "http://alertmanager-operated.monitoring.svc.cluster.local:9093"
+          minimumpriority: "warning"
+        ntfy:
+          url: "http://ntfy-alertmanager-svc.monitoring.svc.cluster.local:8080"
+          minimumpriority: "warning"
+
+    # -- Enable the response actions using Falco Talon.
+    responseActions:
+      enabled: false
+
+    # -- For configuration values, see https://github.com/falcosecurity/charts/blob/master/charts/falco-talon/values.yaml
+    # -- It must be used in conjunction with the response_actions.enabled option.
+    falco-talon: { }
+    serviceMonitor:
+      create: true
+    metrics:
+      enabled: true
+    grafana:
+      dashboards:
+        enabled: false
+        configMaps:
+          falco:
+            name: falco-grafana-dashboard
+            namespace: "monitoring"
+    # Resource requests and limits (balanced for a homelab)
+#    resources:
+#      requests:
+#        cpu: 100m
+#        memory: 256Mi
+#      limits:
+#        memory: 512Mi
