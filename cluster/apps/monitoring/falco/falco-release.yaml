@@ -26,13 +26,11 @@ spec:
       retries: 3
   uninstall:
     keepHistory: false
+  valuesFrom:
+    - kind: ConfigMap
+      name: falco-rules-configmap
+      valuesKey: rules.yaml
   values:
-    customRules:
-      custom-rules.yaml: |-
-        - macro: user_known_contact_k8s_api_server_activities
-          append: true
-          condition: >
-            container.image.repository in (quay.io/kiwigrid/k8s-sidecar, docker.io/longhornio/longhorn-share-manager)
     # Use eBPF driver
     driver:
       enabled: true
