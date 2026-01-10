@@ -10,9 +10,11 @@ data:
         - macro: user_known_contact_k8s_api_server_activities
           condition: >
             or container.image.repository in (quay.io/kiwigrid/k8s-sidecar, docker.io/kiwigrid/k8s-sidecar, docker.io/longhornio/longhorn-share-manager)
-          append: true
+          override:
+            condition: append
 
         - macro: user_known_non_base_binaries
           condition: >
             or (container.image.repository == "ghcr.io/flaresolverr/flaresolverr" and proc.name == "chromedriver")
-          append: true
+          override:
+            condition: append
