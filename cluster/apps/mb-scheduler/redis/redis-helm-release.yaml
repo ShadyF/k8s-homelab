@@ -17,22 +17,28 @@ spec:
         namespace: flux-system
 
   values:
-    image:
-      repository: docker.io/library/redis
-      tag: 8.4.0
+    controllers:
+      main:
+        containers:
+          main:
+            image:
+              repository: docker.io/library/redis
+              tag: 8.4.0
+
+            resources:
+              requests:
+                cpu: 23m
+                memory: 64M
+              limits:
+                memory: 64M
 
     service:
       main:
+        controller: main
         ports:
           http:
             enabled: false
+            port: 8080 # Not really the port but just want schema validation to pass
           redis:
             enabled: true
             port: 6379
-
-    resources:
-      requests:
-        cpu: 10m
-        memory: 100Mi
-      limits:
-        memory: 100Mi
