@@ -11,5 +11,4 @@ data:
         - macro: user_known_contact_k8s_api_server_activities
           condition: >
             or container.image.repository in (quay.io/kiwigrid/k8s-sidecar, docker.io/longhornio/longhorn-share-manager)
-          override:
-            condition: append
+          append: true
