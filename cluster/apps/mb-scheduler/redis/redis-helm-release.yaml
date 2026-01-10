@@ -7,6 +7,7 @@ spec:
   interval: 15m
   chart:
     spec:
+      # renovate: registryUrl=https://bjw-s-labs.github.io/helm-charts
       chart: app-template
       version: 0.2.1
       interval: 15m
