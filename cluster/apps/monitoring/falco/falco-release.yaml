@@ -88,8 +88,6 @@ spec:
           enabled: true
       prometheusRules:
         enabled: true
-        additionalLabels:
-          release: kube-prometheus-stack
 
     # -- Enable the response actions using Falco Talon.
     responseActions:
@@ -100,8 +98,6 @@ spec:
     falco-talon: { }
     serviceMonitor:
       create: true
-      additionalLabels:
-        release: kube-prometheus-stack
     metrics:
       enabled: true
     grafana:
