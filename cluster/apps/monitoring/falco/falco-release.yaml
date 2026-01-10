@@ -76,27 +76,18 @@ spec:
           tls:
             - hosts:
                 - "falco.${SECRET_DOMAIN}"
-      # Configuration for outputs
-      config:
-        alertmanager:
-          hostport: "http://alertmanager-operated.monitoring.svc.cluster.local:9093"
-          minimumpriority: "warning"
-
       grafana:
         dashboards:
           enabled: true
       prometheusRules:
         enabled: true
-        critical:
-          enabled: true
-        error:
-          enabled: true
-        warning:
-          enabled: true
-        # Also add the discovery labels found in the previous step
-        additionalLabels:
-          prometheus: k8s
-          role: alert-rules
+
+      # Configuration for outputs
+      config:
+        alertmanager:
+          hostport: "http://alertmanager-operated.monitoring.svc.cluster.local:9093"
+          endpoint: "/api/v2/alerts"
+          minimumpriority: "warning"
 
     # -- Enable the response actions using Falco Talon.
     responseActions:
