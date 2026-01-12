@@ -13,7 +13,7 @@ data:
           override:
             condition: append
 
-        - macro: user_known_non_base_binaries
+        - macro: known_drop_and_execute_activities
           condition: >
             or (container.image.repository == "ghcr.io/flaresolverr/flaresolverr" and proc.name == "chromedriver")
           override:
