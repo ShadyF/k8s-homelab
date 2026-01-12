@@ -25,10 +25,6 @@ spec:
       retries: 3
   uninstall:
     keepHistory: false
-  valuesFrom:
-    - kind: ConfigMap
-      name: falco-rules-configmap
-      valuesKey: rules.yaml
   values:
     # Use eBPF driver
     driver:
@@ -54,6 +50,18 @@ spec:
 #      grpc:
 #        enabled: true
 #        bind_address: "0.0.0.0:5060"
+
+    customRules:
+      custom-rules.yaml: |-
+        - macro: user_known_contact_k8s_api_server_activities
+          condition: or container.image.repository in (quay.io/kiwigrid/k8s-sidecar, docker.io/kiwigrid/k8s-sidecar, docker.io/longhornio/longhorn-share-manager)
+          override:
+            condition: append
+
+        - macro: user_known_base_binaries
+          condition: or (container.image.repository == "ghcr.io/flaresolverr/flaresolverr" and proc.name == "chromedriver")
+          override:
+            condition: append
 
     # Falcosidekick configuration
     falcosidekick:
