@@ -9,12 +9,17 @@ data:
       custom-rules.yaml: |-
         - macro: user_known_contact_k8s_api_server_activities
           condition: >
-            or container.image.repository in (quay.io/kiwigrid/k8s-sidecar, docker.io/kiwigrid/k8s-sidecar, docker.io/longhornio/longhorn-share-manager)
+            or container.image.repository in (
+              quay.io/kiwigrid/k8s-sidecar, 
+              docker.io/kiwigrid/k8s-sidecar, 
+              docker.io/longhornio/longhorn-manager, 
+              docker.io/longhornio/longhorn-share-manager,
+              docker.io/longhornio/longhorn-instance-manager
+            )
           override:
             condition: append
 
         - macro: known_drop_and_execute_activities
-          condition: >
-            or (container.image.repository == "ghcr.io/flaresolverr/flaresolverr" and proc.name == "chromedriver")
+          condition: or (container.image.repository == "ghcr.io/flaresolverr/flaresolverr" and proc.name == "chromedriver")
           override:
             condition: append
