@@ -14,7 +14,10 @@ data:
               docker.io/kiwigrid/k8s-sidecar, 
               docker.io/longhornio/longhorn-manager, 
               docker.io/longhornio/longhorn-share-manager,
-              docker.io/longhornio/longhorn-instance-manager
+              docker.io/longhornio/longhorn-instance-manager,
+              docker.io/longhornio/csi-resizer,
+              quay.io/jetstack/cert-manager-webhook,
+              quay.io/metallb/controller
             )
           override:
             condition: append
@@ -23,3 +26,18 @@ data:
           condition: or (container.image.repository == "ghcr.io/flaresolverr/flaresolverr" and proc.name == "chromedriver")
           override:
             condition: append
+
+        - macro: user_known_stand_streams_redirect_activities
+          condition: or (container.image.repository == "docker.io/longhornio/longhorn-manager" and proc.name == "longhorn")
+          override:
+            condition: append
+
+        - macro: allowed_clear_log_files
+          condition: or (container.image.repository == "docker.io/longhornio/longhorn-instance-manager" and proc.name == "tee" and fd.name == "/var/log/tgtd.log")
+          override:
+            condition: append
+        
+        - list: user_known_packet_socket_binaries
+          items: [speaker]
+          override:
+            items: append
