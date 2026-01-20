@@ -17,13 +17,16 @@ data:
               docker.io/longhornio/longhorn-instance-manager,
               docker.io/longhornio/csi-resizer,
               quay.io/jetstack/cert-manager-webhook,
-              quay.io/metallb/controller
+              quay.io/metallb/controller,
+              quay.io/metallb/speaker
             )
           override:
             condition: append
 
         - macro: known_drop_and_execute_activities
-          condition: or (container.image.repository == "ghcr.io/flaresolverr/flaresolverr" and proc.name == "chromedriver")
+          condition: >
+            or (container.image.repository == "ghcr.io/flaresolverr/flaresolverr" and proc.name == "chromedriver")
+            or (container.image.repository == "docker.io/library/alpine" and proc.name == "stunnel" and k8s.ns.name == "monitoring")
           override:
             condition: append
 
@@ -36,8 +39,14 @@ data:
           condition: or (container.image.repository == "docker.io/longhornio/longhorn-instance-manager" and proc.name == "tee" and fd.name == "/var/log/tgtd.log")
           override:
             condition: append
+
+            - macro: user_read_sensitive_file_conditions
+              condition: >
+                or (container.image.repository == "docker.io/library/alpine" and proc.name == "adduser" and k8s.ns.name == "monitoring")
+              override:
+                condition: append
         
-        - list: user_known_packet_socket_binaries
+            - list: user_known_packet_socket_binaries
           items: [speaker]
           override:
             items: append
