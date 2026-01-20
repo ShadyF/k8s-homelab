@@ -138,8 +138,6 @@ spec:
             value: "off"
           - name: DOT_PROVIDERS
             value: "google"
-          - name: DNS_KEEP_NAMESERVER
-            value: "on"
           - name: UNBLOCK
             value: "am.i.mullvad.net"
           - name: TZ
