@@ -17,7 +17,8 @@ data:
               docker.io/longhornio/longhorn-instance-manager,
               docker.io/longhornio/csi-resizer,
               quay.io/jetstack/cert-manager-webhook,
-              quay.io/metallb/controller
+              quay.io/metallb/controller,
+              docker.io/falcosecurity/k8s-metacollector
             )
           override:
             condition: append
