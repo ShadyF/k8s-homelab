@@ -135,7 +135,7 @@ spec:
           - name: OPENVPN_PROTOCOL
             value: "tcp"
           - name: OPENVPN_IPV6
-            value: "on"
+            value: "off"
           - name: DOT_PROVIDERS
             value: "google"
           - name: UNBLOCK
@@ -177,6 +177,6 @@ spec:
         resources:
           requests:
             cpu: 265m
-            memory: 591Mi
+            memory: 768Mi
           limits:
-            memory: 591Mi
+            memory: 1Gi
