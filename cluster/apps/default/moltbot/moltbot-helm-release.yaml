@@ -54,6 +54,14 @@ spec:
       accessMode: ReadWriteOnce
       size: 20Gi
 
+    resources:
+      limits:
+        memory: 2Gi
+        cpu: 2000m
+      requests:
+        memory: 512Mi
+        cpu: 250m
+
     ingress:
       enabled: true
       className: internal
