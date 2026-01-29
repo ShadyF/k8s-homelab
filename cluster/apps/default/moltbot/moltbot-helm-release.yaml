@@ -70,9 +70,6 @@ spec:
               pathType: Prefix
       tls:
         enabled: true
-        certManager:
-          enabled: true
-          issuer: "letsencrypt-production"
 
     affinity:
       nodeAffinity:
