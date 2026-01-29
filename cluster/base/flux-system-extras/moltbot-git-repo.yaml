@@ -1,0 +1,10 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: moltbot
+  namespace: flux-system
+spec:
+  interval: 15m
+  url: https://github.com/sirily11/clawdbot
+  ref:
+    branch: main
