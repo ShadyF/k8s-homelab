@@ -38,7 +38,7 @@ spec:
     # Config file (clawdbot.json)
     config:
       # Create ConfigMap from inline config
-      create: false
+      create: true
       # Use existing ConfigMap
       existingConfigMap: "moltbot-config"
 
