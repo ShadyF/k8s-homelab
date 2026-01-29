@@ -68,7 +68,7 @@ spec:
       domain: &host "moltbot.${SECRET_DOMAIN}"
       annotations:
         nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.networking.svc.cluster.local/oauth2/auth"
-        nginx.ingress.kubernetes.io/auth-signin: "https://auth.${SECRET_DOMAIN}/oauth2/start?rd=$scheme://$host$escaped_request_uri"
+        nginx.ingress.kubernetes.io/auth-signin: "https://auth.${SECRET_DOMAIN}/oauth2/sign_in"
         nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
         nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
         external-dns/is-public: "false"

@@ -48,8 +48,8 @@ spec:
         # in conjuction with MetalLB
         externalTrafficPolicy: Local
       config:
-        #        custom-http-errors: >-
-        #          401,403,404,500,501,502,503
+        custom-http-errors: >-
+          404,500,501,502,503
         ssl-protocols: "TLSv1.3 TLSv1.2"
         # Same size defined in cloudflare
         proxy-body-size: "100m"
