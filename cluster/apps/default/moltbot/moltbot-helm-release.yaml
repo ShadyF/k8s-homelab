@@ -54,6 +54,7 @@ spec:
     ingress:
       enabled: true
       className: internal
+      domain: &host "moltbot.${SECRET_DOMAIN}"
       annotations:
         nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.networking.svc.cluster.local/oauth2/auth"
         nginx.ingress.kubernetes.io/auth-signin: "https://auth.${SECRET_DOMAIN}/oauth2/sign_in"
@@ -63,13 +64,12 @@ spec:
         external-dns/is-public: "false"
         external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
       hosts:
-        - host: &host "moltbot.${SECRET_DOMAIN}"
+        - host: *host
           paths:
             - path: /
               pathType: Prefix
       tls:
-        - hosts:
-            - *host
+        enabled: true
 
     affinity:
       nodeAffinity:
