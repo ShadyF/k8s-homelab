@@ -35,7 +35,7 @@ spec:
               PAPERLESS_BASE_URL: http://paperless.default.svc.cluster.local:8000
               LLM_PROVIDER: openai
               OPENAI_BASE_URL: https://openrouter.ai/api/v1
-              LLM_MODEL: google/gemini-2.0-flash-001
+              LLM_MODEL: google/gemini-3-flash-preview
               VISION_LLM_PROVIDER: "openai" # openai or ollama
               VISION_LLM_MODEL: "google/gemini-2.0-flash-001"
               PDF_OCR_TAGGING: "true"
@@ -51,7 +51,7 @@ spec:
                 memory: 512Mi
               limits:
                 cpu: 250m
-                memory: 900Mi
+                memory: 512Mi
     service:
       app:
         controller: paperless-gpt
