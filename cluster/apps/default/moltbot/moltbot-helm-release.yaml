@@ -74,6 +74,8 @@ spec:
         nginx.ingress.kubernetes.io/websocket-services: "moltbot"
         external-dns/is-public: "false"
         external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
+        nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+        nginx.ingress.kubernetes.io/enable-websocket-upgrade: "true"
       hosts:
         - host: *host
           paths:
