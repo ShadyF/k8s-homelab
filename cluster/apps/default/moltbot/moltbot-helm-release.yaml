@@ -35,9 +35,12 @@ spec:
       CLAWDBOT_WORKSPACE_DIR: /home/node/clawd
       NODE_OPTIONS: "--max-old-space-size=2048"
 
+    # Config file (clawdbot.json)
     config:
       # Create ConfigMap from inline config
       create: false
+      # Use existing ConfigMap
+      existingConfigMap: "moltbot-config"
 
 
     gateway:
