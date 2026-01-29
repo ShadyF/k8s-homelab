@@ -39,7 +39,7 @@ spec:
               VISION_LLM_PROVIDER: "openai" # openai or ollama
               VISION_LLM_MODEL: "google/gemini-2.0-flash-001"
               PDF_OCR_TAGGING: "true"
-              PDF_OCR_COMPLETE_TAG: "paperless-gpt-ocr-complete"
+              PDF_OCR_COMPLETE_TAG: "review"
               OCR_LIMIT_PAGES: 10 # default is 5
               LOG_LEVEL: info
             envFrom:
