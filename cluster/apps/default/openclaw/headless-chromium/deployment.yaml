@@ -24,34 +24,20 @@ spec:
         runAsNonRoot: true
       containers:
         - name: headless-chromium
-          image: erseco/alpine-chromedriver:3.23.0
+          image: zenika/alpine-chrome:124
           ports:
             - containerPort: 9222
               name: remote-debug
-          env:
-            - name: CHROME_CRASH_REPORTER_ENABLED
-              value: "0"
           command:
-            - /bin/sh
-            - -c
-            - |
-              export CHROME_LOG_FILE=/tmp/chrome.log
-              mkdir -p /tmp/crashpad && \
-              /usr/bin/chromium-browser \
-                --headless=new \
-                --no-sandbox \
-                --disable-dev-shm-usage \
-                --disable-gpu \
-                --disable-software-rasterizer \
-                --disable-background-timer-throttling \
-                --disable-backgrounding-occluded-windows \
-                --disable-renderer-backgrounding \
-                --user-data-dir=/tmp/chromium \
-                --remote-debugging-port=9222 \
-                --remote-debugging-address=0.0.0.0 \
-                --enable-logging=stderr \
-                --v=1 \
-                2>&1 | grep -v "chrome_crashpad_handler"
+            - chromium-browser
+            - --headless=new
+            - --no-sandbox
+            - --disable-dev-shm-usage
+            - --disable-gpu
+            - --disable-software-rasterizer
+            - --remote-debugging-port=9222
+            - --remote-debugging-address=0.0.0.0
+            - --user-data-dir=/tmp/chromium
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
