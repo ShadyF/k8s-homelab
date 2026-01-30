@@ -23,22 +23,6 @@ spec:
         runAsNonRoot: true
         fsGroupChangePolicy: Always
       initContainers:
-        - name: fix-permissions
-          image: busybox:latest
-          command: ["sh", "-c", "chown -R 1000:1000 /home/node/.openclaw"]
-          securityContext:
-            runAsUser: 0
-            allowPrivilegeEscalation: true
-            capabilities:
-              add:
-                - CHOWN
-              drop:
-                - ALL
-            readOnlyRootFilesystem: true
-          volumeMounts:
-            - name: data
-              mountPath: /home/node/.openclaw
-              subPath: openclaw-state
         - name: init-config
           image: ghcr.io/openclaw/openclaw:2026.1.29
           imagePullPolicy: IfNotPresent
