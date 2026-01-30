@@ -57,10 +57,10 @@ spec:
     resources:
       limits:
         memory: 2Gi
-        cpu: 2000m
+        cpu: 1500m
       requests:
         memory: 512Mi
-        cpu: 250m
+        cpu: 600m
 
     ingress:
       enabled: true
