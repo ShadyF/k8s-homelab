@@ -35,6 +35,7 @@ spec:
             - /bin/sh
             - -c
             - |
+              export CHROME_LOG_FILE=/tmp/chrome.log
               mkdir -p /tmp/crashpad && \
               /usr/bin/chromium-browser \
                 --headless=new \
@@ -48,7 +49,11 @@ spec:
                 --crash-dumps-dir=/tmp/crashpad \
                 --remote-debugging-port=9222 \
                 --remote-debugging-address=0.0.0.0 \
-                --disable-breakpad
+                --disable-breakpad \
+                --no-crash-upload \
+                --disable-features=ReportingCore \
+                --enable-logging=stderr \
+                --v=1
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
