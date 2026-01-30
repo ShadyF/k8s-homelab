@@ -21,9 +21,6 @@ spec:
         - name: playwright
           image: ghcr.io/browserless/chrome:v2.38.4
           imagePullPolicy: IfNotPresent
-          env:
-            - name: CONNECTION_TIMEOUT
-              value: "120000"
           ports:
             - containerPort: 3000
           resources:

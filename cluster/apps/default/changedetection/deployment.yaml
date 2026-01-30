@@ -29,7 +29,7 @@ spec:
             - name: HIDE_REFERER
               value: "true"  # Hide referer when visiting sites
             - name: FETCH_TIMEOUT
-              value: "120"
+              value: "360"
           ports:
             - containerPort: 5000
           volumeMounts:
