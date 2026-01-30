@@ -52,6 +52,7 @@ spec:
                 --disable-breakpad \
                 --no-crash-upload \
                 --disable-features=ReportingCore \
+                --disable-crash-reporter \
                 --enable-logging=stderr \
                 --v=1
           securityContext:
