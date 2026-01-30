@@ -16,10 +16,21 @@ spec:
       labels:
         app.kubernetes.io/name: openclaw
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        runAsNonRoot: true
       initContainers:
         - name: init-config
           image: ghcr.io/openclaw/openclaw:2026.1.29
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
           command:
             - sh
             - -c
@@ -39,6 +50,8 @@ spec:
             - name: data
               mountPath: /home/node/.openclaw
               subPath: openclaw-state
+            - name: tmp
+              mountPath: /tmp
       containers:
         - name: gateway
           image: ghcr.io/openclaw/openclaw:2026.1.29
@@ -71,6 +84,12 @@ spec:
             - name: gateway
               containerPort: 18789
               protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
           volumeMounts:
             - name: data
               mountPath: /home/node/.openclaw
@@ -78,6 +97,8 @@ spec:
             - name: data
               mountPath: /home/node/clawd
               subPath: openclaw-workspace
+            - name: tmp
+              mountPath: /tmp
           resources:
             limits:
               memory: 2Gi
@@ -92,6 +113,8 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: openclaw-data
+        - name: tmp
+          emptyDir: {}
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
