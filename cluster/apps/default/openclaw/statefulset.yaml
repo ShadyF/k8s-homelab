@@ -84,6 +84,22 @@ spec:
             - name: gateway
               containerPort: 18789
               protocol: TCP
+          startupProbe:
+            tcpSocket:
+              port: gateway
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            tcpSocket:
+              port: gateway
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            tcpSocket:
+              port: gateway
+            initialDelaySeconds: 5
+            periodSeconds: 10
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
