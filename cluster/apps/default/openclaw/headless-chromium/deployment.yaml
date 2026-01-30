@@ -42,25 +42,25 @@ spec:
                 --no-sandbox \
                 --disable-dev-shm-usage \
                 --disable-gpu \
+                --disable-software-rasterizer \
                 --disable-background-timer-throttling \
                 --disable-backgrounding-occluded-windows \
                 --disable-renderer-backgrounding \
                 --user-data-dir=/tmp/chromium \
-                --crash-dumps-dir=/tmp/crashpad \
                 --remote-debugging-port=9222 \
                 --remote-debugging-address=0.0.0.0 \
-                --disable-breakpad \
-                --no-crash-upload \
-                --disable-features=ReportingCore \
-                --disable-crash-reporter \
                 --enable-logging=stderr \
-                --v=1
+                --v=1 \
+                2>&1 | grep -v "chrome_crashpad_handler"
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL
-            readOnlyRootFilesystem: false # Chromedriver might need to write to /tmp or similar, and it's alpine based.
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           resources:
             limits:
               cpu: 500m
@@ -78,3 +78,6 @@ spec:
               port: 9222
             initialDelaySeconds: 5
             periodSeconds: 10
+      volumes:
+        - name: tmp
+          emptyDir: {}
