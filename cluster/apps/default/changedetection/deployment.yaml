@@ -28,6 +28,8 @@ spec:
               value: "changedetection.${SECRET_DOMAIN}"
             - name: HIDE_REFERER
               value: "true"  # Hide referer when visiting sites
+            - name: FETCH_TIMEOUT
+              value: "120"
           ports:
             - containerPort: 5000
           volumeMounts:
