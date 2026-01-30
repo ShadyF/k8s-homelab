@@ -26,10 +26,13 @@ spec:
           ports:
             - containerPort: 9515
               name: http
+            - containerPort: 9222
+              name: remote-debug
           command:
             - chromedriver
             - --port=9515
-            - --whitelisted-ips=
+            - --remote-debugging-port=9222
+            - --remote-debugging-address=0.0.0.0
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:

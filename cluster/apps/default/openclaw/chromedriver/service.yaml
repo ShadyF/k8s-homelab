@@ -10,5 +10,9 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+    - port: 9222
+      targetPort: remote-debug
+      protocol: TCP
+      name: remote-debug
   selector:
     app: openclaw-chromedriver
