@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: openclaw-chromedriver
+  name: headless-chromium
   namespace: default
   labels:
-    app: openclaw-chromedriver
+    app: headless-chromium
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: openclaw-chromedriver
+      app: headless-chromium
   template:
     metadata:
       labels:
-        app: openclaw-chromedriver
+        app: headless-chromium
     spec:
       securityContext:
         runAsUser: 1000
@@ -23,7 +23,7 @@ spec:
         fsGroup: 1000
         runAsNonRoot: true
       containers:
-        - name: chromedriver
+        - name: headless-chromium
           image: erseco/alpine-chromedriver:3.23.0
           ports:
             - containerPort: 9222
@@ -38,6 +38,8 @@ spec:
             - --disable-backgrounding-occluded-windows
             - --disable-renderer-backgrounding
             - --disable-crash-reporter
+            - --crash-dumps-dir=/tmp
+            - --user-data-dir=/tmp/chromium
             - --remote-debugging-port=9222
             - --remote-debugging-address=0.0.0.0
           securityContext:
