@@ -28,6 +28,9 @@ spec:
           ports:
             - containerPort: 9222
               name: remote-debug
+          env:
+            - name: CHROME_CRASH_REPORTER_ENABLED
+              value: "0"
           command:
             - /usr/bin/chromium-browser
             - --headless=new
@@ -37,8 +40,7 @@ spec:
             - --disable-background-timer-throttling
             - --disable-backgrounding-occluded-windows
             - --disable-renderer-backgrounding
-            - --disable-crash-reporter
-            - --crash-dumps-dir=/tmp
+            - --disable-breakpad
             - --user-data-dir=/tmp/chromium
             - --remote-debugging-port=9222
             - --remote-debugging-address=0.0.0.0
