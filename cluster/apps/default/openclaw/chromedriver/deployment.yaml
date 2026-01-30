@@ -26,15 +26,17 @@ spec:
         - name: chromedriver
           image: erseco/alpine-chromedriver:3.23.0
           ports:
-            - containerPort: 9515
-              name: http
             - containerPort: 9222
               name: remote-debug
           command:
-            - chromedriver
-            - --port=9515
-            - --whitelisted-ips=
-            - --allowed-origins=*
+            - /usr/bin/chromium-browser
+            - --headless=new
+            - --no-sandbox
+            - --disable-dev-shm-usage
+            - --disable-gpu
+            - --disable-background-timer-throttling
+            - --disable-backgrounding-occluded-windows
+            - --disable-renderer-backgrounding
             - --remote-debugging-port=9222
             - --remote-debugging-address=0.0.0.0
           securityContext:
@@ -52,11 +54,11 @@ spec:
               memory: 128Mi
           livenessProbe:
             tcpSocket:
-              port: 9515
+              port: 9222
             initialDelaySeconds: 5
             periodSeconds: 10
           readinessProbe:
             tcpSocket:
-              port: 9515
+              port: 9222
             initialDelaySeconds: 5
             periodSeconds: 10
