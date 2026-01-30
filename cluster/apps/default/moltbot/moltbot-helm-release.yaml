@@ -38,7 +38,7 @@ spec:
     # Config file (clawdbot.json)
     config:
       # Create ConfigMap from inline config
-      create: true
+      create: false
       # Use existing ConfigMap
       existingConfigMap: "moltbot-config"
 
@@ -57,7 +57,7 @@ spec:
     resources:
       limits:
         memory: 2Gi
-        cpu: 1500m
+        cpu: 2000m
       requests:
         memory: 512Mi
         cpu: 600m
