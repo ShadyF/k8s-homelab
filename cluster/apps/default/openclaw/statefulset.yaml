@@ -72,7 +72,7 @@ spec:
             - name: CLAWDBOT_WORKSPACE_DIR
               value: "/home/node/clawd"
             - name: NODE_OPTIONS
-              value: "--max-old-space-size=2048"
+              value: "--max-old-space-size=1024"
             - name: CLAWDBOT_GATEWAY_PORT
               value: "18789"
             - name: CLAWDBOT_GATEWAY_TOKEN
@@ -117,10 +117,10 @@ spec:
               mountPath: /tmp
           resources:
             limits:
-              memory: 2Gi
-              cpu: 2500m
+              memory: 1200Mi
+              cpu: 2000m
             requests:
-              memory: 1Gi
+              memory: 512Mi
               cpu: 600m
       volumes:
         - name: config
