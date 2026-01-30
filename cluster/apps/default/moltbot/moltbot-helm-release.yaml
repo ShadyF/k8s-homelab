@@ -23,8 +23,8 @@ spec:
       namespace: longhorn-system
   values:
     image:
-      repository: ghcr.io/moltbot/clawdbot
-      tag: 2026.1.24-1
+      repository: ghcr.io/openclaw/openclaw
+      tag: 2026.1.29
       pullPolicy: IfNotPresent
 
     replicaCount: 1
