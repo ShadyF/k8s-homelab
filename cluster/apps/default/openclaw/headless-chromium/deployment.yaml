@@ -47,7 +47,8 @@ spec:
                 --user-data-dir=/tmp/chromium \
                 --crash-dumps-dir=/tmp/crashpad \
                 --remote-debugging-port=9222 \
-                --remote-debugging-address=0.0.0.0
+                --remote-debugging-address=0.0.0.0 \
+                --disable-breakpad
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
