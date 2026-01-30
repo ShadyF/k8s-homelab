@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openclaw-chromedriver
+  namespace: default
+  labels:
+    app: openclaw-chromedriver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openclaw-chromedriver
+  template:
+    metadata:
+      labels:
+        app: openclaw-chromedriver
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        runAsNonRoot: true
+      containers:
+        - name: chromedriver
+          image: erseco/alpine-chromedriver:3.23.0
+          ports:
+            - containerPort: 9515
+              name: http
+          command:
+            - chromedriver
+            - --port=9515
+            - --whitelisted-ips=
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: false # Chromedriver might need to write to /tmp or similar, and it's alpine based.
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          livenessProbe:
+            tcpSocket:
+              port: 9515
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 9515
+            initialDelaySeconds: 5
+            periodSeconds: 10
