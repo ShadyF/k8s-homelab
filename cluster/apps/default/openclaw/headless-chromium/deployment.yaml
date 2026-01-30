@@ -32,18 +32,22 @@ spec:
             - name: CHROME_CRASH_REPORTER_ENABLED
               value: "0"
           command:
-            - /usr/bin/chromium-browser
-            - --headless=new
-            - --no-sandbox
-            - --disable-dev-shm-usage
-            - --disable-gpu
-            - --disable-background-timer-throttling
-            - --disable-backgrounding-occluded-windows
-            - --disable-renderer-backgrounding
-            - --disable-breakpad
-            - --user-data-dir=/tmp/chromium
-            - --remote-debugging-port=9222
-            - --remote-debugging-address=0.0.0.0
+            - /bin/sh
+            - -c
+            - |
+              mkdir -p /tmp/crashpad && \
+              /usr/bin/chromium-browser \
+                --headless=new \
+                --no-sandbox \
+                --disable-dev-shm-usage \
+                --disable-gpu \
+                --disable-background-timer-throttling \
+                --disable-backgrounding-occluded-windows \
+                --disable-renderer-backgrounding \
+                --user-data-dir=/tmp/chromium \
+                --crash-dumps-dir=/tmp/crashpad \
+                --remote-debugging-port=9222 \
+                --remote-debugging-address=0.0.0.0
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
