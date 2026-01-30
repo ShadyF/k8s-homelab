@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: openclaw
+  namespace: default
+  labels:
+    app.kubernetes.io/name: openclaw
+spec:
+  serviceName: openclaw
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: openclaw
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: openclaw
+    spec:
+      initContainers:
+        - name: init-config
+          image: ghcr.io/openclaw/openclaw:2026.1.29
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - |
+              echo "Initializing configuration..."
+              mkdir -p /home/node/.openclaw
+              if [ ! -f /home/node/.openclaw/openclaw.json ]; then
+                echo "Copying default config..."
+                cp /config/openclaw.json /home/node/.openclaw/openclaw.json
+                echo "Config initialized"
+              else
+                echo "Config already exists, skipping"
+              fi
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: data
+              mountPath: /home/node/.openclaw
+              subPath: openclaw-state
+      containers:
+        - name: gateway
+          image: ghcr.io/openclaw/openclaw:2026.1.29
+          imagePullPolicy: IfNotPresent
+          command:
+            - node
+            - dist/index.js
+            - gateway
+            - --bind
+            - lan
+            - --port
+            - "18789"
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: CLAWDBOT_STATE_DIR
+              value: "/home/node/.openclaw"
+            - name: CLAWDBOT_WORKSPACE_DIR
+              value: "/home/node/clawd"
+            - name: NODE_OPTIONS
+              value: "--max-old-space-size=1024"
+            - name: CLAWDBOT_GATEWAY_PORT
+              value: "18789"
+            - name: CLAWDBOT_GATEWAY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secret
+                  key: gatewayToken
+          ports:
+            - name: gateway
+              containerPort: 18789
+              protocol: TCP
+          volumeMounts:
+            - name: data
+              mountPath: /home/node/.openclaw
+              subPath: openclaw-state
+            - name: data
+              mountPath: /home/node/clawd
+              subPath: openclaw-workspace
+          resources:
+            limits:
+              memory: 2Gi
+              cpu: 2000m
+            requests:
+              memory: 512Mi
+              cpu: 600m
+      volumes:
+        - name: config
+          configMap:
+            name: openclaw-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: openclaw-data
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
+                  - key: workload-type
+                    operator: In
+                    values:
+                      - stateful
