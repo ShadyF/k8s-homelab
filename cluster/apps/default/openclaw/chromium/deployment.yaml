@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chromium
+  namespace: default
+  labels:
+    app: chromium
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chromium
+  template:
+    metadata:
+      labels:
+        app: chromium
+    spec:
+      containers:
+        - name: chromium
+          image: lscr.io/linuxserver/chromium:version-4896c9c3
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: UTC
+            - name: CHROME_CLI
+              value: >-
+                --headless=new
+                --no-sandbox
+                --disable-gpu
+                --remote-debugging-port=9222
+                --remote-debugging-address=0.0.0.0
+                --user-data-dir=/tmp/chromium-data
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+            - name: debug
+              containerPort: 9222
+              protocol: TCP
+          resources:
+            limits:
+              memory: 1Gi
+            requests:
+              cpu: 100m
+              memory: 512Mi
