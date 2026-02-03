@@ -18,6 +18,15 @@ spec:
       containers:
         - name: chromium
           image: lscr.io/linuxserver/chromium:version-4896c9c3
+          command:
+            - /usr/bin/chromium-browser
+          args:
+            - --headless=new
+            - --no-sandbox
+            - --disable-gpu
+            - --remote-debugging-port=9222
+            - --remote-debugging-address=0.0.0.0
+            - --user-data-dir=/tmp/chromium-data
           env:
             - name: PUID
               value: "1000"
@@ -25,14 +34,6 @@ spec:
               value: "1000"
             - name: TZ
               value: UTC
-            - name: CHROME_CLI
-              value: >-
-                --headless=new
-                --no-sandbox
-                --disable-gpu
-                --remote-debugging-port=9222
-                --remote-debugging-address=0.0.0.0
-                --user-data-dir=/tmp/chromium-data
           ports:
             - name: http
               containerPort: 3000
