@@ -5,10 +5,6 @@ metadata:
   namespace: default
 spec:
   ports:
-    - name: http
-      port: 3000
-      targetPort: http
-      protocol: TCP
     - name: debug
       port: 9222
       targetPort: debug

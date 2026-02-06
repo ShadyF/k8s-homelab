@@ -19,33 +19,44 @@ spec:
     spec:
       containers:
         - name: chromium
-          image: lscr.io/linuxserver/chromium:version-4896c9c3
+          image: zenika/alpine-chrome:124
           command:
-            - /usr/bin/chromium-browser
+            - chromium-browser
           args:
-            - --headless=new
-            - --no-sandbox
+            - --headless
             - --disable-gpu
-            - --remote-debugging-port=9222
+            - --no-sandbox
+            - --disable-dev-shm-usage
             - --remote-debugging-address=0.0.0.0
-            - --user-data-dir=/tmp/chromium-data
+            - --remote-debugging-port=9222
           env:
-            - name: PUID
-              value: "1000"
-            - name: PGID
-              value: "1000"
             - name: TZ
-              value: UTC
+              value: Africa/Cairo
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
-            - name: http
-              containerPort: 3000
-              protocol: TCP
             - name: debug
               containerPort: 9222
               protocol: TCP
           resources:
-            limits:
-              memory: 1Gi
             requests:
               cpu: 100m
-              memory: 512Mi
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          probes:
+            readiness:
+              enabled: true
+              type: TCP
+              spec:
+                tcpSocket:
+                  port: 9222
+                initialDelaySeconds: 5
+                periodSeconds: 10
