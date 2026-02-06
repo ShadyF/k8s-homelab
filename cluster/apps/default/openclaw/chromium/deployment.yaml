@@ -51,12 +51,8 @@ spec:
             limits:
               cpu: 1000m
               memory: 1Gi
-          probes:
-            readiness:
-              enabled: true
-              type: TCP
-              spec:
-                tcpSocket:
-                  port: 9222
-                initialDelaySeconds: 5
-                periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 9222
+            initialDelaySeconds: 5
+            periodSeconds: 10
