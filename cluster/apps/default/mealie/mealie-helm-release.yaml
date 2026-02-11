@@ -103,5 +103,9 @@ spec:
         enabled: true
         type: persistentVolumeClaim
         existingClaim: mealie-pvc
+        globalMounts:
+          - path: /app/data
       tmp:
         type: emptyDir
+        globalMounts:
+          - path: /tmp
