@@ -59,10 +59,7 @@ spec:
               API_DOCS: false
               TZ: Africa/Cairo
               LOG_LEVEL: info
-              # Default Values
-              WORKERS_PER_CORE: 1
-              MAX_WORKERS: 1
-              WEB_CONCURRENCY: 4
+              UVICORN_WORKERS: 2
             envFrom:
               - secretRef:
                   name: mealie-openai-secrets
