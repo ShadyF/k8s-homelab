@@ -62,6 +62,9 @@ spec:
               WORKERS_PER_CORE: 1
               MAX_WORKERS: 1
               WEB_CONCURRENCY: 4
+            envFrom:
+              - secretRef:
+                  name: mealie-openai-secrets
 
             resources:
               requests:
