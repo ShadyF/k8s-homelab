@@ -54,7 +54,6 @@ spec:
                   - ALL
 
             env:
-              BASE_URL: https://mealie.${SECRET_DOMAIN}
               ALLOW_SIGNUP: false
               API_DOCS: false
               TZ: Africa/Cairo
@@ -65,7 +64,7 @@ spec:
               WEB_CONCURRENCY: 4
             envFrom:
               - secretRef:
-                  name: mealie-secrets
+                  name: mealie-openai-secrets
 
             resources:
               requests:
