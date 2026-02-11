@@ -32,12 +32,26 @@ spec:
       main:
         strategy: Recreate
 
+        pod:
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
+
         containers:
           main:
             image:
               repository: ghcr.io/mealie-recipes/mealie
               tag: v3.10.2
               pullPolicy: IfNotPresent
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
 
             env:
               BASE_URL: https://mealie.${SECRET_DOMAIN}
@@ -48,13 +62,13 @@ spec:
               WORKERS_PER_CORE: 1
               MAX_WORKERS: 1
               WEB_CONCURRENCY: 4
-    #            resources:
-    #              limits:
-    #                cpu: 100m
-    #                memory: 128Mi
-    #              requests:
-    #                cpu: 100m
-    #                memory: 128Mi
+
+            resources:
+              requests:
+                cpu: 20m
+                memory: 256Mi
+              limits:
+                memory: 256Gi
 
     service:
       main:
@@ -89,3 +103,5 @@ spec:
         enabled: true
         type: persistentVolumeClaim
         existingClaim: mealie-pvc
+      tmp:
+        type: emptyDir
