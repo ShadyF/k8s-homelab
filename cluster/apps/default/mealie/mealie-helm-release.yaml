@@ -54,6 +54,7 @@ spec:
                   - ALL
 
             env:
+              BASE_URL: https://mealie.${SECRET_DOMAIN}
               ALLOW_SIGNUP: false
               API_DOCS: false
               TZ: Africa/Cairo
