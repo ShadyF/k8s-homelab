@@ -90,7 +90,7 @@ spec:
           capabilities:
             add: [ "NET_ADMIN" ]
         env:
-          - name: VPNSP
+          - name: VPN_SERVICE_PROVIDER
             value: "mullvad"
           - name: VPN_TYPE
             value: "wireguard"
@@ -104,6 +104,11 @@ spec:
               secretKeyRef:
                 name: mullvad-secrets
                 key: WIREGUARD_PRIVATE_KEY
+          - name: SERVER_HOSTNAMES
+            valueFrom:
+              secretKeyRef:
+                name: mullvad-secrets
+                key: SERVER_HOSTNAMES
           - name: DOT_PROVIDERS
             value: "google"
           - name: UNBLOCK
