@@ -29,6 +29,7 @@ spec:
             - --disable-dev-shm-usage
             - --remote-debugging-address=0.0.0.0
             - --remote-debugging-port=9222
+            - --remote-allow-origins=*
             - --user-data-dir=/tmp/chromium
           env:
             - name: TZ
