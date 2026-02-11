@@ -29,9 +29,12 @@ spec:
             - --disable-dev-shm-usage
             - --remote-debugging-address=0.0.0.0
             - --remote-debugging-port=9222
+            - --user-data-dir=/tmp/chromium
           env:
             - name: TZ
               value: Africa/Cairo
+            - name: XDG_CACHE_HOME
+              value: /tmp
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
