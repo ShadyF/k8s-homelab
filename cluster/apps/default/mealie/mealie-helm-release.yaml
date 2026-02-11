@@ -59,7 +59,7 @@ spec:
               API_DOCS: false
               TZ: Africa/Cairo
               LOG_LEVEL: info
-              UVICORN_WORKERS: 2
+              UVICORN_WORKERS: 1
             envFrom:
               - secretRef:
                   name: mealie-openai-secrets
