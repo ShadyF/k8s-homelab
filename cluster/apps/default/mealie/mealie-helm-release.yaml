@@ -64,7 +64,7 @@ spec:
               WEB_CONCURRENCY: 4
             envFrom:
               - secretRef:
-                  name: mealie-openai-secrets
+                  name: mealie-secrets
 
             resources:
               requests:
