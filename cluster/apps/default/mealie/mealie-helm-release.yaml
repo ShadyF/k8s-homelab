@@ -58,6 +58,7 @@ spec:
               ALLOW_SIGNUP: false
               API_DOCS: false
               TZ: Africa/Cairo
+              LOG_LEVEL: debug
               # Default Values
               WORKERS_PER_CORE: 1
               MAX_WORKERS: 1
