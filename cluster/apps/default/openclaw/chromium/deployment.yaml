@@ -26,7 +26,7 @@ spec:
             - --no-sandbox
             - --disable-software-rasterizer
             - --disable-dev-shm-usage
-            - --remote-debugging-address=0.0.0.0
+            - --remote-debugging-address=127.0.0.1
             - --remote-debugging-port=9222
             - --remote-allow-origins=*
             - --user-data-dir=/tmp/chromium
@@ -60,6 +60,27 @@ spec:
               memory: 1Gi
           readinessProbe:
             tcpSocket:
-              port: 9222
+              port: 9223
             initialDelaySeconds: 5
             periodSeconds: 10
+        - name: proxy
+          image: nginx:1.29.5-alpine
+          ports:
+            - name: proxy
+              containerPort: 9223
+              protocol: TCP
+          volumeMounts:
+            - name: proxy-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+      volumes:
+        - name: proxy-config
+          configMap:
+            name: chromium-proxy-config

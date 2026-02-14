@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chromium-proxy-config
+  namespace: default
+data:
+  nginx.conf: |
+    worker_processes 1;
+    events { worker_connections 1024; }
+    http {
+      server {
+        listen 9223;
+        location / {
+          proxy_pass http://127.0.0.1:9222;
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade $http_upgrade;
+          proxy_set_header Connection "Upgrade";
+          proxy_set_header Host localhost;
+          proxy_read_timeout 86400;
+        }
+      }
+    }

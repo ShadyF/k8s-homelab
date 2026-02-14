@@ -7,7 +7,7 @@ spec:
   ports:
     - name: debug
       port: 9222
-      targetPort: debug
+      targetPort: 9223
       protocol: TCP
   selector:
     app: chromium
