@@ -23,9 +23,10 @@ spec:
           command:
             - chromium-browser
           args:
-            - --headless
+            - --headless=new
             - --disable-gpu
             - --no-sandbox
+            - --disable-software-rasterizer
             - --disable-dev-shm-usage
             - --remote-debugging-address=0.0.0.0
             - --remote-debugging-port=9222
@@ -33,6 +34,8 @@ spec:
             - --user-data-dir=/tmp/chromium
             - --disable-logging
             - --log-level=3
+            - --no-zygote
+            - --single-process
           env:
             - name: TZ
               value: Africa/Cairo
