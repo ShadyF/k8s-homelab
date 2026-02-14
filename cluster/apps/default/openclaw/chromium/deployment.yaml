@@ -36,6 +36,9 @@ spec:
             - --log-level=3
             - --no-zygote
             - --single-process
+            - --disable-extensions
+            - --disable-blink-features=AutomationControlled
+            - about:blank
           env:
             - name: TZ
               value: Africa/Cairo
