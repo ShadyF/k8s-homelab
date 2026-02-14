@@ -23,7 +23,7 @@ spec:
           command:
             - chromium-browser
           args:
-            - --headless=new
+            - --headless
             - --disable-gpu
             - --no-sandbox
             - --disable-dev-shm-usage
@@ -31,11 +31,15 @@ spec:
             - --remote-debugging-port=9222
             - --remote-allow-origins=*
             - --user-data-dir=/tmp/chromium
+            - --disable-logging
+            - --log-level=3
           env:
             - name: TZ
               value: Africa/Cairo
             - name: XDG_CACHE_HOME
               value: /tmp
+            - name: DBUS_SESSION_BUS_ADDRESS
+              value: /dev/null
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
