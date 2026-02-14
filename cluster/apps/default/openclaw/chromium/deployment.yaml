@@ -20,10 +20,8 @@ spec:
       containers:
         - name: chromium
           image: zenika/alpine-chrome:124
-          command:
-            - chromium-browser
           args:
-            - --headless=new
+            - --headless
             - --disable-gpu
             - --no-sandbox
             - --disable-software-rasterizer
