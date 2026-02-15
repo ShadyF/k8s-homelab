@@ -37,14 +37,10 @@ spec:
             - |
               set -e
               echo "Initializing configuration..."
-              if [ ! -f /home/node/.openclaw/openclaw.json ]; then
-                echo "Copying default config..."
-                mkdir -p /home/node/.openclaw
-                cp /config/openclaw.json /home/node/.openclaw/openclaw.json
-                echo "Config initialized"
-              else
-                echo "Config already exists, skipping"
-              fi
+              echo "Copying default config..."
+              mkdir -p /home/node/.openclaw
+              cp /config/openclaw.json /home/node/.openclaw/openclaw.json
+              echo "Config initialized"
           volumeMounts:
             - name: config
               mountPath: /config
