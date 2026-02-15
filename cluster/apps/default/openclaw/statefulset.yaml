@@ -39,6 +39,7 @@ spec:
               echo "Initializing configuration..."
               if [ ! -f /home/node/.openclaw/openclaw.json ]; then
                 echo "Copying default config..."
+                mkdir -p /home/node/.openclaw
                 cp /config/openclaw.json /home/node/.openclaw/openclaw.json
                 echo "Config initialized"
               else
