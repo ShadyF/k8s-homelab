@@ -48,8 +48,7 @@ spec:
             - name: config
               mountPath: /config
             - name: data
-              mountPath: /home/node/.openclaw
-              subPath: openclaw-state
+              mountPath: /home/node
             - name: tmp
               mountPath: /tmp
       containers:
@@ -71,8 +70,6 @@ spec:
               value: "production"
             - name: CLAWDBOT_STATE_DIR
               value: "/home/node/.openclaw"
-            - name: CLAWDBOT_WORKSPACE_DIR
-              value: "/home/node/clawd"
             - name: NODE_OPTIONS
               value: "--max-old-space-size=1024"
             - name: CLAWDBOT_GATEWAY_PORT
@@ -110,11 +107,7 @@ spec:
             readOnlyRootFilesystem: true
           volumeMounts:
             - name: data
-              mountPath: /home/node/.openclaw
-              subPath: openclaw-state
-            - name: data
-              mountPath: /home/node/clawd
-              subPath: openclaw-workspace
+              mountPath: /home/node
             - name: tmp
               mountPath: /tmp
           resources:
