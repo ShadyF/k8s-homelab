@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: playwright
-          image: ghcr.io/browserless/chrome:v2.40.0
+          image: ghcr.io/browserless/chrome:v2.41.0
           imagePullPolicy: IfNotPresent
           env:
             - name: CONNECTION_TIMEOUT
