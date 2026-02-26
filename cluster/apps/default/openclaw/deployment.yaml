@@ -68,6 +68,8 @@ spec:
               value: "production"
             - name: CLAWDBOT_STATE_DIR
               value: "/home/node/.openclaw"
+            - name: PLAYWRIGHT_BROWSERS_PATH
+              value: "/home/node/.cache/ms-playwright"
 #            - name: NODE_OPTIONS
 #              value: "--max-old-space-size=1024"
             - name: CLAWDBOT_GATEWAY_PORT
