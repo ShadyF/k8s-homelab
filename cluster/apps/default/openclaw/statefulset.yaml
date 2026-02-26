@@ -58,12 +58,8 @@ spec:
           imagePullPolicy: IfNotPresent
           command:
             - node
-            - dist/index.js
+            - openclaw.mjs
             - gateway
-            - --bind
-            - lan
-            - --port
-            - "18789"
           env:
             - name: PATH
               value: "/home/node/homebrew/bin:/home/node/homebrew/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
