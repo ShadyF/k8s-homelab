@@ -67,8 +67,8 @@ spec:
               value: "production"
             - name: CLAWDBOT_STATE_DIR
               value: "/home/node/.openclaw"
-            - name: NODE_OPTIONS
-              value: "--max-old-space-size=1024"
+#            - name: NODE_OPTIONS
+#              value: "--max-old-space-size=1024"
             - name: CLAWDBOT_GATEWAY_PORT
               value: "18789"
             - name: CLAWDBOT_GATEWAY_TOKEN
@@ -109,7 +109,7 @@ spec:
               mountPath: /tmp
           resources:
             limits:
-              memory: 1200Mi
+              memory: 1800Mi
               cpu: 2000m
             requests:
               memory: 512Mi
