@@ -1,13 +1,14 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: openclaw
   namespace: default
   labels:
     app.kubernetes.io/name: openclaw
 spec:
-  serviceName: openclaw
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app.kubernetes.io/name: openclaw
@@ -138,13 +139,3 @@ spec:
             claimName: openclaw-data
         - name: tmp
           emptyDir: {}
-      affinity:
-        nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              preference:
-                matchExpressions:
-                  - key: workload-type
-                    operator: In
-                    values:
-                      - stateful
