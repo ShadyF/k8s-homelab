@@ -141,3 +141,12 @@ spec:
             claimName: openclaw-data
         - name: tmp
           emptyDir: {}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/arch
+                    operator: NotIn
+                    values:
+                      - arm64
