@@ -30,8 +30,6 @@ spec:
             - --remote-debugging-port=9222
             - --remote-allow-origins=*
             - --user-data-dir=/tmp/chromium
-            - --no-zygote
-            - --single-process
           env:
             - name: TZ
               value: Africa/Cairo
