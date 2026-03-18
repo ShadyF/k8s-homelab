@@ -27,7 +27,9 @@ data:
         - macro: known_drop_and_execute_activities
           condition: >
             or (container.image.repository == "ghcr.io/flaresolverr/flaresolverr" and proc.name == "chromedriver")
-            or (container.image.repository == "docker.io/library/alpine" and proc.name == "stunnel" and k8s.ns.name == "monitoring")
+            or (container.image.repository == "docker.io/library/alpine" and proc.name == "stunnel" and k8s.ns.name == "monitoring" and proc.exepath == "/usr/bin/stunnel")
+            or (container.image.repository == "docker.io/library/alpine" and proc.name == "c_rehash" and k8s.ns.name == "monitoring" and proc.exepath == "/usr/bin/c_rehash")
+            or (container.image.repository == "docker.io/library/alpine" and proc.name == "update-ca-certificates" and k8s.ns.name == "monitoring" and proc.exepath == "/usr/sbin/update-ca-certificates")
           override:
             condition: append
 
