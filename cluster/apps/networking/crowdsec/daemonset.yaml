@@ -69,8 +69,12 @@ spec:
             - name: varlibdockercontainers
               mountPath: /var/lib/docker/containers
               readOnly: true
+            - name: crowdsec-data
+              mountPath: /var/lib/crowdsec/data
       terminationGracePeriodSeconds: 30
       volumes:
+        - name: crowdsec-data
+          emptyDir: {}
         - name: acquis-config-volume
           configMap:
             name: crowdsec-acquis-configmap
