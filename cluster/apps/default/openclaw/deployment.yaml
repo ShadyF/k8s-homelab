@@ -94,6 +94,11 @@ spec:
                 secretKeyRef:
                   name: openclaw-secret
                   key: OPENROUTER_TOOLS_API_KEY
+            - name: HEVY_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secret
+                  key: HEVY_API_KEY
           ports:
             - name: gateway
               containerPort: 18789
