@@ -43,13 +43,13 @@ data:
           override:
             condition: append
 
-            - macro: user_read_sensitive_file_conditions
-              condition: >
-                or (container.image.repository == "docker.io/library/alpine" and proc.name == "adduser" and k8s.ns.name == "monitoring")
-              override:
-                condition: append
-        
-            - list: user_known_packet_socket_binaries
+        - macro: user_read_sensitive_file_conditions
+          condition: >
+            or (container.image.repository == "docker.io/library/alpine" and proc.name == "adduser" and k8s.ns.name == "monitoring")
+          override:
+            condition: append
+
+        - list: user_known_packet_socket_binaries
           items: [speaker]
           override:
             items: append
