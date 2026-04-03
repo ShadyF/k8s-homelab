@@ -19,6 +19,9 @@ spec:
     - name: longhorn
       namespace: longhorn-system
   values:
+    controller:
+      replicas: 1
+      strategy: Recreate
     image:
       repository: ghcr.io/home-operations/qbittorrent
       tag: 5.1.4
@@ -128,11 +131,11 @@ spec:
             command:
               - /bin/sh
               - -c
-              - grep -q city /gluetun/servers.json && echo "connected" > /shared/vpnstatus
-          initialDelaySeconds: 1
-          timeoutSeconds: 1
+              - '[ -s /gluetun/servers.json ] && grep -q city /gluetun/servers.json && echo "connected" > /shared/vpnstatus'
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
           periodSeconds: 5
-          failureThreshold: 30
+          failureThreshold: 60
           successThreshold: 1
         livenessProbe:
           exec:
