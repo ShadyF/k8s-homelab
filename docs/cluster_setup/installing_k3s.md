@@ -17,7 +17,7 @@ called [k3sup](https://github.com/alexellis/k3sup)
 Getting your cluster up and running is as simple as running this command from your local machine
 
 ```sh
-k3sup install --ip <master_ip> --user master --local-path ~/.kube/config --merge --context homelab --ssh-key <ssh_key> --k3s-channel latest --no-extras
+k3sup install --ip <master_ip> --user master --local-path ~/.kube/config --merge --context homelab --ssh-key <ssh_key> --k3s-channel stable --no-extras
 ```
 
 This will command will attempt to create a k3s master node on the machine you pointed to (via the `--ip` flag). After
@@ -29,13 +29,26 @@ end of the command above.
 
 ## Adding nodes to your cluster
 
-Once you've created your master node, it's time to add some workers!
+Once you have created the initial control-plane node, add more machines based on their role.
 
-Run the following from your local machine
+### Add an additional control-plane node
 
-!!! warning Not 100% sure whether `ssh-key` in below command should be the ssh key of the master node or the worker
-node.
+Run the following from your local machine:
 
 ```sh
-k3sup join --ip <worker_ip> --server-ip <master_ip> --user master --ssh-key <master_ssh_key> --k3s-channel latest
+k3sup join --server --ip <control_plane_ip> --server-ip <healthy_control_plane_ip> --user <ssh_user> --server-user <server_ssh_user> --ssh-key <ssh_key> --k3s-channel stable --no-extras
 ```
+
+Additional control-plane nodes run `k3s.service`. Do not use plain agent-mode `k3sup join ...` for a control-plane node.
+
+Using agent-mode join on a control-plane node is incorrect and can create a stray `k3s-agent.service`.
+
+### Add a worker node
+
+Run the following from your local machine:
+
+```sh
+k3sup join --ip <worker_ip> --server-ip <healthy_control_plane_ip> --user <ssh_user> --server-user <server_ssh_user> --ssh-key <ssh_key> --k3s-channel stable
+```
+
+Worker nodes run `k3s-agent.service`.
