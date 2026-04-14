@@ -21,7 +21,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: atuin
-          image: ghcr.io/atuinsh/atuin:18.13.6
+          image: ghcr.io/atuinsh/atuin:18.14.1
           args:
             - start
           env:
