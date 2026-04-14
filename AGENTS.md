@@ -24,3 +24,6 @@
 ## Automation to avoid fighting
 - Docs publishing is handled by `.github/workflows/mkdocs.yaml` and only triggers for docs-related paths.
 - `.github/workflows/flux-schedule.yaml` rewrites `cluster/base/flux-system/gotk-components.yaml` during Flux upgrade automation; avoid manual churn there unless the task is about Flux bootstrap.
+
+## Operator guidance
+- This repo/cluster includes Prometheus and Loki in the monitoring stack; use them during debugging, incident investigation, and post-change verification when metrics or logs can help narrow the problem.

@@ -45,6 +45,10 @@ Use this skill when working in this repository.
 ## Homelab context
 - If a task involves the live cluster, treat Flux reconciliation as the final path for durable changes.
 - For k3s upgrade work, load the `k3s-upgrade-homelab` skill.
+- Prometheus and Loki are available in this cluster and should be part of the default investigation toolkit.
+- Use Prometheus to inspect metrics, alerts, resource pressure, and time-correlated cluster or workload behavior.
+- Use Loki to inspect workload and node logs, correlate failures across pods, and confirm whether changes affected runtime behavior.
+- Use findings from Prometheus/Loki to guide the lasting fix back into this repo rather than leaving the solution as an imperative live-cluster change.
 
 ### SSH access
 - For node-level diagnostics, the current SSH targets are:
