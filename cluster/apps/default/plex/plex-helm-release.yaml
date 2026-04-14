@@ -22,7 +22,7 @@ spec:
   values:
     image:
       repository: linuxserver/plex
-      tag: 1.43.1.10576-06378bdcd-ls300
+      tag: 1.43.1.10611-1e34174b1-ls301
     env:
       TZ: "Africa/Cairo"
       # See https://www.devwithimagination.com/2019/08/21/plex-docker-and-the-problem-of-always-appearing-as-remote/
