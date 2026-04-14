@@ -44,9 +44,6 @@ spec:
               - "qbit.${SECRET_DOMAIN}"
     settings:
       automaticPortSetup: true
-    env:
-      - name: WAIT_FOR_VPN
-        value: "true"
     # Permission denied issues in qbittorrent container if podSecurityContext -> fsGroup 1001 is not added
     # Maybe has to do with qbittorrent's container not running as root?
     podSecurityContext:
@@ -64,10 +61,6 @@ spec:
         type: pvc
         existingClaim: nfs-big-media-pvc
         mountPath: "/media_nfs"
-      shared:
-        enabled: true
-        type: emptyDir
-        mountPath: /shared
     resources:
       requests:
         cpu: 258m
@@ -84,10 +77,11 @@ spec:
     #                  operator: In
     #                  values:
     #                    - arm64
-    additionalContainers:
-      - name: gluetun
+    initContainers:
+      gluetun:
         image: qmcgaw/gluetun:v3.41.1
         imagePullPolicy: IfNotPresent
+        restartPolicy: Always
         securityContext:
           privileged: true
           capabilities:
@@ -112,41 +106,41 @@ spec:
               secretKeyRef:
                 name: mullvad-secrets
                 key: SERVER_HOSTNAMES
-          - name: DOT_PROVIDERS
+          - name: DNS_UPSTREAM_RESOLVERS
             value: "google"
-          - name: UNBLOCK
+          - name: DNS_UNBLOCK_HOSTNAMES
             value: "am.i.mullvad.net"
           - name: TZ
             value: "Africa/Cairo"
-        volumeMounts:
-          - mountPath: "/shared"
-            name: shared
-        # Write "connected" to the shared emptyDir to allow qbittorrent to run
-        # This should avoid situation where qbittorrent would run before the VPN, causing IP leaks
-        # There's no need to handle when the VPN disconnects since the VPN container has a built in killswitch.
-        # Moreover, if the container goes down (due to the liveness probe), the pod itself won't run (verify this, saw this behaviour but not 100% sure)
-        # See https://docs.k8s-at-home.com/our-helm-charts/common-library-add-ons/#openvpn
         startupProbe:
           exec:
             command:
-              - /bin/sh
-              - -c
-              - '[ -s /gluetun/servers.json ] && grep -q city /gluetun/servers.json && echo "connected" > /shared/vpnstatus'
+              - /gluetun-entrypoint
+              - healthcheck
           initialDelaySeconds: 10
           timeoutSeconds: 5
           periodSeconds: 5
           failureThreshold: 60
           successThreshold: 1
+        readinessProbe:
+          exec:
+            command:
+              - /gluetun-entrypoint
+              - healthcheck
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+          periodSeconds: 10
+          failureThreshold: 3
+          successThreshold: 1
         livenessProbe:
           exec:
             command:
-              - /bin/sh
-              - -c
-              - if wget -q -O - https://am.i.mullvad.net/connected | grep -q "You are connected to Mullvad"  ; then exit 0; else exit $?; fi
+              - /gluetun-entrypoint
+              - healthcheck
           initialDelaySeconds: 30
-          timeoutSeconds: 8
-          periodSeconds: 120
-          failureThreshold: 5
+          timeoutSeconds: 5
+          periodSeconds: 60
+          failureThreshold: 10
           successThreshold: 1
         resources:
           requests:
