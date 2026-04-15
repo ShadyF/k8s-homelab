@@ -17,6 +17,9 @@ spec:
       labels:
         app: chromium
     spec:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: chromium
           image: zenika/alpine-chrome:124
