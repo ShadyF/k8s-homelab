@@ -15,7 +15,10 @@ data:
           proxy_http_version 1.1;
           proxy_set_header Upgrade $http_upgrade;
           proxy_set_header Connection "Upgrade";
-          proxy_set_header Host $http_host;
+          proxy_set_header Host 127.0.0.1:9222;
+          sub_filter_once off;
+          sub_filter_types application/json;
+          sub_filter 'ws://127.0.0.1:9222' 'ws://chromium:9222';
           proxy_send_timeout 86400;
           proxy_read_timeout 86400;
         }
