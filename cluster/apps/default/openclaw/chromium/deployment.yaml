@@ -25,16 +25,15 @@ spec:
             - --disable-gpu
             - --no-sandbox
             - --disable-software-rasterizer
-            - --disable-dev-shm-usage
             - --remote-debugging-address=127.0.0.1
             - --remote-debugging-port=9222
             - --remote-allow-origins=*
-            - --user-data-dir=/tmp/chromium
+            - --user-data-dir=/data/chromium
           env:
             - name: TZ
               value: Africa/Cairo
             - name: XDG_CACHE_HOME
-              value: /tmp
+              value: /data/cache
             - name: DBUS_SESSION_BUS_ADDRESS
               value: /dev/null
           securityContext:
@@ -49,16 +48,26 @@ spec:
             - name: debug
               containerPort: 9222
               protocol: TCP
+          volumeMounts:
+            - name: chromium-data
+              mountPath: /data
+            - name: chromium-shm
+              mountPath: /dev/shm
           resources:
             requests:
-              cpu: 100m
-              memory: 256Mi
+              cpu: 300m
+              memory: 768Mi
             limits:
-              cpu: 1500m
-              memory: 1Gi
+              cpu: 2000m
+              memory: 2Gi
           readinessProbe:
             tcpSocket:
-              port: 9223
+              port: 9222
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 9222
             initialDelaySeconds: 5
             periodSeconds: 10
         - name: proxy
@@ -76,9 +85,16 @@ spec:
               cpu: 20m
               memory: 48Mi
             limits:
-              cpu: 50m
-              memory: 48Mi
+              cpu: 100m
+              memory: 96Mi
       volumes:
+        - name: chromium-data
+          persistentVolumeClaim:
+            claimName: chromium-data
+        - name: chromium-shm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 1Gi
         - name: proxy-config
           configMap:
             name: chromium-proxy-config

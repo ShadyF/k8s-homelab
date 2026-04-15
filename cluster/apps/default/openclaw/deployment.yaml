@@ -79,11 +79,6 @@ spec:
                 secretKeyRef:
                   name: openclaw-secret
                   key: gatewayToken
-            - name: PERPLEXITY_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: openclaw-secret
-                  key: PERPLEXITY_API_KEY
             - name: OPENROUTER_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -94,6 +89,11 @@ spec:
                 secretKeyRef:
                   name: openclaw-secret
                   key: OPENROUTER_TOOLS_API_KEY
+            - name: GITHUB_MCP_PAT
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secret
+                  key: GITHUB_MCP_PAT
             - name: HEVY_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -132,11 +132,11 @@ spec:
               mountPath: /tmp
           resources:
             limits:
-              memory: 1800Mi
-              cpu: 2000m
+              memory: 2300Mi
+              cpu: 2500m
             requests:
-              memory: 512Mi
-              cpu: 600m
+              memory: 768Mi
+              cpu: 750m
       volumes:
         - name: config
           configMap:
