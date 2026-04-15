@@ -64,15 +64,23 @@ spec:
               cpu: 2000m
               memory: 2Gi
           readinessProbe:
-            tcpSocket:
-              port: 9222
+            exec:
+              command:
+                - sh
+                - -c
+                - busybox wget -q -T 1 -O - http://127.0.0.1:9222/json/version >/dev/null
             initialDelaySeconds: 5
             periodSeconds: 10
+            timeoutSeconds: 2
           livenessProbe:
-            tcpSocket:
-              port: 9222
+            exec:
+              command:
+                - sh
+                - -c
+                - busybox wget -q -T 1 -O - http://127.0.0.1:9222/json/version >/dev/null
             initialDelaySeconds: 5
             periodSeconds: 10
+            timeoutSeconds: 2
         - name: proxy
           image: nginx:1.30.0-alpine
           ports:
