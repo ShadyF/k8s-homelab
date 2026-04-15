@@ -71,7 +71,7 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 10
         - name: proxy
-          image: nginx:1.29.8-alpine
+          image: nginx:1.30.0-alpine
           ports:
             - name: proxy
               containerPort: 9223
