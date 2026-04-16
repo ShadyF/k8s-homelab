@@ -273,7 +273,7 @@
     },
     {
       description: [
-        'Auto-merge container digests updates for trusted containers',
+        'Auto-merge patch updates for selected app images',
       ],
       matchDatasources: [
         'docker',
@@ -281,12 +281,17 @@
       automerge: true,
       automergeType: 'branch',
       matchUpdateTypes: [
-        'minor',
         'patch',
       ],
       matchPackageNames: [
-        '/ghcr.io/bjw-s/',
-        '/ghcr.io/onedr0p/',
+        'n8nio/n8n',
+        'ghcr.io/atuinsh/atuin',
+        'santiagosayshey/profilarr',
+        'ghcr.io/home-operations/radarr',
+        'ghcr.io/home-operations/sonarr',
+        'ghcr.io/home-operations/prowlarr',
+        'ghcr.io/mealie-recipes/mealie',
+        'ghcr.io/flaresolverr/flaresolverr',
       ],
     },
   ],
