@@ -46,6 +46,16 @@
     {
       customType: 'regex',
       managerFilePatterns: [
+        '/cluster/crds/kube-prometheus-stack/kustomization\\.yaml$/',
+      ],
+      matchStrings: [
+        'datasource=(?<datasource>github-releases) depName=(?<depName>.*?)\\n\\s*- https:\\/\\/raw\\.githubusercontent\\.com\\/.*?\\/refs\\/tags\\/(?<currentValue>kube-prometheus-stack-[^\\/]+)\\/',
+      ],
+      versioningTemplate: 'regex:^kube-prometheus-stack-(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
         '/cluster/.+\\.yaml$/',
       ],
       matchStrings: [
@@ -153,6 +163,66 @@
     {
       matchDatasources: [
         'helm',
+      ],
+      matchUpdateTypes: [
+        'patch',
+      ],
+      semanticCommitType: 'fix',
+      labels: [
+        'renovate/helm',
+        'dep/patch',
+      ],
+    },
+    {
+      matchDatasources: [
+        'github-releases',
+      ],
+      matchPackageNames: [
+        'prometheus-community/helm-charts',
+      ],
+      semanticCommitScope: 'charts',
+      commitMessageTopic: 'kube-prometheus-stack CRDs',
+      commitMessageExtra: 'to {{{newValue}}}',
+      separateMinorPatch: true,
+    },
+    {
+      matchDatasources: [
+        'github-releases',
+      ],
+      matchPackageNames: [
+        'prometheus-community/helm-charts',
+      ],
+      matchUpdateTypes: [
+        'major',
+      ],
+      commitMessagePrefix: 'feat(charts)!: ',
+      labels: [
+        'renovate/helm',
+        'dep/major',
+      ],
+    },
+    {
+      matchDatasources: [
+        'github-releases',
+      ],
+      matchPackageNames: [
+        'prometheus-community/helm-charts',
+      ],
+      matchUpdateTypes: [
+        'minor',
+      ],
+      semanticCommitType: 'feat',
+      labels: [
+        'renovate/helm',
+        'dep/minor',
+      ],
+    },
+    {
+      matchDatasources: [
+        'github-releases',
+      ],
+      matchPackageNames: [
+        'prometheus-community/helm-charts',
       ],
       matchUpdateTypes: [
         'patch',
