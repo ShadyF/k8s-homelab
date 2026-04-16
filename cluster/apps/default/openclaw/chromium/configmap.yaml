@@ -15,17 +15,12 @@ data:
           proxy_http_version 1.1;
           proxy_set_header Upgrade $http_upgrade;
           proxy_set_header Connection "Upgrade";
-          # Chromium DevTools rejects non-localhost Host headers.
-          # Keep localhost upstream, then rewrite advertised loopback websocket URLs
-          # so OpenClaw can reconnect through the cluster-internal chromium Service.
+          # Chromium DevTools requires a localhost Host header here.
+          # Rewrite the advertised loopback websocket URL so OpenClaw can reconnect via the chromium Service.
           proxy_set_header Host localhost;
-          proxy_set_header Accept-Encoding "";
           proxy_read_timeout 86400;
-          sub_filter_once off;
           sub_filter_types application/json;
           sub_filter 'ws://localhost/' 'ws://chromium:9222/';
-          sub_filter 'ws://localhost:9222/' 'ws://chromium:9222/';
-          sub_filter 'ws://127.0.0.1:9222/' 'ws://chromium:9222/';
         }
       }
     }
