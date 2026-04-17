@@ -120,10 +120,15 @@ spec:
                 printf '%s\n' "$collections_list" | grep -q -- "$agent_id-sessions"
               }
 
+              if [ -d "/home/node/.openclaw/extensions/lossless-claw" ]; then
+                echo "Skipping lossless-claw bootstrap; plugin already exists"
+              else
+                openclaw plugins install @martian-engineering/lossless-claw@0.9.1 --pin
+              fi
+
               if [ ! -f "$marker_file" ] || ! agent_qmd_ready concierge "/home/node/.openclaw/concierge-workspace" || ! agent_qmd_ready heba "/home/node/.openclaw/heba-workspace" || ! agent_qmd_ready boys "/home/node/.openclaw/boys-workspace"; then
                 npm install -g @tobilu/qmd@2.1.0
                 qmd --version
-                openclaw plugins install @martian-engineering/lossless-claw@0.9.1 --pin
                 bootstrap_agent_qmd concierge "/home/node/.openclaw/concierge-workspace"
                 bootstrap_agent_qmd heba "/home/node/.openclaw/heba-workspace"
                 bootstrap_agent_qmd boys "/home/node/.openclaw/boys-workspace"
