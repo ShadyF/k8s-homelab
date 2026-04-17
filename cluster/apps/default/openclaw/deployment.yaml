@@ -17,7 +17,7 @@ spec:
       labels:
         app.kubernetes.io/name: openclaw
       annotations:
-        checksum/openclaw-config: 3d3776d7342f299971a7f3b22214b90b4dfca248566f4e6283414974be8a99b5
+        checksum/openclaw-config: 2b242af118176aaaa5187698c44339c70a4f879ad761e7f2626d14dedb0c45c8
         checksum/openclaw-secret: 9a4cd68c5c6dbe4b6c4eb5dbaa22d6d30d9da9fec817c2af6bba64011373b2e8
         checksum/openclaw-concierge-workspace: b1764d54c23c76bbdef04b48f6620efe971015b70ed8aba2af8232d539eee8c8
         checksum/openclaw-researcher-workspace: 5a37a771de3ed5b7a9a5564a68500ee581f0c77f13fcbff6a7f69e6b70018ebe
@@ -72,6 +72,30 @@ spec:
                 workspace_dir="$2"
                 agent_qmd_dir="$OPENCLAW_STATE_DIR/agents/$agent_id/qmd"
 
+                cleanup_legacy_collections() {
+                  legacy_name="$1"
+                  qmd collection remove "$legacy_name" >/dev/null 2>&1 || true
+                }
+
+                ensure_collection() {
+                  collection_path="$1"
+                  collection_name="$2"
+                  collection_pattern="$3"
+
+                  if ! qmd collection list | grep -Fq -- "$collection_name"; then
+                    qmd collection add "$collection_path" --name "$collection_name" --glob "$collection_pattern" || qmd collection add "$collection_path" --name "$collection_name" --mask "$collection_pattern"
+                  fi
+                }
+
+                for legacy_name in \
+                  "$agent_id-workspace-root" \
+                  "$agent_id-workspace-memory" \
+                  "memory-root-$agent_id" \
+                  "memory-dir-$agent_id" \
+                  "sessions-$agent_id"; do
+                  cleanup_legacy_collections "$legacy_name"
+                done
+
                 mkdir -p \
                   "$workspace_dir" \
                   "$workspace_dir/memory" \
@@ -87,16 +111,16 @@ spec:
                 export XDG_CACHE_HOME="$agent_qmd_dir/xdg-cache"
                 export QMD_CONFIG_DIR="$agent_qmd_dir/xdg-config"
 
-                qmd collection add "$workspace_dir" --name "$agent_id-workspace-root" --glob 'MEMORY.md' || qmd collection add "$workspace_dir" --name "$agent_id-workspace-root" --mask 'MEMORY.md'
-                qmd collection add "$workspace_dir/memory" --name "$agent_id-workspace-memory" --glob '**/*.md' || qmd collection add "$workspace_dir/memory" --name "$agent_id-workspace-memory" --mask '**/*.md'
-                qmd collection add "$agent_qmd_dir/sessions" --name "$agent_id-sessions" --glob '**/*.jsonl' || qmd collection add "$agent_qmd_dir/sessions" --name "$agent_id-sessions" --mask '**/*.jsonl'
+                ensure_collection "$workspace_dir" "$agent_id-workspace-root-$agent_id" 'MEMORY.md'
+                ensure_collection "$workspace_dir/memory" "$agent_id-workspace-memory-$agent_id" '**/*.md'
+                ensure_collection "$agent_qmd_dir/sessions" "$agent_id-sessions" '**/*.jsonl'
 
                 qmd update
                 qmd embed
 
                 collections_list="$(qmd collection list)"
-                printf '%s\n' "$collections_list" | grep -q -- "$agent_id-workspace-root"
-                printf '%s\n' "$collections_list" | grep -q -- "$agent_id-workspace-memory"
+                printf '%s\n' "$collections_list" | grep -q -- "$agent_id-workspace-root-$agent_id"
+                printf '%s\n' "$collections_list" | grep -q -- "$agent_id-workspace-memory-$agent_id"
                 printf '%s\n' "$collections_list" | grep -q -- "$agent_id-sessions"
                 if printf '%s\n' "$collections_list" | grep -Eq 'No collections found|0 files indexed|0 docs'; then
                   echo "QMD bootstrap failed for $agent_id"
@@ -115,8 +139,8 @@ spec:
                 [ -d "$workspace_dir" ] || return 1
 
                 collections_list="$(XDG_CONFIG_HOME="$agent_qmd_dir/xdg-config" XDG_CACHE_HOME="$agent_qmd_dir/xdg-cache" QMD_CONFIG_DIR="$agent_qmd_dir/xdg-config" qmd collection list)"
-                printf '%s\n' "$collections_list" | grep -q -- "$agent_id-workspace-root" &&
-                printf '%s\n' "$collections_list" | grep -q -- "$agent_id-workspace-memory" &&
+                printf '%s\n' "$collections_list" | grep -q -- "$agent_id-workspace-root-$agent_id" &&
+                printf '%s\n' "$collections_list" | grep -q -- "$agent_id-workspace-memory-$agent_id" &&
                 printf '%s\n' "$collections_list" | grep -q -- "$agent_id-sessions"
               }
 
