@@ -17,7 +17,7 @@ spec:
       labels:
         app.kubernetes.io/name: openclaw
       annotations:
-        checksum/openclaw-config: 24c7ca00cb81f36d4b9a85b30c41670269d51d287eaad03a32b03e3c328ffb33
+        checksum/openclaw-config: 17d0effd91a640b1288924b651ac60bc91262946cc2de1e78b3ffe4817752412
         checksum/openclaw-secret: 9a4cd68c5c6dbe4b6c4eb5dbaa22d6d30d9da9fec817c2af6bba64011373b2e8
         checksum/openclaw-concierge-workspace: b1764d54c23c76bbdef04b48f6620efe971015b70ed8aba2af8232d539eee8c8
         checksum/openclaw-researcher-workspace: 5a37a771de3ed5b7a9a5564a68500ee581f0c77f13fcbff6a7f69e6b70018ebe
