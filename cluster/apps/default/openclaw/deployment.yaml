@@ -32,7 +32,7 @@ spec:
         fsGroupChangePolicy: Always
       initContainers:
         - name: init-config
-          image: ghcr.io/openclaw/openclaw:2026.4.14
+          image: ghcr.io/openclaw/openclaw:2026.4.15
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
@@ -87,7 +87,7 @@ spec:
               mountPath: /bootstrap/coder
       containers:
         - name: gateway
-          image: ghcr.io/openclaw/openclaw:2026.4.14
+          image: ghcr.io/openclaw/openclaw:2026.4.15
           imagePullPolicy: IfNotPresent
           command:
             - node
