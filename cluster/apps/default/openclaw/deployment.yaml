@@ -76,14 +76,18 @@ spec:
                   "$workspace_dir" \
                   "$workspace_dir/memory" \
                   "$agent_qmd_dir/sessions" \
-                  "$agent_qmd_dir/xdg-config" \
+                  "$agent_qmd_dir/xdg-config/qmd" \
                   "$agent_qmd_dir/xdg-cache"
 
                 export XDG_CONFIG_HOME="$agent_qmd_dir/xdg-config"
                 export XDG_CACHE_HOME="$agent_qmd_dir/xdg-cache"
-                export QMD_CONFIG_DIR="$agent_qmd_dir/xdg-config"
+                export QMD_CONFIG_DIR="$agent_qmd_dir/xdg-config/qmd"
 
                 : "${XDG_CONFIG_HOME:?}" "${XDG_CACHE_HOME:?}" "${QMD_CONFIG_DIR:?}"
+                expected_qmd_config_dir="$agent_qmd_dir/xdg-config/qmd"
+                [ "$QMD_CONFIG_DIR" = "$expected_qmd_config_dir" ]
+
+                rm -f "$agent_qmd_dir/xdg-config/index.yml"
 
                 cleanup_legacy_collections() {
                   legacy_name="$1"
@@ -136,11 +140,12 @@ spec:
                 agent_qmd_dir="$OPENCLAW_STATE_DIR/agents/$agent_id/qmd"
 
                 [ -d "$agent_qmd_dir/xdg-config" ] || return 1
+                [ -d "$agent_qmd_dir/xdg-config/qmd" ] || return 1
                 [ -d "$agent_qmd_dir/xdg-cache" ] || return 1
                 [ -d "$agent_qmd_dir/sessions" ] || return 1
                 [ -d "$workspace_dir" ] || return 1
 
-                collections_list="$(XDG_CONFIG_HOME="$agent_qmd_dir/xdg-config" XDG_CACHE_HOME="$agent_qmd_dir/xdg-cache" QMD_CONFIG_DIR="$agent_qmd_dir/xdg-config" qmd collection list)"
+                collections_list="$(XDG_CONFIG_HOME="$agent_qmd_dir/xdg-config" XDG_CACHE_HOME="$agent_qmd_dir/xdg-cache" QMD_CONFIG_DIR="$agent_qmd_dir/xdg-config/qmd" qmd collection list)"
                 printf '%s\n' "$collections_list" | grep -q -- "$agent_id-workspace-root-$agent_id" &&
                 printf '%s\n' "$collections_list" | grep -q -- "$agent_id-workspace-memory-$agent_id" &&
                 printf '%s\n' "$collections_list" | grep -q -- "$agent_id-sessions"
