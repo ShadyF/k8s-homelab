@@ -72,6 +72,19 @@ spec:
                 workspace_dir="$2"
                 agent_qmd_dir="$OPENCLAW_STATE_DIR/agents/$agent_id/qmd"
 
+                mkdir -p \
+                  "$workspace_dir" \
+                  "$workspace_dir/memory" \
+                  "$agent_qmd_dir/sessions" \
+                  "$agent_qmd_dir/xdg-config" \
+                  "$agent_qmd_dir/xdg-cache"
+
+                export XDG_CONFIG_HOME="$agent_qmd_dir/xdg-config"
+                export XDG_CACHE_HOME="$agent_qmd_dir/xdg-cache"
+                export QMD_CONFIG_DIR="$agent_qmd_dir/xdg-config"
+
+                : "${XDG_CONFIG_HOME:?}" "${XDG_CACHE_HOME:?}" "${QMD_CONFIG_DIR:?}"
+
                 cleanup_legacy_collections() {
                   legacy_name="$1"
                   qmd collection remove "$legacy_name" >/dev/null 2>&1 || true
@@ -96,20 +109,9 @@ spec:
                   cleanup_legacy_collections "$legacy_name"
                 done
 
-                mkdir -p \
-                  "$workspace_dir" \
-                  "$workspace_dir/memory" \
-                  "$agent_qmd_dir/sessions" \
-                  "$agent_qmd_dir/xdg-config" \
-                  "$agent_qmd_dir/xdg-cache"
-
                 if [ ! -f "$workspace_dir/MEMORY.md" ]; then
                   printf '%s\n\n%s\n' "# $agent_id memory seed" "No durable memories exist yet for $agent_id." > "$workspace_dir/MEMORY.md"
                 fi
-
-                export XDG_CONFIG_HOME="$agent_qmd_dir/xdg-config"
-                export XDG_CACHE_HOME="$agent_qmd_dir/xdg-cache"
-                export QMD_CONFIG_DIR="$agent_qmd_dir/xdg-config"
 
                 ensure_collection "$workspace_dir" "$agent_id-workspace-root-$agent_id" 'MEMORY.md'
                 ensure_collection "$workspace_dir/memory" "$agent_id-workspace-memory-$agent_id" '**/*.md'
