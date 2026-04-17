@@ -17,7 +17,7 @@ spec:
       labels:
         app.kubernetes.io/name: openclaw
       annotations:
-        checksum/openclaw-config: 17d0effd91a640b1288924b651ac60bc91262946cc2de1e78b3ffe4817752412
+        checksum/openclaw-config: 1312b24bd932ee0e437cbdbfb1885683c94b494d7a9baa91fdbc5a8df52f7f78
         checksum/openclaw-secret: 9a4cd68c5c6dbe4b6c4eb5dbaa22d6d30d9da9fec817c2af6bba64011373b2e8
         checksum/openclaw-concierge-workspace: b1764d54c23c76bbdef04b48f6620efe971015b70ed8aba2af8232d539eee8c8
         checksum/openclaw-researcher-workspace: 5a37a771de3ed5b7a9a5564a68500ee581f0c77f13fcbff6a7f69e6b70018ebe
@@ -52,9 +52,6 @@ spec:
 
               export PATH="/home/node/.openclaw/runtime/npm-global/bin:$PATH"
               export NPM_CONFIG_PREFIX="/home/node/.openclaw/runtime/npm-global"
-              export XDG_CONFIG_HOME="/home/node/.openclaw/runtime/qmd/xdg-config"
-              export XDG_CACHE_HOME="/home/node/.openclaw/runtime/qmd/xdg-cache"
-              export QMD_CONFIG_DIR="/home/node/.openclaw/runtime/qmd/xdg-config"
               export LCM_DATABASE_PATH="/home/node/.openclaw/lcm/lcm.db"
               export LCM_LARGE_FILES_DIR="/home/node/.openclaw/lcm/large-files"
               export NODE_LLAMA_CPP_CUDA="false"
@@ -67,17 +64,69 @@ spec:
                 "$bootstrap_dir" \
                 "$(dirname "$NPM_CONFIG_PREFIX")" \
                 "$NPM_CONFIG_PREFIX" \
-                "$XDG_CONFIG_HOME" \
-                "$XDG_CACHE_HOME" \
                 "$(dirname "$LCM_DATABASE_PATH")" \
                 "$LCM_LARGE_FILES_DIR"
 
-              if [ ! -f "$marker_file" ]; then
+              bootstrap_agent_qmd() {
+                agent_id="$1"
+                workspace_dir="$2"
+                agent_qmd_dir="$OPENCLAW_STATE_DIR/agents/$agent_id/qmd"
+
+                mkdir -p \
+                  "$workspace_dir" \
+                  "$workspace_dir/memory" \
+                  "$agent_qmd_dir/sessions" \
+                  "$agent_qmd_dir/xdg-config" \
+                  "$agent_qmd_dir/xdg-cache"
+
+                if [ ! -f "$workspace_dir/MEMORY.md" ]; then
+                  printf '%s\n\n%s\n' "# $agent_id memory seed" "No durable memories exist yet for $agent_id." > "$workspace_dir/MEMORY.md"
+                fi
+
+                export XDG_CONFIG_HOME="$agent_qmd_dir/xdg-config"
+                export XDG_CACHE_HOME="$agent_qmd_dir/xdg-cache"
+                export QMD_CONFIG_DIR="$agent_qmd_dir/xdg-config"
+
+                qmd collection add "$workspace_dir" --name "$agent_id-workspace-root" --glob 'MEMORY.md' || qmd collection add "$workspace_dir" --name "$agent_id-workspace-root" --mask 'MEMORY.md'
+                qmd collection add "$workspace_dir/memory" --name "$agent_id-workspace-memory" --glob '**/*.md' || qmd collection add "$workspace_dir/memory" --name "$agent_id-workspace-memory" --mask '**/*.md'
+                qmd collection add "$agent_qmd_dir/sessions" --name "$agent_id-sessions" --glob '**/*.jsonl' || qmd collection add "$agent_qmd_dir/sessions" --name "$agent_id-sessions" --mask '**/*.jsonl'
+
+                qmd update
+                qmd embed
+
+                collections_list="$(qmd collection list)"
+                printf '%s\n' "$collections_list" | grep -q -- "$agent_id-workspace-root"
+                printf '%s\n' "$collections_list" | grep -q -- "$agent_id-workspace-memory"
+                printf '%s\n' "$collections_list" | grep -q -- "$agent_id-sessions"
+                if printf '%s\n' "$collections_list" | grep -Eq 'No collections found|0 files indexed|0 docs'; then
+                  echo "QMD bootstrap failed for $agent_id"
+                  return 1
+                fi
+              }
+
+              agent_qmd_ready() {
+                agent_id="$1"
+                workspace_dir="$2"
+                agent_qmd_dir="$OPENCLAW_STATE_DIR/agents/$agent_id/qmd"
+
+                [ -d "$agent_qmd_dir/xdg-config" ] || return 1
+                [ -d "$agent_qmd_dir/xdg-cache" ] || return 1
+                [ -d "$agent_qmd_dir/sessions" ] || return 1
+                [ -d "$workspace_dir" ] || return 1
+
+                collections_list="$(XDG_CONFIG_HOME="$agent_qmd_dir/xdg-config" XDG_CACHE_HOME="$agent_qmd_dir/xdg-cache" QMD_CONFIG_DIR="$agent_qmd_dir/xdg-config" qmd collection list)"
+                printf '%s\n' "$collections_list" | grep -q -- "$agent_id-workspace-root" &&
+                printf '%s\n' "$collections_list" | grep -q -- "$agent_id-workspace-memory" &&
+                printf '%s\n' "$collections_list" | grep -q -- "$agent_id-sessions"
+              }
+
+              if [ ! -f "$marker_file" ] || ! agent_qmd_ready concierge "/home/node/.openclaw/concierge-workspace" || ! agent_qmd_ready heba "/home/node/.openclaw/heba-workspace" || ! agent_qmd_ready boys "/home/node/.openclaw/boys-workspace"; then
                 npm install -g @tobilu/qmd@2.1.0
                 qmd --version
-                qmd status
-                qmd update
                 openclaw plugins install @martian-engineering/lossless-claw@0.9.1 --pin
+                bootstrap_agent_qmd concierge "/home/node/.openclaw/concierge-workspace"
+                bootstrap_agent_qmd heba "/home/node/.openclaw/heba-workspace"
+                bootstrap_agent_qmd boys "/home/node/.openclaw/boys-workspace"
                 touch "$marker_file"
               else
                 echo "Skipping QMD/lossless-claw bootstrap; marker already exists"
@@ -141,12 +190,6 @@ spec:
               value: "--max-old-space-size=1532"
             - name: NPM_CONFIG_PREFIX
               value: "/home/node/.openclaw/runtime/npm-global"
-            - name: XDG_CONFIG_HOME
-              value: "/home/node/.openclaw/runtime/qmd/xdg-config"
-            - name: XDG_CACHE_HOME
-              value: "/home/node/.openclaw/runtime/qmd/xdg-cache"
-            - name: QMD_CONFIG_DIR
-              value: "/home/node/.openclaw/runtime/qmd/xdg-config"
             - name: LCM_DATABASE_PATH
               value: "/home/node/.openclaw/lcm/lcm.db"
             - name: LCM_LARGE_FILES_DIR
