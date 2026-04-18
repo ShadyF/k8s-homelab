@@ -16,13 +16,6 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: openclaw
-      annotations:
-        checksum/openclaw-config: 4334afc228763bad9a8aa99e2c0bb0e4aba1434e2afa7dcac4c1de8cd2b61bb6
-        checksum/openclaw-secret: 9a4cd68c5c6dbe4b6c4eb5dbaa22d6d30d9da9fec817c2af6bba64011373b2e8
-        checksum/openclaw-concierge-workspace: b1764d54c23c76bbdef04b48f6620efe971015b70ed8aba2af8232d539eee8c8
-        checksum/openclaw-researcher-workspace: 5a37a771de3ed5b7a9a5564a68500ee581f0c77f13fcbff6a7f69e6b70018ebe
-        checksum/openclaw-browser-ops-workspace: dcb4175953c748c3bb995f51a67924bf3bb6331e89ea20e048c7d3e4c7a4cfcd
-        checksum/openclaw-coder-workspace: 0c139ae3602f8c9e6001bcdd2c27d36a9092e34f029e9e4bda8158eddd45bc43
     spec:
       securityContext:
         runAsUser: 1000
@@ -49,25 +42,22 @@ spec:
               cp /config/openclaw.json /home/node/.openclaw/openclaw.json
 
               export OPENCLAW_STATE_DIR="/home/node/.openclaw"
-
               export PATH="/home/node/.openclaw/runtime/npm-global/bin:$PATH"
               export NPM_CONFIG_PREFIX="/home/node/.openclaw/runtime/npm-global"
               export LCM_DATABASE_PATH="/home/node/.openclaw/lcm/lcm.db"
               export LCM_LARGE_FILES_DIR="/home/node/.openclaw/lcm/large-files"
               export NODE_LLAMA_CPP_CUDA="false"
 
-              runtime_dir="$OPENCLAW_STATE_DIR/runtime"
-              bootstrap_dir="$runtime_dir/bootstrap"
-              marker_file="$bootstrap_dir/qmd-lossless-claw.done"
-
               mkdir -p \
-                "$bootstrap_dir" \
+                "$OPENCLAW_STATE_DIR" \
+                "$OPENCLAW_STATE_DIR/runtime" \
+                "$OPENCLAW_STATE_DIR/extensions" \
                 "$(dirname "$NPM_CONFIG_PREFIX")" \
                 "$NPM_CONFIG_PREFIX" \
                 "$(dirname "$LCM_DATABASE_PATH")" \
                 "$LCM_LARGE_FILES_DIR"
 
-              bootstrap_agent_qmd() {
+              ensure_agent_runtime() {
                 agent_id="$1"
                 workspace_dir="$2"
                 agent_qmd_dir="$OPENCLAW_STATE_DIR/agents/$agent_id/qmd"
@@ -79,90 +69,24 @@ spec:
                   "$agent_qmd_dir/xdg-config/qmd" \
                   "$agent_qmd_dir/xdg-cache"
 
-                export XDG_CONFIG_HOME="$agent_qmd_dir/xdg-config"
-                export XDG_CACHE_HOME="$agent_qmd_dir/xdg-cache"
-                export QMD_CONFIG_DIR="$agent_qmd_dir/xdg-config/qmd"
-
-                : "${XDG_CONFIG_HOME:?}" "${XDG_CACHE_HOME:?}" "${QMD_CONFIG_DIR:?}"
-                expected_qmd_config_dir="$agent_qmd_dir/xdg-config/qmd"
-                [ "$QMD_CONFIG_DIR" = "$expected_qmd_config_dir" ]
-
-                rm -f "$agent_qmd_dir/xdg-config/index.yml"
-
-                cleanup_legacy_collections() {
-                  legacy_name="$1"
-                  qmd collection remove "$legacy_name" >/dev/null 2>&1 || true
-                }
-
-                ensure_collection() {
-                  collection_path="$1"
-                  collection_name="$2"
-                  collection_pattern="$3"
-
-                  if ! qmd collection list | grep -Fq -- "$collection_name"; then
-                    qmd collection add "$collection_path" --name "$collection_name" --glob "$collection_pattern" || qmd collection add "$collection_path" --name "$collection_name" --mask "$collection_pattern"
-                  fi
-                }
-
-                for legacy_name in \
-                  "$agent_id-workspace-root" \
-                  "$agent_id-workspace-memory" \
-                  "memory-root-$agent_id" \
-                  "memory-dir-$agent_id" \
-                  "$agent_id-sessions"; do
-                  cleanup_legacy_collections "$legacy_name"
-                done
-
                 if [ ! -f "$workspace_dir/MEMORY.md" ]; then
                   printf '%s\n\n%s\n' "# $agent_id memory seed" "No durable memories exist yet for $agent_id." > "$workspace_dir/MEMORY.md"
                 fi
-
-                ensure_collection "$workspace_dir" "$agent_id-workspace-root-$agent_id" 'MEMORY.md'
-                ensure_collection "$workspace_dir/memory" "$agent_id-workspace-memory-$agent_id" '**/*.md'
-
-                qmd update
-                qmd embed
-
-                collections_list="$(qmd collection list)"
-                printf '%s\n' "$collections_list" | grep -q -- "$agent_id-workspace-root-$agent_id"
-                printf '%s\n' "$collections_list" | grep -q -- "$agent_id-workspace-memory-$agent_id"
-                if printf '%s\n' "$collections_list" | grep -Eq 'No collections found|0 files indexed|0 docs'; then
-                  echo "QMD bootstrap failed for $agent_id"
-                  return 1
-                fi
               }
 
-              agent_qmd_ready() {
-                agent_id="$1"
-                workspace_dir="$2"
-                agent_qmd_dir="$OPENCLAW_STATE_DIR/agents/$agent_id/qmd"
+              ensure_agent_runtime concierge "/home/node/.openclaw/concierge-workspace"
+              ensure_agent_runtime heba "/home/node/.openclaw/heba-workspace"
+              ensure_agent_runtime boys "/home/node/.openclaw/boys-workspace"
 
-                [ -d "$agent_qmd_dir/xdg-config" ] || return 1
-                [ -d "$agent_qmd_dir/xdg-config/qmd" ] || return 1
-                [ -d "$agent_qmd_dir/xdg-cache" ] || return 1
-                [ -d "$agent_qmd_dir/sessions" ] || return 1
-                [ -d "$workspace_dir" ] || return 1
-
-                collections_list="$(XDG_CONFIG_HOME="$agent_qmd_dir/xdg-config" XDG_CACHE_HOME="$agent_qmd_dir/xdg-cache" QMD_CONFIG_DIR="$agent_qmd_dir/xdg-config/qmd" qmd collection list)"
-                printf '%s\n' "$collections_list" | grep -q -- "$agent_id-workspace-root-$agent_id" &&
-                printf '%s\n' "$collections_list" | grep -q -- "$agent_id-workspace-memory-$agent_id"
-              }
+              if [ ! -x "$NPM_CONFIG_PREFIX/bin/qmd" ]; then
+                npm install -g @tobilu/qmd@2.1.0
+              fi
+              qmd --version
 
               if [ -d "/home/node/.openclaw/extensions/lossless-claw" ]; then
-                echo "Skipping lossless-claw bootstrap; plugin already exists"
+                echo "lossless-claw already installed"
               else
                 openclaw plugins install @martian-engineering/lossless-claw@0.9.1 --pin
-              fi
-
-              if [ ! -f "$marker_file" ] || ! agent_qmd_ready concierge "/home/node/.openclaw/concierge-workspace" || ! agent_qmd_ready heba "/home/node/.openclaw/heba-workspace" || ! agent_qmd_ready boys "/home/node/.openclaw/boys-workspace"; then
-                npm install -g @tobilu/qmd@2.1.0
-                qmd --version
-                bootstrap_agent_qmd concierge "/home/node/.openclaw/concierge-workspace"
-                bootstrap_agent_qmd heba "/home/node/.openclaw/heba-workspace"
-                bootstrap_agent_qmd boys "/home/node/.openclaw/boys-workspace"
-                touch "$marker_file"
-              else
-                echo "Skipping QMD/lossless-claw bootstrap; marker already exists"
               fi
 
               refresh_workspace() {
