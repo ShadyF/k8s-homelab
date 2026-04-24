@@ -1,38 +1,48 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: hyperion
   namespace: default
 spec:
-  interval: 5m
+  interval: 15m
   chart:
     spec:
-      # renovate: registryUrl=https://k8s-at-home.com/charts/
-      chart: hyperion-ng
-      version: 5.4.2
+      # renovate: registryUrl=https://bjw-s-labs.github.io/helm-charts
+      chart: app-template
+      version: 4.6.2
+      interval: 15m
       sourceRef:
         kind: HelmRepository
-        name: k8s-at-home-charts
+        name: bjw-s
         namespace: flux-system
-      interval: 5m
   dependsOn:
     - name: longhorn
       namespace: longhorn-system
   values:
-    # https://github.com/k8s-at-home/charts/blob/master/charts/stable/syncthing/values.yaml
-    image:
-      repository: sirfragalot/hyperion.ng
-      tag: 2.2.0
+    controllers:
+      main:
+        strategy: Recreate
+        containers:
+          main:
+            image:
+              repository: sirfragalot/hyperion.ng
+              tag: 2.2.0
+              pullPolicy: IfNotPresent
 
     service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 8090
       flatbuffer:
-        enabled: true
+        controller: main
         type: LoadBalancer
         loadBalancerIP: 192.168.1.243
         externalTrafficPolicy: Local
         ports:
           listen:
-            enabled: true
             port: 19400
             protocol: TCP
             targetPort: 19400
@@ -40,7 +50,7 @@ spec:
     ingress:
       main:
         enabled: true
-        ingressClassName: "internal"
+        className: "internal"
         annotations:
           nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.networking.svc.cluster.local/oauth2/auth"
           nginx.ingress.kubernetes.io/auth-signin: "https://auth.${SECRET_DOMAIN}/oauth2/sign_in"
@@ -49,6 +59,9 @@ spec:
             paths:
               - path: /
                 pathType: Prefix
+                service:
+                  identifier: main
+                  port: http
         tls:
           - hosts:
               - "hyperion.${SECRET_DOMAIN}"
@@ -56,14 +69,7 @@ spec:
     persistence:
       config:
         enabled: true
+        type: persistentVolumeClaim
         existingClaim: hyperion-pvc
-
-#    affinity:
-#      nodeAffinity:
-#        requiredDuringSchedulingIgnoredDuringExecution:
-#          nodeSelectorTerms:
-#            - matchExpressions:
-#                - key: beta.kubernetes.io/arch
-#                  operator: In
-#                  values:
-#                    - arm64
+        globalMounts:
+          - path: /config
