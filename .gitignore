@@ -6,3 +6,7 @@ venv/
 .aider*
 /.pki/
 /.cache/
+/site/
+
+/docs/superpowers
+.opencode/package-lock.json
