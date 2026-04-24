@@ -1,30 +1,51 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: syncthing
   namespace: default
 spec:
-  interval: 5m
+  interval: 15m
   chart:
     spec:
-      # renovate: registryUrl=https://k8s-at-home.com/charts/
-      chart: syncthing
-      version: 3.5.2
+      # renovate: registryUrl=https://bjw-s-labs.github.io/helm-charts
+      chart: app-template
+      version: 4.6.2
+      interval: 15m
       sourceRef:
         kind: HelmRepository
-        name: k8s-at-home-charts
+        name: bjw-s
         namespace: flux-system
-      interval: 5m
   values:
-    # https://github.com/k8s-at-home/charts/blob/master/charts/stable/syncthing/values.yaml
-    image:
-      repository: syncthing/syncthing
-      tag: 2.0.16
+    controllers:
+      main:
+        strategy: Recreate
+        containers:
+          main:
+            image:
+              repository: syncthing/syncthing
+              tag: 2.0.16
+              pullPolicy: IfNotPresent
+
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 8384
+          sync-tcp:
+            port: 22000
+            protocol: TCP
+            targetPort: 22000
+          discovery:
+            port: 21027
+            protocol: UDP
+            targetPort: 21027
 
     ingress:
       main:
         enabled: true
-        ingressClassName: "internal"
+        className: "internal"
         annotations:
           external-dns/is-public: "false"
         hosts:
@@ -32,6 +53,9 @@ spec:
             paths:
               - path: /
                 pathType: Prefix
+                service:
+                  identifier: main
+                  port: http
         tls:
           - hosts:
               - "syncthing.${SECRET_DOMAIN}"
@@ -39,5 +63,7 @@ spec:
     persistence:
       data:
         enabled: true
+        type: persistentVolumeClaim
         existingClaim: syncthing-pvc
-        mountPath: /var/syncthing
+        globalMounts:
+          - path: /var/syncthing
