@@ -285,6 +285,7 @@
       ],
       matchPackageNames: [
         'n8nio/n8n',
+        'bitnami/postgresql',
         'ghcr.io/atuinsh/atuin',
         'santiagosayshey/profilarr',
         'ghcr.io/home-operations/radarr',
