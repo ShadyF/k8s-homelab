@@ -1,4 +1,4 @@
----
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -8,51 +8,85 @@ spec:
   interval: 5m
   chart:
     spec:
-      # renovate: registryUrl=https://k8s-at-home.com/charts/
-      chart: plex
-      version: 6.4.3
+      # renovate: registryUrl=https://bjw-s-labs.github.io/helm-charts
+      chart: app-template
+      version: 4.6.2
       sourceRef:
         kind: HelmRepository
-        name: k8s-at-home-charts
+        name: bjw-s
         namespace: flux-system
       interval: 5m
   dependsOn:
     - name: longhorn
       namespace: longhorn-system
   values:
-    image:
-      repository: linuxserver/plex
-      tag: 1.43.1.10611-1e34174b1-ls302
-    env:
-      TZ: "Africa/Cairo"
-      # See https://www.devwithimagination.com/2019/08/21/plex-docker-and-the-problem-of-always-appearing-as-remote/
-      ADVERTISE_IP: "https://plex.${SECRET_DOMAIN}:443/,http://192.168.1.245:32400/"
-      ALLOWED_NETWORKS: "10.0.0.0/8,192.168.1.0/24"
-    envFrom:
-      - secretRef:
-          # TODO: PLEX_CLAIM doesn't seem to work with linuxserver.io, have to do it manually by opening plex at IP
-          name: plex-secrets
-    podSecurityContext:
-      fsGroup: 1001
-      supplementalGroups:
-        - 44
-        - 109
-        - 100
+    controllers:
+      main:
+        strategy: Recreate
+        pod:
+          securityContext:
+            fsGroup: 1001
+            supplementalGroups:
+              - 44
+              - 109
+              - 100
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: kubernetes.io/arch
+                        operator: NotIn
+                        values:
+                          - arm64
+          nodeSelector:
+            intel.feature.node.kubernetes.io/gpu: "true"
+        containers:
+          main:
+            image:
+              repository: linuxserver/plex
+              tag: 1.43.1.10611-1e34174b1-ls302
+              pullPolicy: IfNotPresent
+            env:
+              TZ: Africa/Cairo
+              ADVERTISE_IP: "https://plex.${SECRET_DOMAIN}:443/,http://192.168.1.245:32400/"
+              ALLOWED_NETWORKS: 10.0.0.0/8,192.168.1.0/24
+            envFrom:
+              - secretRef:
+                  name: plex-secrets
+            resources:
+              requests:
+                gpu.intel.com/i915: 1
+                memory: 983Mi
+              limits:
+                gpu.intel.com/i915: 1
+                memory: 983Mi
+          promtail:
+            image:
+              repository: grafana/promtail
+              tag: 3.6.10
+              pullPolicy: IfNotPresent
+            args:
+              - -config.file=/etc/promtail/promtail.yaml
+            securityContext:
+              runAsUser: 0
+
     service:
       main:
-        # Not sure why this service is needed. See https://www.debontonline.com/2021/01/part-14-deploy-plexserver-yaml-with.html
+        controller: main
         type: LoadBalancer
-        # Needed since plex only considers clients as local if they're on the same subnet
         externalTrafficPolicy: Local
-
-        # Needed if sharing UDP and TCP services, not sure if this is actually needed here though
         annotations:
           metallb.universe.tf/allow-shared-ip: plex
           metallb.universe.tf/loadBalancerIPs: 192.168.1.245
+        ports:
+          http:
+            port: 32400
+
     ingress:
       main:
         enabled: true
-        ingressClassName: "external"
+        className: external
         annotations:
           external-dns/is-public: "true"
           external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
@@ -61,61 +95,43 @@ spec:
             paths:
               - path: /
                 pathType: Prefix
+                service:
+                  identifier: main
+                  port: http
         tls:
           - hosts:
               - "plex.${SECRET_DOMAIN}"
 
     persistence:
-      # Settings config to an NFS volume will cause issues and hangs. iSCSI volume should fix the issue.
-      # See https://www.reddit.com/r/PleX/comments/ezbmy0/running_plex_in_kubernetes_finally_working/
       config:
         enabled: true
+        type: persistentVolumeClaim
         existingClaim: plex-csi-config-pvc
+        advancedMounts:
+          main:
+            main:
+              - path: /config
+            promtail:
+              - path: /config
+                readOnly: true
       transcode:
         enabled: true
         type: emptyDir
+        globalMounts:
+          - path: /transcode
       nfs-big-media-pvc:
         enabled: true
+        type: persistentVolumeClaim
         existingClaim: nfs-big-media-pvc
-        # To be able to delete movies directly from plex
-        readOnly: false
-
-    # Disallow running on arm64
-    affinity:
-      nodeAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          nodeSelectorTerms:
-            - matchExpressions:
-                - key: kubernetes.io/arch
-                  operator: NotIn
-                  values:
-                    - arm64
-
-    nodeSelector:
-      intel.feature.node.kubernetes.io/gpu: "true"
-
-    resources:
-      requests:
-        gpu.intel.com/i915: "1"
-        memory: 983Mi
-      limits:
-        gpu.intel.com/i915: "1"
-        memory: 983Mi
-    addons:
-      promtail:
+        globalMounts:
+          - path: /nfs-big-media-pvc
+            readOnly: false
+      promtail-config:
         enabled: true
-        image:
-          repository: grafana/promtail
-          tag: 3.6.10
-        loki: http://loki.monitoring.svc.cluster.local:3100/loki/api/v1/push
-        logs:
-          - name: promtail/plex
-            path: "/config/Library/Application Support/Plex Media Server/Logs/*.log"
-          - name: promtail/plex/plugins
-            path: "/config/Library/Application Support/Plex Media Server/Logs/PMS Plugin Logs/*.log"
-        volumeMounts:
-          - name: config
-            mountPath: /config
-            readOnly: true
-        securityContext:
-          runAsUser: 0
+        type: configMap
+        name: plex-promtail-configmap
+        advancedMounts:
+          main:
+            promtail:
+              - path: /etc/promtail/promtail.yaml
+                subPath: promtail.yaml
