@@ -1,23 +1,21 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: prowlarr
   namespace: default
 spec:
-  interval: 5m
+  interval: 15m
   chart:
     spec:
-      # renovate: registryUrl=https://k8s-at-home.com/charts/
-      chart: prowlarr
-      version: 4.5.2
+      # renovate: registryUrl=https://bjw-s-labs.github.io/helm-charts
+      chart: app-template
+      version: 4.6.2
+      interval: 15m
       sourceRef:
         kind: HelmRepository
-        name: k8s-at-home-charts
+        name: bjw-s
         namespace: flux-system
-      interval: 5m
-  dependsOn:
-    - name: longhorn
-      namespace: longhorn-system
   install:
     remediation:
       retries: 3
@@ -25,16 +23,44 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
+  dependsOn:
+    - name: longhorn
+      namespace: longhorn-system
   values:
-    image:
-      repository: ghcr.io/home-operations/prowlarr
-      tag: 2.3.6.5351
-    env:
-      TZ: "Africa/Cairo"
+    controllers:
+      main:
+        strategy: Recreate
+        pod:
+          securityContext:
+            runAsUser: 1001
+            runAsGroup: 1001
+            fsGroup: 1001
+        containers:
+          main:
+            image:
+              repository: ghcr.io/home-operations/prowlarr
+              tag: 2.3.6.5351
+              pullPolicy: IfNotPresent
+            env:
+              TZ: Africa/Cairo
+            resources:
+              requests:
+                cpu: 300m
+                memory: 250Mi
+              limits:
+                memory: 250Mi
+
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 9696
+
     ingress:
       main:
         enabled: true
-        ingressClassName: "external"
+        className: "external"
         annotations:
           nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.networking.svc.cluster.local/oauth2/auth"
           nginx.ingress.kubernetes.io/auth-signin: "https://auth.${SECRET_DOMAIN}/oauth2/sign_in"
@@ -45,23 +71,23 @@ spec:
             paths:
               - path: /
                 pathType: Prefix
+                service:
+                  identifier: main
+                  port: http
         tls:
           - hosts:
               - "prowlarr.${SECRET_DOMAIN}"
+
     persistence:
       config:
         enabled: true
+        type: persistentVolumeClaim
         existingClaim: prowlarr-config-pvc
+        globalMounts:
+          - path: /config
       media:
         enabled: true
+        type: persistentVolumeClaim
         existingClaim: nfs-big-media-pvc
-    resources:
-      requests:
-        cpu: 300m
-        memory: 250Mi
-      limits:
-        memory: 250Mi
-    podSecurityContext:
-      runAsUser: 1001
-      runAsGroup: 1001
-      fsGroup: 1001
+        globalMounts:
+          - path: /media
