@@ -1,5 +1,7 @@
 site_name: ShadyF's K8s Homelab
 site_description: The documentation website of my kubernetes (k3s) homelab cluster
+docs_dir: content
+site_dir: ../site
 
 # Repo details
 repo_url: https://github.com/ShadyF/k8s-homelab
@@ -92,8 +94,8 @@ markdown_extensions:
 
   # Add emojis
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
       # Tasks use a custom checkbox (https://facelessuser.github.io/pymdown-extensions/extensions/tasklist/)
   - pymdownx.tasklist:
@@ -106,6 +108,8 @@ nav:
       - Installing k3s: 'cluster_setup/installing_k3s.md'
       - Setting up Flux: 'cluster_setup/setting_up_flux.md'
   #      - Adding SOPS support to Flux: 'cluster_setup/adding_sops_support_to_flux.md'
+  - Runbooks:
+      - Raspberry Pi USB SSD boot: 'runbooks/raspberry_pi_usb_ssd_boot.md'
   - Apps: 'apps/oauth2-proxy.md'
   - Miscellaneous:
       - Restrict Port Forwarding to only allow Cloudflare IPs using OpenWRT: 'miscellaneous/cloudflare_port_forwarding_openwrt.md'
@@ -113,4 +117,3 @@ nav:
       - Enabling Wake on Lan on NIC: 'miscellaneous/enabling_WakeOnLan_on_NIC.md'
       - Getting MetalLB to work on Raspberry Pi 4's Wifi: 'miscellaneous/metallb_not_working_raspberry_wifi.md'
       - Tips and Tricks: 'miscellaneous/tips_and_tricks.md'
-

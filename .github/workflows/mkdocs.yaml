@@ -8,7 +8,6 @@ on:
     # Only run when docs specific files have been changed
     paths:
       - ".github/workflows/mkdocs.yaml"
-      - "mkdocs.yml"
       - "docs/**"
 
 jobs:
@@ -18,9 +17,11 @@ jobs:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
         with:
-          python-version: '3.14'
+          python-version: '3.13'
       - uses: abatilo/actions-poetry@v4.0.0
         with:
-          poetry-version: '1.1.13'
+          poetry-version: '2.3.4'
       - run: poetry config virtualenvs.create false && poetry install
+        working-directory: docs
       - run: poetry run mkdocs gh-deploy --force
+        working-directory: docs

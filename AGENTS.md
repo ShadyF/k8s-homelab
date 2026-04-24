@@ -10,10 +10,13 @@
 - `cluster/crds/`: CRDs and prerequisites that must exist before apps.
 - `cluster/apps/`: Flux-managed workloads grouped by namespace/platform area.
 - `ansible/`: machine bootstrap/host automation; separate from Flux sync and uses its own Poetry project.
-- `docs/`: documentation website content; root Poetry tooling is for this site.
+- `docs/`: documentation website tooling and its own MkDocs/Poetry project; site content lives under `docs/content/`.
 
 ## Commands and environments
-- Docs site commands use the repo root: `poetry install`, `poetry run mkdocs serve`, `poetry run mkdocs build`.
+- Use the folder-local devcontainers for docs and Ansible work when running commands or making environment-dependent changes. These devcontainers are intended for direct devcontainer CLI use, not editor-specific workflows:
+  - Docs: `devcontainer up --workspace-folder docs`
+  - Ansible: `devcontainer up --workspace-folder ansible`
+- Docs site commands run from `docs/`: `poetry install`, `poetry run mkdocs serve`, `poetry run mkdocs build`.
 - Ansible work should use the separate `ansible/pyproject.toml` environment, not the repo-root Poetry environment.
 - There is no repo task runner; prefer exact commands already encoded in tracked configs and workflows.
 
@@ -27,3 +30,4 @@
 
 ## Operator guidance
 - This repo/cluster includes Prometheus and Loki in the monitoring stack; use them during debugging, incident investigation, and post-change verification when metrics or logs can help narrow the problem.
+- For Raspberry Pi USB SSD boot failures, check `docs/content/runbooks/raspberry_pi_usb_ssd_boot.md` before assuming SSD hardware, USB-SATA adapter, or UAS failure.

@@ -1,10 +1,10 @@
 # Setting up Raspberry Pi for k3s
 
-!!!info 
+!!!info
     The following guide was heavily inspired / has snippets
     from [this medium tutorial](https://levelup.gitconnected.com/step-by-step-slow-guide-kubernetes-cluster-on-raspberry-pi-4b-part-1-6e4179c89cbc)
 
-!!! info 
+!!! info
     This guide assumes that you have already installed Ubuntu Server 21.04 on your Raspberry Pi
 
 ## Logging into Raspberry Pi via SSH
@@ -22,7 +22,7 @@ Once you have your IP, time to SSH into this bad boy.
 ssh ubuntu@192.168.1.100
 ```
 
-!!! note 
+!!! note
     The default username and password for a fresh Ubuntu Server 21.04 install should be `ubuntu` / `ubuntu`. Don't
     worry, you'll be prompted to change this once you login for the first time.
 
@@ -80,7 +80,7 @@ preserve_hostname: true
 
 ## Securing SSH access
 
-!!! note 
+!!! note
     This section assumes that you're familiar with Key-Based authentication and that you already have a public /
     private key pair.
 
@@ -158,7 +158,7 @@ master ALL=(ALL) NOPASSWD:ALL
 ```
 
 ## (Optional) Enable Wi-Fi on your Raspberry Pi
-!!! warning 
+!!! warning
     It's recommended to connect the your cluster nodes via a wired connection for a general stability, and an
     overall better experience
 
@@ -196,5 +196,9 @@ there's some quirks regarding which USB adapters work properly and some fixes th
 
 You might also want to look at enabling [TRIM](https://wiki.archlinux.org/title/Solid_state_drive#TRIM). This is OS dependent
 so I'll leave it up to you to find the appropriate guide.
+
+If the Raspberry Pi stops booting from a USB SSD, see the
+[USB SSD boot runbook](../runbooks/raspberry_pi_usb_ssd_boot.md) before assuming the SSD, USB adapter,
+or UAS driver is faulty.
 
 [^1]: [https://itsfoss.com/connect-wifi-terminal-ubuntu/](https://itsfoss.com/connect-wifi-terminal-ubuntu/)
