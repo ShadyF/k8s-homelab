@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -7,28 +8,133 @@ spec:
   interval: 5m
   chart:
     spec:
-      # renovate: registryUrl=https://k8s-at-home.com/charts/
-      chart: qbittorrent
-      version: 13.5.2
+      # renovate: registryUrl=https://bjw-s-labs.github.io/helm-charts
+      chart: app-template
+      version: 4.6.2
       sourceRef:
         kind: HelmRepository
-        name: k8s-at-home-charts
+        name: bjw-s
         namespace: flux-system
       interval: 5m
   dependsOn:
     - name: longhorn
       namespace: longhorn-system
   values:
-    controller:
-      replicas: 1
-      strategy: Recreate
-    image:
-      repository: ghcr.io/home-operations/qbittorrent
-      tag: 5.1.4
+    controllers:
+      main:
+        replicas: 1
+        strategy: Recreate
+        pod:
+          # Permission denied issues in qbittorrent container if fsGroup 1001 is not added.
+          securityContext:
+            fsGroup: 1001
+        containers:
+          main:
+            image:
+              repository: ghcr.io/home-operations/qbittorrent
+              tag: 5.1.4
+              pullPolicy: IfNotPresent
+            resources:
+              requests:
+                cpu: 258m
+                memory: 850Mi
+              limits:
+                memory: 850Mi
+        initContainers:
+          gluetun:
+            image:
+              repository: qmcgaw/gluetun
+              tag: v3.41.1
+              pullPolicy: IfNotPresent
+            restartPolicy: Always
+            securityContext:
+              privileged: true
+              capabilities:
+                add: [ "NET_ADMIN" ]
+            env:
+              - name: VPN_SERVICE_PROVIDER
+                value: "mullvad"
+              - name: VPN_TYPE
+                value: "wireguard"
+              - name: WIREGUARD_ADDRESS
+                valueFrom:
+                  secretKeyRef:
+                    name: mullvad-secrets
+                    key: WIREGUARD_ADDRESS
+              - name: WIREGUARD_PRIVATE_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: mullvad-secrets
+                    key: WIREGUARD_PRIVATE_KEY
+              - name: SERVER_HOSTNAMES
+                valueFrom:
+                  secretKeyRef:
+                    name: mullvad-secrets
+                    key: SERVER_HOSTNAMES
+              - name: DNS_UPSTREAM_RESOLVERS
+                value: "google"
+              - name: DNS_UNBLOCK_HOSTNAMES
+                value: "am.i.mullvad.net"
+              - name: TZ
+                value: "Africa/Cairo"
+            probes:
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - /gluetun-entrypoint
+                      - healthcheck
+                  initialDelaySeconds: 10
+                  timeoutSeconds: 5
+                  periodSeconds: 5
+                  failureThreshold: 60
+                  successThreshold: 1
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - /gluetun-entrypoint
+                      - healthcheck
+                  initialDelaySeconds: 5
+                  timeoutSeconds: 5
+                  periodSeconds: 10
+                  failureThreshold: 3
+                  successThreshold: 1
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - /gluetun-entrypoint
+                      - healthcheck
+                  initialDelaySeconds: 30
+                  timeoutSeconds: 5
+                  periodSeconds: 60
+                  failureThreshold: 10
+                  successThreshold: 1
+            resources:
+              requests:
+                cpu: 265m
+                memory: 768Mi
+              limits:
+                memory: 1Gi
+
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 8080
+
     ingress:
       main:
         enabled: true
-        ingressClassName: "external"
+        className: "external"
         annotations:
           nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.networking.svc.cluster.local/oauth2/auth"
           nginx.ingress.kubernetes.io/auth-signin: "https://auth.${SECRET_DOMAIN}/oauth2/sign_in"
@@ -39,112 +145,31 @@ spec:
             paths:
               - path: /
                 pathType: Prefix
+                service:
+                  identifier: main
+                  port: http
         tls:
           - hosts:
               - "qbit.${SECRET_DOMAIN}"
-    settings:
-      automaticPortSetup: true
-    # Permission denied issues in qbittorrent container if podSecurityContext -> fsGroup 1001 is not added
-    # Maybe has to do with qbittorrent's container not running as root?
-    podSecurityContext:
-      fsGroup: 1001
+
     persistence:
       config:
         enabled: true
+        type: persistentVolumeClaim
         existingClaim: qb-config-pvc2
+        advancedMounts:
+          main:
+            main:
+              - path: /config
 #      downloads:
 #        enabled: true
 #        existingClaim: nfs-media-downloads-pvc
-      # Mount plex's nfs so that downloaded movies / series are automatically in the right location
+      # Mount plex's nfs so that downloaded movies / series are automatically in the right location.
       plex-nfs:
         enabled: true
-        type: pvc
+        type: persistentVolumeClaim
         existingClaim: nfs-big-media-pvc
-        mountPath: "/media_nfs"
-    resources:
-      requests:
-        cpu: 258m
-        memory: 850Mi
-      limits:
-        memory: 850Mi
-    # Only schedule on RPI since intel rig has faulty ram that causes integrity issues when downloading torrents
-    #    affinity:
-    #      nodeAffinity:
-    #        requiredDuringSchedulingIgnoredDuringExecution:
-    #          nodeSelectorTerms:
-    #            - matchExpressions:
-    #                - key: beta.kubernetes.io/arch
-    #                  operator: In
-    #                  values:
-    #                    - arm64
-    initContainers:
-      gluetun:
-        image: qmcgaw/gluetun:v3.41.1
-        imagePullPolicy: IfNotPresent
-        restartPolicy: Always
-        securityContext:
-          privileged: true
-          capabilities:
-            add: [ "NET_ADMIN" ]
-        env:
-          - name: VPN_SERVICE_PROVIDER
-            value: "mullvad"
-          - name: VPN_TYPE
-            value: "wireguard"
-          - name: WIREGUARD_ADDRESS
-            valueFrom:
-              secretKeyRef:
-                name: mullvad-secrets
-                key: WIREGUARD_ADDRESS
-          - name: WIREGUARD_PRIVATE_KEY
-            valueFrom:
-              secretKeyRef:
-                name: mullvad-secrets
-                key: WIREGUARD_PRIVATE_KEY
-          - name: SERVER_HOSTNAMES
-            valueFrom:
-              secretKeyRef:
-                name: mullvad-secrets
-                key: SERVER_HOSTNAMES
-          - name: DNS_UPSTREAM_RESOLVERS
-            value: "google"
-          - name: DNS_UNBLOCK_HOSTNAMES
-            value: "am.i.mullvad.net"
-          - name: TZ
-            value: "Africa/Cairo"
-        startupProbe:
-          exec:
-            command:
-              - /gluetun-entrypoint
-              - healthcheck
-          initialDelaySeconds: 10
-          timeoutSeconds: 5
-          periodSeconds: 5
-          failureThreshold: 60
-          successThreshold: 1
-        readinessProbe:
-          exec:
-            command:
-              - /gluetun-entrypoint
-              - healthcheck
-          initialDelaySeconds: 5
-          timeoutSeconds: 5
-          periodSeconds: 10
-          failureThreshold: 3
-          successThreshold: 1
-        livenessProbe:
-          exec:
-            command:
-              - /gluetun-entrypoint
-              - healthcheck
-          initialDelaySeconds: 30
-          timeoutSeconds: 5
-          periodSeconds: 60
-          failureThreshold: 10
-          successThreshold: 1
-        resources:
-          requests:
-            cpu: 265m
-            memory: 768Mi
-          limits:
-            memory: 1Gi
+        advancedMounts:
+          main:
+            main:
+              - path: /media_nfs
