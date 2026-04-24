@@ -1,0 +1,16 @@
+---
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: midnight-backups
+  namespace: longhorn-system
+spec:
+  concurrency: 2
+  cron: "0 1 * * *"
+  groups:
+    - default
+  labels: {}
+  name: midnight-backups
+  parameters: {}
+  retain: 14
+  task: backup
