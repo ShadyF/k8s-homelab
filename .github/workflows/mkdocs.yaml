@@ -10,6 +10,9 @@ on:
       - ".github/workflows/mkdocs.yaml"
       - "docs/**"
 
+permissions:
+  contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -21,7 +24,7 @@ jobs:
       - uses: abatilo/actions-poetry@v4.0.0
         with:
           poetry-version: '2.3.4'
-      - run: poetry config virtualenvs.create false && poetry install
+      - run: poetry install --no-interaction
         working-directory: docs
-      - run: poetry run mkdocs gh-deploy --force
+      - run: poetry run mkdocs gh-deploy --force --strict
         working-directory: docs
