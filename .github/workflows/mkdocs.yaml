@@ -11,11 +11,20 @@ on:
       - "docs/**"
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
@@ -26,5 +35,11 @@ jobs:
           poetry-version: '2.3.4'
       - run: poetry install --no-interaction
         working-directory: docs
-      - run: poetry run mkdocs gh-deploy --force --strict
+      - run: poetry run mkdocs build --strict
         working-directory: docs
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4
