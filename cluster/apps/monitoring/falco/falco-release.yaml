@@ -63,6 +63,17 @@ spec:
       webui:
         enabled: true
         replicaCount: 1
+        ttl: 7d
+        redis:
+          customConfig:
+            - maxmemory 768mb
+            - maxmemory-policy allkeys-lfu
+          resources:
+            requests:
+              cpu: 50m
+              memory: 256Mi
+            limits:
+              memory: 1Gi
         ingress:
           enabled: true
           ingressClassName: "internal"
