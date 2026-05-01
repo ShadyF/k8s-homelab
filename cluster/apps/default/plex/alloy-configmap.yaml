@@ -6,14 +6,14 @@ metadata:
   namespace: default
 data:
   config.alloy: |
-    # Send Plex file logs to the in-cluster Loki gateway.
+    // Send Plex file logs to the in-cluster Loki gateway.
     loki.write "default" {
       endpoint {
         url = "http://loki-gateway.monitoring.svc.cluster.local/loki/api/v1/push"
       }
     }
 
-    # Match Plex application log files from the shared /config volume.
+    // Match Plex application log files from the shared /config volume.
     local.file_match "plex_logs" {
       path_targets = [
         {
@@ -26,7 +26,7 @@ data:
       ]
     }
 
-    # Tail matched Plex log files and forward entries to Loki.
+    // Tail matched Plex log files and forward entries to Loki.
     loki.source.file "plex_logs" {
       targets    = local.file_match.plex_logs.targets
       forward_to = [loki.write.default.receiver]
