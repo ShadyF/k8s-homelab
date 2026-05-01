@@ -61,15 +61,24 @@ spec:
               limits:
                 gpu.intel.com/i915: 1
                 memory: 983Mi
-          promtail:
+          alloy:
             image:
-              repository: grafana/promtail
-              tag: 3.6.10
+              repository: grafana/alloy
+              tag: v1.16.0
               pullPolicy: IfNotPresent
             args:
-              - -config.file=/etc/promtail/promtail.yaml
+              - run
+              - /etc/alloy/config.alloy
+              - --storage.path=/tmp/alloy
             securityContext:
               runAsUser: 0
+              readOnlyRootFilesystem: true
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 128Mi
 
     service:
       main:
@@ -111,7 +120,7 @@ spec:
           main:
             main:
               - path: /config
-            promtail:
+            alloy:
               - path: /config
                 readOnly: true
       transcode:
@@ -126,12 +135,20 @@ spec:
         globalMounts:
           - path: /nfs-big-media-pvc
             readOnly: false
-      promtail-config:
+      alloy-storage:
         enabled: true
-        type: configMap
-        name: plex-promtail-configmap
+        type: emptyDir
         advancedMounts:
           main:
-            promtail:
-              - path: /etc/promtail/promtail.yaml
-                subPath: promtail.yaml
+            alloy:
+              - path: /tmp/alloy
+      alloy-config:
+        enabled: true
+        type: configMap
+        name: plex-alloy-configmap
+        advancedMounts:
+          main:
+            alloy:
+              - path: /etc/alloy/config.alloy
+                subPath: config.alloy
+                readOnly: true
