@@ -45,6 +45,12 @@ spec:
       defaultReplicaCount: "2"
       defaultDataLocality: best-effort
       replicaAutoBalance: best-effort
+      replicaSoftAntiAffinity: false
+      replicaDiskSoftAntiAffinity: true
+      replicaZoneSoftAntiAffinity: true
+      storageMinimalAvailablePercentage: 10
+      storageOverProvisioningPercentage: 100
+      storageReservedPercentageForDefaultDisk: 30
       # Prevents pods from being rescheduled on healthy nodes
       nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
       # Allows kured to be able to work with longhorn
