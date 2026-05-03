@@ -30,6 +30,13 @@ spec:
               value: "true"  # Hide referer when visiting sites
             - name: FETCH_TIMEOUT
               value: "360"
+            - name: LLM_MODEL
+              value: "openrouter/openai/gpt-4o-mini"
+            - name: LLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: changedetection-secrets
+                  key: LLM_API_KEY
           ports:
             - containerPort: 5000
           volumeMounts:
