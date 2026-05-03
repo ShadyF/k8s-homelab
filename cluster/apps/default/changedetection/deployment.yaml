@@ -37,6 +37,11 @@ spec:
                 secretKeyRef:
                   name: changedetection-secrets
                   key: LLM_API_KEY
+            - name: NOTIFICATION_URLS
+              valueFrom:
+                secretKeyRef:
+                  name: changedetection-secrets
+                  key: NOTIFICATION_URLS
           ports:
             - containerPort: 5000
           volumeMounts:
