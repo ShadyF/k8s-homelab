@@ -45,7 +45,7 @@ spec:
           main:
             image:
               repository: linuxserver/plex
-              tag: 1.43.1.10611-1e34174b1-ls303
+              tag: 1.43.1.10611-1e34174b1-ls304
               pullPolicy: IfNotPresent
             env:
               TZ: Africa/Cairo
