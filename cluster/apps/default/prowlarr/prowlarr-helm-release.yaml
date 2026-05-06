@@ -39,7 +39,7 @@ spec:
           main:
             image:
               repository: ghcr.io/home-operations/prowlarr
-              tag: 2.3.6.5351
+              tag: 2.3.7.5365
               pullPolicy: IfNotPresent
             env:
               TZ: Africa/Cairo
