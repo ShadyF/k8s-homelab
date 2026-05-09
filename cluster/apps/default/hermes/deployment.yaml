@@ -42,6 +42,10 @@ spec:
               value: /opt/data
             - name: HOME
               value: /opt/data/home
+            - name: NPM_CONFIG_CACHE
+              value: /opt/data/home/.npm
+            - name: NPM_CONFIG_PREFIX
+              value: /opt/data/home/.npm-global
             - name: HERMES_UID
               value: "1000"
             - name: HERMES_GID
