@@ -19,9 +19,9 @@ spec:
     spec:
       automountServiceAccountToken: false
       securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        runAsUser: 10000
+        runAsGroup: 10000
+        fsGroup: 10000
         runAsNonRoot: true
         fsGroupChangePolicy: OnRootMismatch
       containers:
@@ -47,9 +47,9 @@ spec:
             - name: NPM_CONFIG_PREFIX
               value: /opt/data/home/.npm-global
             - name: HERMES_UID
-              value: "1000"
+              value: "10000"
             - name: HERMES_GID
-              value: "1000"
+              value: "10000"
             - name: WHATSAPP_ENABLED
               value: "true"
             - name: WHATSAPP_MODE
