@@ -24,6 +24,42 @@ spec:
         fsGroup: 10000
         runAsNonRoot: true
         fsGroupChangePolicy: OnRootMismatch
+      initContainers:
+        - name: install-whatsapp-bridge-deps
+          image: nousresearch/hermes-agent:v2026.5.7
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -lc
+            - cd /opt/hermes/scripts/whatsapp-bridge && npm install --silent
+          env:
+            - name: HERMES_HOME
+              value: /opt/data
+            - name: HOME
+              value: /opt/data/home
+            - name: NPM_CONFIG_CACHE
+              value: /opt/data/home/.npm
+            - name: NPM_CONFIG_PREFIX
+              value: /opt/data/home/.npm-global
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: data
+              mountPath: /opt/data
+            - name: tmp
+              mountPath: /tmp
+            - name: whatsapp-bridge-node-modules
+              mountPath: /opt/hermes/scripts/whatsapp-bridge/node_modules
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 2000m
+              memory: 1Gi
       containers:
         - name: gateway
           image: nousresearch/hermes-agent:v2026.5.7
@@ -96,6 +132,8 @@ spec:
               mountPath: /opt/data
             - name: tmp
               mountPath: /tmp
+            - name: whatsapp-bridge-node-modules
+              mountPath: /opt/hermes/scripts/whatsapp-bridge/node_modules
           resources:
             requests:
               cpu: 500m
@@ -108,6 +146,8 @@ spec:
           persistentVolumeClaim:
             claimName: hermes-data
         - name: tmp
+          emptyDir: {}
+        - name: whatsapp-bridge-node-modules
           emptyDir: {}
       affinity:
         nodeAffinity:
