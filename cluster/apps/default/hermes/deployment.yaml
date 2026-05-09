@@ -31,7 +31,7 @@ spec:
           command:
             - sh
             - -lc
-            - cd /opt/hermes/scripts/whatsapp-bridge && npm install --silent
+            - cd /opt/hermes/scripts/whatsapp-bridge && npm install
           env:
             - name: HERMES_HOME
               value: /opt/data
@@ -51,8 +51,9 @@ spec:
               mountPath: /opt/data
             - name: tmp
               mountPath: /tmp
-            - name: whatsapp-bridge-node-modules
+            - name: data
               mountPath: /opt/hermes/scripts/whatsapp-bridge/node_modules
+              subPath: whatsapp-bridge-node-modules
           resources:
             requests:
               cpu: 250m
@@ -132,8 +133,9 @@ spec:
               mountPath: /opt/data
             - name: tmp
               mountPath: /tmp
-            - name: whatsapp-bridge-node-modules
+            - name: data
               mountPath: /opt/hermes/scripts/whatsapp-bridge/node_modules
+              subPath: whatsapp-bridge-node-modules
           resources:
             requests:
               cpu: 500m
@@ -146,8 +148,6 @@ spec:
           persistentVolumeClaim:
             claimName: hermes-data
         - name: tmp
-          emptyDir: {}
-        - name: whatsapp-bridge-node-modules
           emptyDir: {}
       affinity:
         nodeAffinity:
