@@ -38,6 +38,10 @@ spec:
               value: "0.0.0.0"
             - name: HERMES_DASHBOARD_PORT
               value: "9119"
+            - name: HERMES_HOME
+              value: /opt/data
+            - name: HOME
+              value: /opt/data/home
             - name: HERMES_UID
               value: "1000"
             - name: HERMES_GID
