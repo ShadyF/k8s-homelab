@@ -1,8 +1,10 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: openclaw
+  name: hermes
   namespace: default
+  labels:
+    app.kubernetes.io/name: hermes
   annotations:
     nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.networking.svc.cluster.local/oauth2/auth"
     nginx.ingress.kubernetes.io/auth-signin: "https://auth.${SECRET_DOMAIN}/oauth2/sign_in"
@@ -16,15 +18,15 @@ spec:
   ingressClassName: internal
   tls:
     - hosts:
-        - "openclaw.${SECRET_DOMAIN}"
+        - "hermes.${SECRET_DOMAIN}"
   rules:
-    - host: "openclaw.${SECRET_DOMAIN}"
+    - host: "hermes.${SECRET_DOMAIN}"
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: openclaw
+                name: hermes
                 port:
-                  number: 18789
+                  number: 9119

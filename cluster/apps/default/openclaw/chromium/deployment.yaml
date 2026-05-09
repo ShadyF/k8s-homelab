@@ -57,12 +57,21 @@ spec:
               cpu: 1500m
               memory: 1Gi
           readinessProbe:
-            tcpSocket:
+            httpGet:
+              path: /json/version
               port: 9223
             initialDelaySeconds: 5
             periodSeconds: 10
         - name: proxy
           image: nginx:1.30.0-alpine
+          securityContext:
+            runAsUser: 101
+            runAsGroup: 101
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - name: proxy
               containerPort: 9223

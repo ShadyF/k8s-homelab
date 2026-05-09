@@ -5,9 +5,15 @@ metadata:
   namespace: default
 data:
   nginx.conf: |
+    pid /tmp/nginx.pid;
     worker_processes 1;
     events { worker_connections 1024; }
     http {
+      client_body_temp_path /tmp/client_temp;
+      proxy_temp_path /tmp/proxy_temp;
+      fastcgi_temp_path /tmp/fastcgi_temp;
+      uwsgi_temp_path /tmp/uwsgi_temp;
+      scgi_temp_path /tmp/scgi_temp;
       server {
         listen 9223;
         location / {
@@ -16,7 +22,7 @@ data:
           proxy_set_header Upgrade $http_upgrade;
           proxy_set_header Connection "Upgrade";
           # Chromium DevTools requires a localhost Host header here.
-          # Rewrite the advertised loopback websocket URL so OpenClaw can reconnect via the chromium Service.
+          # Rewrite the advertised loopback websocket URL so in-cluster agents can reconnect via the chromium Service.
           proxy_set_header Host localhost;
           proxy_read_timeout 86400;
           sub_filter_types application/json;

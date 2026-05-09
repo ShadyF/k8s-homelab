@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hermes
+  namespace: default
+  labels:
+    app.kubernetes.io/name: hermes
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hermes
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hermes
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        runAsNonRoot: true
+        fsGroupChangePolicy: OnRootMismatch
+      containers:
+        - name: gateway
+          image: nousresearch/hermes-agent:v2026.5.7
+          imagePullPolicy: IfNotPresent
+          args:
+            - gateway
+            - run
+          env:
+            - name: HERMES_DASHBOARD
+              value: "1"
+            - name: HERMES_DASHBOARD_HOST
+              value: "0.0.0.0"
+            - name: HERMES_DASHBOARD_PORT
+              value: "9119"
+            - name: HERMES_UID
+              value: "1000"
+            - name: HERMES_GID
+              value: "1000"
+            - name: WHATSAPP_ENABLED
+              value: "true"
+            - name: WHATSAPP_MODE
+              value: bot
+            - name: WHATSAPP_ALLOWED_USERS
+              valueFrom:
+                secretKeyRef:
+                  name: hermes-secret
+                  key: WHATSAPP_ALLOWED_USERS
+            - name: OPENROUTER_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: hermes-secret
+                  key: OPENROUTER_API_KEY
+            - name: BROWSER_CDP_URL
+              value: http://chromium:9222
+          ports:
+            - name: dashboard
+              containerPort: 9119
+              protocol: TCP
+          startupProbe:
+            tcpSocket:
+              port: dashboard
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 60
+          livenessProbe:
+            tcpSocket:
+              port: dashboard
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          readinessProbe:
+            tcpSocket:
+              port: dashboard
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: data
+              mountPath: /opt/data
+            - name: tmp
+              mountPath: /tmp
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: 2500m
+              memory: 2Gi
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: hermes-data
+        - name: tmp
+          emptyDir: {}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/arch
+                    operator: NotIn
+                    values:
+                      - arm64
