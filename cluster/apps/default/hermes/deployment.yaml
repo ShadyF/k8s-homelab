@@ -87,8 +87,6 @@ spec:
               value: "10000"
             - name: HERMES_GID
               value: "10000"
-            - name: WHATSAPP_ENABLED
-              value: "false"
             - name: WHATSAPP_MODE
               value: bot
             - name: WHATSAPP_ALLOWED_USERS
