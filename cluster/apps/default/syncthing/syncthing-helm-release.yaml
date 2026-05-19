@@ -10,7 +10,7 @@ spec:
     spec:
       # renovate: registryUrl=https://bjw-s-labs.github.io/helm-charts
       chart: app-template
-      version: 5.0.0
+      version: 5.0.1
       interval: 15m
       sourceRef:
         kind: HelmRepository
@@ -24,7 +24,7 @@ spec:
           main:
             image:
               repository: syncthing/syncthing
-              tag: 2.0.16
+              tag: 2.1.0
               pullPolicy: IfNotPresent
 
     service:
