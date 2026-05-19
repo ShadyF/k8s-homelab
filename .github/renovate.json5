@@ -234,6 +234,22 @@
       ],
     },
     {
+      description: [
+        'Group kube-prometheus-stack Helm chart and CRD updates',
+      ],
+      matchDatasources: [
+        'helm',
+        'github-releases',
+      ],
+      matchPackageNames: [
+        'kube-prometheus-stack',
+        'prometheus-community/helm-charts',
+      ],
+      groupName: 'kube-prometheus-stack chart and CRDs',
+      groupSlug: 'kube-prometheus-stack',
+      separateMinorPatch: false,
+    },
+    {
       matchDatasources: [
         'docker',
       ],
