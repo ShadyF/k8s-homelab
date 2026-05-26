@@ -1,0 +1,154 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hermes-h
+  namespace: default
+  labels:
+    app.kubernetes.io/name: hermes-h
+    app.kubernetes.io/part-of: hermes
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hermes-h
+      app.kubernetes.io/part-of: hermes
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hermes-h
+        app.kubernetes.io/part-of: hermes
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsUser: 10000
+        runAsGroup: 10000
+        fsGroup: 10000
+        runAsNonRoot: true
+        fsGroupChangePolicy: OnRootMismatch
+      initContainers:
+        - name: install-whatsapp-bridge-deps
+          image: nousresearch/hermes-agent:v2026.5.16
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -lc
+            - cd /opt/hermes/scripts/whatsapp-bridge && npm install
+          env:
+            - name: HERMES_HOME
+              value: /opt/data
+            - name: HOME
+              value: /opt/data/home
+            - name: NPM_CONFIG_CACHE
+              value: /opt/data/home/.npm
+            - name: NPM_CONFIG_PREFIX
+              value: /opt/data/home/.npm-global
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: data
+              mountPath: /opt/data
+            - name: tmp
+              mountPath: /tmp
+            - name: data
+              mountPath: /opt/hermes/scripts/whatsapp-bridge/node_modules
+              subPath: whatsapp-bridge-node-modules
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 750Mi
+      containers:
+        - name: gateway
+          image: nousresearch/hermes-agent:v2026.5.16
+          imagePullPolicy: IfNotPresent
+          args:
+            - gateway
+            - run
+          env:
+            - name: HERMES_DASHBOARD
+              value: "1"
+            - name: HERMES_DASHBOARD_HOST
+              value: "0.0.0.0"
+            - name: HERMES_DASHBOARD_PORT
+              value: "9119"
+            - name: HERMES_HOME
+              value: /opt/data
+            - name: HOME
+              value: /opt/data/home
+            - name: NPM_CONFIG_CACHE
+              value: /opt/data/home/.npm
+            - name: NPM_CONFIG_PREFIX
+              value: /opt/data/home/.npm-global
+            - name: HERMES_UID
+              value: "10000"
+            - name: HERMES_GID
+              value: "10000"
+            - name: WHATSAPP_MODE
+              value: bot
+            - name: WHATSAPP_ALLOWED_USERS
+              valueFrom:
+                secretKeyRef:
+                  name: hermes-h-secret
+                  key: WHATSAPP_ALLOWED_USERS
+          ports:
+            - name: dashboard
+              containerPort: 9119
+              protocol: TCP
+          startupProbe:
+            tcpSocket:
+              port: dashboard
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 60
+          livenessProbe:
+            tcpSocket:
+              port: dashboard
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          readinessProbe:
+            tcpSocket:
+              port: dashboard
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: data
+              mountPath: /opt/data
+            - name: tmp
+              mountPath: /tmp
+            - name: data
+              mountPath: /opt/hermes/scripts/whatsapp-bridge/node_modules
+              subPath: whatsapp-bridge-node-modules
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 750Mi
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: hermes-h-data
+        - name: tmp
+          emptyDir: {}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/arch
+                    operator: NotIn
+                    values:
+                      - arm64
