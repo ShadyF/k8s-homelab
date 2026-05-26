@@ -1,0 +1,29 @@
+{
+  "skill_name": "pr-upgrade-review",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Review all open Renovate PRs for ShadyF/k8s-homelab and tell me which ones are safe to merge. I do not have gh installed, so do not use the GitHub CLI.",
+      "expected_output": "Uses GitHub API/MCP or the bundled Python helper instead of gh; analyzes all open PRs by default; runs repo/static checks before final recommendations; returns merge/manual review/hold decisions without vague merge-after-checks language.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "For the open upgrade PRs in this repo, check whether the target versions have any regressions in GitHub issues or online that matter for our Kubernetes manifests before recommending merge or hold.",
+      "expected_output": "Includes regression and known-issue research for each target version; links findings where available; filters risks against repo files such as cluster/apps, cluster/crds, and cluster/base; recommends merge when reported breakage affects unused providers, disabled components, or config absent from this repo.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Look at the release notes for our open app upgrade PRs and tell me if there are new Helm values or config options we should use. If changes are useful, ask before editing manifests.",
+      "expected_output": "Finds release notes from Renovate links or upstream sources; identifies useful repo-relevant configuration opportunities; lists manifest update candidates separately with file paths and evidence; stops to ask for approval before editing any files.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Review these upgrade PRs from the repo first. Only check the live cluster if the repo and release notes cannot answer the risk. If a breaking change is for a provider or feature I do not use, tell me to merge.",
+      "expected_output": "Prioritizes PR patches, manifests, rendered Kustomize/Flux output, and release-note relevance before any live-cluster check; clearly states checks performed; recommends merge when intended breakage is not applicable to this repo; uses manual review only for specific unresolved runtime-only or encrypted-config risks.",
+      "files": []
+    }
+  ]
+}
