@@ -34,7 +34,10 @@ spec:
           command:
             - sh
             - -lc
-            - cd /opt/hermes/scripts/whatsapp-bridge && npm install
+            - >-
+              cd /opt/hermes/scripts/whatsapp-bridge &&
+              find node_modules -mindepth 1 -maxdepth 1 -exec rm -rf -- {} + &&
+              npm install
           env:
             - name: HERMES_HOME
               value: /opt/data
