@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - deployment.yaml
+  - service.yaml
+  - ingress.yaml
+  - pvc.yaml
+  - secrets.enc.yaml
+
+configMapGenerator:
+  - name: hermes-customizations
+    namespace: default
+    files:
+      - skills__events__egypt-events__SKILL.md=skills/events/egypt-events/SKILL.md
+      - skills__events__uae-events__SKILL.md=skills/events/uae-events/SKILL.md
+      - scripts__events_seen.py=scripts/events_seen.py
