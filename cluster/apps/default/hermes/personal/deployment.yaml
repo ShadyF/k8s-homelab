@@ -113,6 +113,7 @@ spec:
               }
               install_projected_files skills /opt/data/home/.hermes/skills
               install_projected_files scripts /opt/data/home/.hermes/scripts
+              chown -R 10000:10000 /opt/data/home/.hermes/skills /opt/data/home/.hermes/scripts
           env:
             - name: HERMES_HOME
               value: /opt/data
@@ -128,6 +129,7 @@ spec:
                 - ALL
               add:
                 - CHOWN
+                - DAC_OVERRIDE
                 - FOWNER
                 - SETGID
                 - SETUID
