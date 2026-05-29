@@ -133,7 +133,7 @@ spec:
               port: dashboard
             initialDelaySeconds: 10
             periodSeconds: 5
-            failureThreshold: 60
+            failureThreshold: 360
           livenessProbe:
             tcpSocket:
               port: dashboard
