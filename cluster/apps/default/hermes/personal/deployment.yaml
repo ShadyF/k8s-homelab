@@ -96,8 +96,8 @@ spec:
             - -lc
             - |
               set -eu
-              mkdir -p /opt/data/home/.hermes/skills
-              mkdir -p /opt/data/home/.hermes/scripts
+              mkdir -p /opt/data/skills
+              mkdir -p /opt/data/scripts
               install_projected_files() {
                 prefix="$1"
                 target_root="$2"
@@ -111,9 +111,9 @@ spec:
                   cp -Lf "$source" "$destination"
                 done
               }
-              install_projected_files skills /opt/data/home/.hermes/skills
-              install_projected_files scripts /opt/data/home/.hermes/scripts
-              chown -R 10000:10000 /opt/data/home/.hermes/skills /opt/data/home/.hermes/scripts
+              install_projected_files skills /opt/data/skills
+              install_projected_files scripts /opt/data/scripts
+              chown -R 10000:10000 /opt/data/skills /opt/data/scripts
           env:
             - name: HERMES_HOME
               value: /opt/data

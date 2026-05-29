@@ -9,9 +9,9 @@ The feature is repo-managed/GitOps:
 - runtime ConfigMap projection: generated from base name `hermes-customizations` by `kustomization.yaml`
 
 Installed into the Hermes PVC at pod startup:
-- `/opt/data/home/.hermes/skills/events/egypt-events/SKILL.md`
-- `/opt/data/home/.hermes/skills/events/uae-events/SKILL.md`
-- `/opt/data/home/.hermes/scripts/events_seen.py`
+- `/opt/data/skills/events/egypt-events/SKILL.md`
+- `/opt/data/skills/events/uae-events/SKILL.md`
+- `/opt/data/scripts/events_seen.py`
 
 Seen-state lives on the existing `hermes-data` PVC:
 - Egypt: `/opt/data/events/egypt-seen-events.jsonl`
