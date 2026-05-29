@@ -105,6 +105,8 @@ spec:
               value: "0.0.0.0"
             - name: HERMES_DASHBOARD_PORT
               value: "9119"
+            - name: HERMES_DASHBOARD_INSECURE
+              value: "1"
             - name: HERMES_HOME
               value: /opt/data
             - name: HOME
@@ -154,6 +156,7 @@ spec:
                 - ALL
               add:
                 - CHOWN
+                - DAC_OVERRIDE
                 - FOWNER
                 - SETGID
                 - SETUID
