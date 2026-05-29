@@ -31,7 +31,7 @@ spec:
           command:
             - sh
             - -lc
-            - chown 10000:10000 /run && chmod 0755 /run
+            - chown 10000:10000 /run
           securityContext:
             runAsUser: 0
             runAsGroup: 0
