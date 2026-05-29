@@ -74,10 +74,11 @@ spec:
               install_projected_files() {
                 prefix="$1"
                 target_root="$2"
-                for source in /opt/hermes-customizations/${prefix}__*; do
+                marker="$prefix"__
+                for source in /opt/hermes-customizations/"$marker"*; do
                   [ -e "$source" ] || continue
                   name="$(basename "$source")"
-                  relative="${name#${prefix}__}"
+                  relative="$(printf '%s' "$name" | sed "s#^$marker##")"
                   destination="$target_root/$(printf '%s' "$relative" | sed 's#__#/#g')"
                   mkdir -p "$(dirname "$destination")"
                   cp -Lf "$source" "$destination"
