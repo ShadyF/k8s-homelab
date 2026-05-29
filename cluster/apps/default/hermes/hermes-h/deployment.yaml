@@ -34,7 +34,7 @@ spec:
           command:
             - sh
             - -lc
-            - chown 10000:10000 /run
+            - chown 10000:10000 /run /opt/data
           securityContext:
             runAsUser: 0
             runAsGroup: 0
@@ -46,6 +46,8 @@ spec:
               add:
                 - CHOWN
           volumeMounts:
+            - name: data
+              mountPath: /opt/data
             - name: run
               mountPath: /run
           resources:
