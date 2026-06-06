@@ -26,7 +26,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       initContainers:
         - name: prepare-hermes-home
-          image: nousresearch/hermes-agent:v2026.5.29
+          image: nousresearch/hermes-agent:v2026.6.5
           imagePullPolicy: IfNotPresent
           command:
             - sh
@@ -53,7 +53,7 @@ spec:
               cpu: 50m
               memory: 32Mi
         - name: install-whatsapp-bridge-deps
-          image: nousresearch/hermes-agent:v2026.5.29
+          image: nousresearch/hermes-agent:v2026.6.5
           imagePullPolicy: IfNotPresent
           command:
             - sh
@@ -89,7 +89,7 @@ spec:
               cpu: 2000m
               memory: 2Gi
         - name: prepare-hermes-customizations
-          image: nousresearch/hermes-agent:v2026.5.29
+          image: nousresearch/hermes-agent:v2026.6.5
           imagePullPolicy: IfNotPresent
           command:
             - sh
@@ -148,7 +148,7 @@ spec:
               memory: 128Mi
       containers:
         - name: gateway
-          image: nousresearch/hermes-agent:v2026.5.29
+          image: nousresearch/hermes-agent:v2026.6.5
           imagePullPolicy: IfNotPresent
           args:
             - gateway
