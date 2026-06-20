@@ -61,7 +61,7 @@ spec:
           command:
             - sh
             - -lc
-            - cd /opt/hermes/scripts/whatsapp-bridge && npm install
+            - cd /opt/hermes/scripts/whatsapp-bridge && npm ci
           env:
             - name: HERMES_HOME
               value: /opt/data
