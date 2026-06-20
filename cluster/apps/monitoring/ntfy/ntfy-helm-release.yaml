@@ -36,7 +36,7 @@ spec:
           main:
             image:
               repository: binwiederhier/ntfy
-              tag: v2.23.0
+              tag: v2.24.0
               pullPolicy: IfNotPresent
             args: [ "serve" ]
 
@@ -54,7 +54,7 @@ spec:
           stunnel:
             image:
               repository: alpine
-              tag: 3.23.4
+              tag: 3.24.1
               pullPolicy: IfNotPresent
             command: [ "sh", "/opt/start.sh" ]
 
