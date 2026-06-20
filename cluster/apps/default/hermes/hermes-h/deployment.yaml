@@ -61,7 +61,15 @@ spec:
           command:
             - sh
             - -lc
-            - cd /opt/hermes/scripts/whatsapp-bridge && npm ci
+            - |
+              set -eu
+              bridge_dir=/opt/data/whatsapp-bridge
+              rm -rf "$bridge_dir"
+              mkdir -p "$bridge_dir" "$HOME" "$NPM_CONFIG_CACHE" "$NPM_CONFIG_PREFIX"
+              cp -R /opt/hermes/scripts/whatsapp-bridge/. "$bridge_dir"/
+              chmod -R u+rwX "$bridge_dir" "$HOME"
+              cd "$bridge_dir"
+              npm ci
           env:
             - name: HERMES_HOME
               value: /opt/data
@@ -81,9 +89,6 @@ spec:
               mountPath: /opt/data
             - name: tmp
               mountPath: /tmp
-            - name: data
-              mountPath: /opt/hermes/scripts/whatsapp-bridge/node_modules
-              subPath: whatsapp-bridge-node-modules
           resources:
             requests:
               cpu: 100m
@@ -167,9 +172,11 @@ spec:
               mountPath: /tmp
             - name: run
               mountPath: /run
-            - name: data
-              mountPath: /opt/hermes/scripts/whatsapp-bridge/node_modules
-              subPath: whatsapp-bridge-node-modules
+            # Hermes WhatsApp bridge config references /opt/data/whatsapp-bridge/bridge.js
+            - name: hermes-h-config
+              mountPath: /opt/data/config.yaml
+              subPath: config.yaml
+              readOnly: true
           resources:
             requests:
               cpu: 200m
@@ -186,6 +193,9 @@ spec:
         - name: run
           emptyDir:
             medium: Memory
+        - name: hermes-h-config
+          configMap:
+            name: hermes-h-config
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hermes-h-config
+  namespace: default
+  labels:
+    app.kubernetes.io/name: hermes-h
+    app.kubernetes.io/part-of: hermes
+data:
+  config.yaml: |
+    gateway:
+      platforms:
+        whatsapp:
+          enabled: true
+          extra:
+            bridge_script: /opt/data/whatsapp-bridge/bridge.js
