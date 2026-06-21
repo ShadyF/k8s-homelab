@@ -72,47 +72,26 @@ spec:
               npm ci
               python - <<'PY'
               from pathlib import Path
+              import json
               import os
-              import yaml
 
-              path = Path('/opt/data/config.yaml')
+              path = Path('/opt/data/gateway.json')
               bridge_script = '/opt/data/whatsapp-bridge/bridge.js'
 
-              if path.exists():
-                  data = yaml.safe_load(path.read_text(encoding='utf-8')) or {}
-              else:
-                  data = {}
+              data = {
+                  'platforms': {
+                      'whatsapp': {
+                          'enabled': True,
+                          'extra': {
+                              'bridge_script': bridge_script,
+                          },
+                      },
+                  },
+              }
 
-              if not isinstance(data, dict):
-                  raise SystemExit('/opt/data/config.yaml must be a YAML mapping')
-
-              def ensure_mapping(parent, key, dotted):
-                  value = parent.get(key)
-                  if value is None:
-                      value = {}
-                      parent[key] = value
-                  if not isinstance(value, dict):
-                      raise SystemExit(f'/opt/data/config.yaml: {dotted} must be a mapping')
-                  return value
-
-              gateway = ensure_mapping(data, 'gateway', 'gateway')
-              platforms = ensure_mapping(gateway, 'platforms', 'gateway.platforms')
-              whatsapp = ensure_mapping(platforms, 'whatsapp', 'gateway.platforms.whatsapp')
-              extra = ensure_mapping(whatsapp, 'extra', 'gateway.platforms.whatsapp.extra')
-
-              changed = False
-              if 'enabled' not in whatsapp:
-                  whatsapp['enabled'] = True
-                  changed = True
-
-              if extra.get('bridge_script') != bridge_script:
-                  extra['bridge_script'] = bridge_script
-                  changed = True
-
-              if changed:
-                  tmp = path.with_suffix(path.suffix + '.tmp')
-                  tmp.write_text(yaml.safe_dump(data, sort_keys=False), encoding='utf-8')
-                  os.replace(tmp, path)
+              tmp = path.with_suffix(path.suffix + '.tmp')
+              tmp.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
+              os.replace(tmp, path)
               PY
           env:
             - name: HERMES_HOME
