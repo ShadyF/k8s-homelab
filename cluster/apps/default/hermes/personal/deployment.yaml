@@ -66,14 +66,18 @@ spec:
               cp -R /opt/hermes/scripts/whatsapp-bridge/. "$bridge_dir"/
               chmod -R u+rwX "$bridge_dir" "$HOME"
               cd "$bridge_dir"
-              npm ci
+              if [ -f package-lock.json ] || [ -f npm-shrinkwrap.json ]; then
+                npm ci
+              else
+                npm install
+              fi
               python - <<'PY'
               from pathlib import Path
               import json
               import os
 
               path = Path('/opt/data/gateway.json')
-              bridge_script = '/opt/data/whatsapp-bridge/bridge.js'
+              bridge_script = '/opt/hermes/scripts/whatsapp-bridge/bridge.js'
 
               data = {
                   'platforms': {
@@ -107,6 +111,9 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /opt/data
+            - name: data
+              mountPath: /opt/hermes/scripts/whatsapp-bridge
+              subPath: whatsapp-bridge
             - name: tmp
               mountPath: /tmp
           resources:
