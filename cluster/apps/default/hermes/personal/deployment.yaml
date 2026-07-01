@@ -111,9 +111,6 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /opt/data
-            - name: data
-              mountPath: /opt/hermes/scripts/whatsapp-bridge
-              subPath: whatsapp-bridge
             - name: tmp
               mountPath: /tmp
           resources:
@@ -260,6 +257,9 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /opt/data
+            - name: data
+              mountPath: /opt/hermes/scripts/whatsapp-bridge
+              subPath: whatsapp-bridge
             - name: tmp
               mountPath: /tmp
             - name: run
