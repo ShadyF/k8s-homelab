@@ -185,6 +185,9 @@ spec:
           args:
             - gateway
             - run
+          envFrom:
+            - secretRef:
+                name: hermes-secret
           env:
             - name: HERMES_DASHBOARD
               value: "1"
@@ -192,8 +195,6 @@ spec:
               value: "0.0.0.0"
             - name: HERMES_DASHBOARD_PORT
               value: "9119"
-            - name: HERMES_DASHBOARD_INSECURE
-              value: "1"
             - name: HERMES_HOME
               value: /opt/data
             - name: HOME
@@ -208,16 +209,6 @@ spec:
               value: "10000"
             - name: WHATSAPP_MODE
               value: bot
-            - name: WHATSAPP_ALLOWED_USERS
-              valueFrom:
-                secretKeyRef:
-                  name: hermes-secret
-                  key: WHATSAPP_ALLOWED_USERS
-            - name: OPENROUTER_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: hermes-secret
-                  key: OPENROUTER_API_KEY
             - name: BROWSER_CDP_URL
               value: http://chromium:9222
           ports:

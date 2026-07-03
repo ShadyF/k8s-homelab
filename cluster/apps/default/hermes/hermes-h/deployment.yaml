@@ -130,6 +130,9 @@ spec:
           args:
             - gateway
             - run
+          envFrom:
+            - secretRef:
+                name: hermes-h-secret
           env:
             - name: HERMES_DASHBOARD
               value: "1"
@@ -137,8 +140,6 @@ spec:
               value: "0.0.0.0"
             - name: HERMES_DASHBOARD_PORT
               value: "9119"
-            - name: HERMES_DASHBOARD_INSECURE
-              value: "1"
             - name: HERMES_HOME
               value: /opt/data
             - name: HOME
@@ -153,11 +154,6 @@ spec:
               value: "10000"
             - name: WHATSAPP_MODE
               value: bot
-            - name: WHATSAPP_ALLOWED_USERS
-              valueFrom:
-                secretKeyRef:
-                  name: hermes-h-secret
-                  key: WHATSAPP_ALLOWED_USERS
           ports:
             - name: dashboard
               containerPort: 9119
