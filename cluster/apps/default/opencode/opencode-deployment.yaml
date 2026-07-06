@@ -39,19 +39,12 @@ spec:
             - "4096"
           env:
             - name: HOME
-              value: /config/home
+              value: /home/opencode
             - name: XDG_CONFIG_HOME
               value: /config
-            - name: XDG_DATA_HOME
-              value: /data
-            - name: XDG_STATE_HOME
-              value: /data/state
-            - name: XDG_CACHE_HOME
-              value: /data/cache
             - name: OPENCODE_CONFIG_DIR
               value: /config/opencode
-            - name: OPENCODE_DATA_DIR
-              value: /data/opencode
+          workingDir: /home/opencode
           ports:
             - name: http
               containerPort: 4096
@@ -82,14 +75,14 @@ spec:
           resources:
             requests:
               cpu: 100m
-              memory: 256Mi
+              memory: 512Mi
             limits:
-              memory: 1.5Gi
+              memory: 3Gi
           volumeMounts:
             - name: opencode-config
               mountPath: /config
             - name: opencode-data
-              mountPath: /data
+              mountPath: /home/opencode
             - name: tmp
               mountPath: /tmp
       volumes:
