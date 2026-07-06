@@ -53,7 +53,7 @@ spec:
 
               export OPENCODE_BINARY="$NPM_CONFIG_PREFIX/bin/opencode"
 
-              exec "$NPM_CONFIG_PREFIX/bin/openchamber"
+              exec "$NPM_CONFIG_PREFIX/bin/openchamber" serve --port "$OPENCHAMBER_PORT" --host "$OPENCHAMBER_HOST" --foreground
           env:
             - name: HOME
               value: /home/openchamber
