@@ -38,15 +38,15 @@ spec:
             - |
               export NPM_CONFIG_PREFIX=/home/openchamber/.npm-global
               export npm_config_cache=/home/openchamber/.npm
-              export PATH="${NPM_CONFIG_PREFIX}/bin:${PATH}"
-              mkdir -p "${NPM_CONFIG_PREFIX}" "${npm_config_cache}" "${OPENCHAMBER_DATA_DIR}"
+              export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
+              mkdir -p "$NPM_CONFIG_PREFIX" "$npm_config_cache" "$OPENCHAMBER_DATA_DIR"
 
-              if [ ! -x "${NPM_CONFIG_PREFIX}/bin/openchamber" ] || [ "$(cat /home/openchamber/.openchamber-version 2>/dev/null || true)" != "${OPENCHAMBER_VERSION}" ]; then
-                npm install --global "@openchamber/web@${OPENCHAMBER_VERSION}"
-                echo "${OPENCHAMBER_VERSION}" > /home/openchamber/.openchamber-version
+              if [ ! -x "$NPM_CONFIG_PREFIX/bin/openchamber" ] || [ "$(cat /home/openchamber/.openchamber-version 2>/dev/null || true)" != "$OPENCHAMBER_VERSION" ]; then
+                npm install --global "@openchamber/web@$OPENCHAMBER_VERSION"
+                echo "$OPENCHAMBER_VERSION" > /home/openchamber/.openchamber-version
               fi
 
-              exec "${NPM_CONFIG_PREFIX}/bin/openchamber"
+              exec "$NPM_CONFIG_PREFIX/bin/openchamber"
           env:
             - name: HOME
               value: /home/openchamber
