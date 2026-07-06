@@ -29,7 +29,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: openchamber
-          image: node:22-bookworm
+          image: node:26-bookworm
           imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
