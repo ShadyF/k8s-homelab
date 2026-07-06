@@ -46,12 +46,21 @@ spec:
                 echo "$OPENCHAMBER_VERSION" > /home/openchamber/.openchamber-version
               fi
 
+              if [ ! -x "$NPM_CONFIG_PREFIX/bin/opencode" ] || [ "$(cat /home/openchamber/.opencode-version 2>/dev/null || true)" != "$OPENCODE_VERSION" ]; then
+                npm install --global "opencode-ai@$OPENCODE_VERSION"
+                echo "$OPENCODE_VERSION" > /home/openchamber/.opencode-version
+              fi
+
+              export OPENCODE_BINARY="$NPM_CONFIG_PREFIX/bin/opencode"
+
               exec "$NPM_CONFIG_PREFIX/bin/openchamber"
           env:
             - name: HOME
               value: /home/openchamber
             - name: OPENCHAMBER_VERSION
               value: "1.14.0"
+            - name: OPENCODE_VERSION
+              value: "1.17.13"
             - name: OPENCHAMBER_HOST
               value: 0.0.0.0
             - name: OPENCHAMBER_PORT
