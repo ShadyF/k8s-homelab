@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: rancher-bootstrap-values
+    namespace: cattle-system
+type: Opaque
+stringData:
+    values.yaml: ENC[AES256_GCM,data:V5LzSNgH3RHWfde+9fP7UmTYOeL8GkxvRfFFNjl0Z8tEHMaN91n0IMrc0+eLphc3uu7WQKOJWDJZUgftHOt+CAS6y5I=,iv:1uKomQPNAov4yggITsDu3/og/WEC6KZZg7rgJPXADMY=,tag:jGJVw0CfzicE0Fb7zoLhsQ==,type:str]
+sops:
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-07-12T14:58:18Z"
+    mac: ENC[AES256_GCM,data:okX+Z+hDiP+dUBipkSBfV2UP3TByyJn3QKYfuI4kX7hgajrBKyaQfkh521dGRSuXgWqeof/0vpgPWOpOJnihsCmXuX7sih+pAuMsEPkTOcJYLRnXOdzy9UFLC7MQZxYt+ibWZ0Wj9wRc8TzXlgQX8rmA8JwegpivI1FSnbz5lcg=,iv:upC58poGWDMhttbY1P+NEM0UR/+hcWcyGHQ2vOuCHbs=,tag:TVnWrhTLbtGMFah7i8PTyQ==,type:str]
+    pgp:
+        - created_at: "2026-07-12T14:58:18Z"
+          enc: |-
+            -----BEGIN PGP MESSAGE-----
+
+            hQGMA71EESEn7N2iAQv/cs0ghEYcC4ECvodtyW/NdtzVV22/HjmR6Qvotai+1y95
+            931o9Wg+9L8xHth9gy3V9JdIXLQ7AmTqN/Sl9gfDfOjlTekVUIOnMPTaNETUVPCY
+            aRZf/NpIWckcPXTTZ+dTR6UUGLH63/5CgCWHC0UJkEZssapGthkDepkbiULDHT0Q
+            zHHb0RRzd8EXaIrvaH0yrE00Zy7WmTMhGFiiY1392T6F2TZaZAWcuwlPnTCERfZ3
+            wQBR3zkQGyBkPSTgPBxz3t/6hbTEzLVPGraD8FX/1OKsOWuDVlkEbOdBgk+VEw3d
+            xWazASSRPjwDFrd5ZowN+D/X12vmqTBw3ey9HqmrE2wfrKLGUO0YefaC1gXiNKAs
+            FjMfAyybia+hlukNN5bq7RibG/kvlqw8KDn9eueSCVw8zysVX/IlaMpWJVGHSv70
+            pFAtooLxedVVfoO/lUAY98U70QaSmCRGBCoeqSPRm6Mt+bPmiwpia6E1K/d1Vjys
+            mJScsyHZebznKSbpLB/+0l4B6oW720wwcD4qXD9HmArD3KFHr6zWshx3LHW4UZ5U
+            BGcZDBx9CJZHaLRP9J7oAaOHAc57XDMvao4Y8NtUKK+VxS2aGnX5lR4emdq6vcc3
+            MxbDyA8a6gREFDH7oSa5
+            =VQrb
+            -----END PGP MESSAGE-----
+          fp: 2D47B9C25AAD87860CC1778F7022B8F414F4AEED
+    version: 3.13.2
