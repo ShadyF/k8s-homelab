@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opencode
+  namespace: default
+  labels:
+    app.kubernetes.io/name: opencode
+    app.kubernetes.io/component: backend
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: opencode
+      app.kubernetes.io/component: backend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: opencode
+        app.kubernetes.io/component: backend
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+      containers:
+        - name: opencode
+          image: ghcr.io/anomalyco/opencode:1.17.13
+          imagePullPolicy: Always
+          args:
+            - serve
+            - --hostname
+            - 0.0.0.0
+            - --port
+            - "4096"
+          env:
+            - name: HOME
+              value: /home/opencode
+            - name: XDG_CONFIG_HOME
+              value: /config
+            - name: OPENCODE_CONFIG_DIR
+              value: /config/opencode
+          workingDir: /home/opencode
+          ports:
+            - name: http
+              containerPort: 4096
+          startupProbe:
+            httpGet:
+              path: /global/health
+              port: http
+            failureThreshold: 30
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /global/health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /global/health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              memory: 3Gi
+          volumeMounts:
+            - name: opencode-config
+              mountPath: /config
+            - name: opencode-data
+              mountPath: /home/opencode
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: opencode-config
+          persistentVolumeClaim:
+            claimName: opencode-config
+        - name: opencode-data
+          persistentVolumeClaim:
+            claimName: opencode-data
+        - name: tmp
+          emptyDir: {}
