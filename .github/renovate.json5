@@ -63,6 +63,15 @@
       ],
       datasourceTemplate: 'docker',
     },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/cluster/apps/default/opencode/opencode-deployment\\.yaml$/',
+      ],
+      matchStrings: [
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n\\s*- name: [A-Z0-9_]+_VERSION\\n\\s*value: [\"']?(?<currentValue>[^\"'\\s]+)[\"']?",
+      ],
+    },
   ],
   packageRules: [
     {
