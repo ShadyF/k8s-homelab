@@ -9,9 +9,9 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app.kubernetes.io/name: openchamber
-    app.kubernetes.io/component: ui
+    app.kubernetes.io/name: opencode
+    app.kubernetes.io/component: backend
   ports:
     - name: http
       port: 3000
-      targetPort: http
+      targetPort: openchamber-http
