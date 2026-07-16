@@ -58,9 +58,9 @@ spec:
             - name: HOME
               value: /home/openchamber
             - name: OPENCHAMBER_VERSION
-              value: "1.14.0"
+              value: "1.16.1"
             - name: OPENCODE_VERSION
-              value: "1.17.13"
+              value: "1.18.2"
             - name: OPENCHAMBER_HOST
               value: 0.0.0.0
             - name: OPENCHAMBER_PORT

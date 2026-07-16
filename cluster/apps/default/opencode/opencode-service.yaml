@@ -15,3 +15,6 @@ spec:
     - name: http
       port: 4096
       targetPort: http
+    - name: preview
+      port: 4173
+      targetPort: preview

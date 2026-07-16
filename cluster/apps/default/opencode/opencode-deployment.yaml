@@ -27,16 +27,60 @@ spec:
         runAsGroup: 1000
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
+      nodeSelector:
+        kubernetes.io/arch: amd64
       containers:
         - name: opencode
-          image: ghcr.io/anomalyco/opencode:1.17.13
-          imagePullPolicy: Always
+          image: mcr.microsoft.com/devcontainers/universal:6.0.8-noble
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/bash
+            - -ec
           args:
-            - serve
-            - --hostname
-            - 0.0.0.0
-            - --port
-            - "4096"
+            - |
+              export NPM_CONFIG_PREFIX="$HOME/.npm-global"
+              export npm_config_cache="$HOME/.npm"
+              export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
+
+              mkdir -p "$NPM_CONFIG_PREFIX" "$npm_config_cache" "$HOME/.agents/skills/agent-browser" "$AGENT_BROWSER_SOCKET_DIR"
+
+              runtime_version="$OPENCODE_VERSION:$AGENT_BROWSER_VERSION"
+              opencode_bin="$NPM_CONFIG_PREFIX/bin/opencode"
+              agent_browser_bin="$NPM_CONFIG_PREFIX/bin/agent-browser"
+              if [ ! -x "$opencode_bin" ] \
+                || [ ! -x "$agent_browser_bin" ] \
+                || [ "$("$agent_browser_bin" --version 2>/dev/null || true)" != "agent-browser $AGENT_BROWSER_VERSION" ] \
+                || [ "$("$opencode_bin" --version 2>/dev/null || true)" != "$OPENCODE_VERSION" ] \
+                || [ "$(cat "$HOME/.development-runtime-version" 2>/dev/null || true)" != "$runtime_version" ]; then
+                npm install --global "opencode-ai@$OPENCODE_VERSION" "agent-browser@$AGENT_BROWSER_VERSION"
+                test -x "$opencode_bin"
+                test -x "$agent_browser_bin"
+                test "$("$agent_browser_bin" --version)" = "agent-browser $AGENT_BROWSER_VERSION"
+                test "$("$opencode_bin" --version)" = "$OPENCODE_VERSION"
+                printf '%s\n' "$runtime_version" > "$HOME/.development-runtime-version"
+              fi
+
+              skill_file="$HOME/.agents/skills/agent-browser/SKILL.md"
+              skill_revision="v$AGENT_BROWSER_VERSION"
+              if [ ! -s "$skill_file" ] || [ "$(cat "$HOME/.agent-browser-skill-revision" 2>/dev/null || true)" != "$skill_revision" ]; then
+                curl --fail --silent --show-error --location \
+                  "https://raw.githubusercontent.com/vercel-labs/agent-browser/$skill_revision/skills/agent-browser/SKILL.md" \
+                  --output "$skill_file.tmp"
+                test -s "$skill_file.tmp"
+                cat >> "$skill_file.tmp" <<'EOF'
+
+              ## OpenCode cluster environment
+
+              - Chromium is remote; do not run `agent-browser install`.
+              - Start project preview servers on `0.0.0.0:4173`.
+              - Browse previews at `http://opencode.default.svc.cluster.local:4173`, not localhost.
+              - Close browser sessions after verification.
+              EOF
+                mv "$skill_file.tmp" "$skill_file"
+                printf '%s\n' "$skill_revision" > "$HOME/.agent-browser-skill-revision"
+              fi
+
+              exec "$NPM_CONFIG_PREFIX/bin/opencode" serve --hostname 0.0.0.0 --port 4096
           env:
             - name: HOME
               value: /home/opencode
@@ -44,15 +88,29 @@ spec:
               value: /config
             - name: OPENCODE_CONFIG_DIR
               value: /config/opencode
+            # renovate: datasource=npm depName=opencode-ai
+            - name: OPENCODE_VERSION
+              value: "1.18.2"
+            # renovate: datasource=npm depName=agent-browser
+            - name: AGENT_BROWSER_VERSION
+              value: "0.32.0"
+            - name: AGENT_BROWSER_CDP
+              value: ws://browserless-chrome-svc.default.svc.cluster.local:3000/chrome
+            - name: AGENT_BROWSER_CONTENT_BOUNDARIES
+              value: "1"
+            - name: AGENT_BROWSER_SOCKET_DIR
+              value: /tmp/agent-browser
           workingDir: /home/opencode
           ports:
             - name: http
               containerPort: 4096
+            - name: preview
+              containerPort: 4173
           startupProbe:
             httpGet:
               path: /global/health
               port: http
-            failureThreshold: 30
+            failureThreshold: 120
             periodSeconds: 5
           readinessProbe:
             httpGet:
