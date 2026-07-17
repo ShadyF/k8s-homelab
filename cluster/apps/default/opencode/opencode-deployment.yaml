@@ -195,21 +195,21 @@ spec:
             - secretRef:
                 name: opencode-openchamber-secrets
           ports:
-            - name: openchamber-http
+            - name: openchamber
               containerPort: 3000
           startupProbe:
             tcpSocket:
-              port: openchamber-http
+              port: openchamber
             failureThreshold: 60
             periodSeconds: 5
           readinessProbe:
             tcpSocket:
-              port: openchamber-http
+              port: openchamber
             initialDelaySeconds: 5
             periodSeconds: 10
           livenessProbe:
             tcpSocket:
-              port: openchamber-http
+              port: openchamber
             initialDelaySeconds: 60
             periodSeconds: 30
           securityContext:
