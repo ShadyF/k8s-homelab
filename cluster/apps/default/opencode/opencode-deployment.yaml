@@ -90,7 +90,7 @@ spec:
               value: /config/opencode
             # renovate: datasource=npm depName=opencode-ai
             - name: OPENCODE_VERSION
-              value: "1.18.2"
+              value: "1.18.3"
             # renovate: datasource=npm depName=agent-browser
             - name: AGENT_BROWSER_VERSION
               value: "0.32.0"
