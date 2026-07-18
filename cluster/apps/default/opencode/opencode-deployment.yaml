@@ -100,12 +100,20 @@ spec:
               value: "1"
             - name: AGENT_BROWSER_SOCKET_DIR
               value: /tmp/agent-browser
+            - name: PLANNOTATOR_REMOTE
+              value: "1"
+            - name: PLANNOTATOR_PORT
+              value: "19432"
+            - name: PLANNOTATOR_SHARE
+              value: disabled
           workingDir: /home/opencode
           ports:
             - name: http
               containerPort: 4096
             - name: preview
               containerPort: 4173
+            - name: plannotator
+              containerPort: 19432
           startupProbe:
             httpGet:
               path: /global/health

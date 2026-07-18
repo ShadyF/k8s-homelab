@@ -18,3 +18,6 @@ spec:
     - name: preview
       port: 4173
       targetPort: preview
+    - name: plannotator
+      port: 19432
+      targetPort: plannotator
