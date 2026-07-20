@@ -183,10 +183,10 @@ spec:
             - name: HOME
               value: /home/openchamber
             - name: OPENCHAMBER_VERSION
-              value: "1.16.1"
+              value: "1.16.2"
             # renovate: datasource=npm depName=opencode-ai
             - name: OPENCODE_VERSION
-              value: "1.18.2"
+              value: "1.18.3"
             - name: OPENCHAMBER_HOST
               value: 0.0.0.0
             - name: OPENCHAMBER_PORT
