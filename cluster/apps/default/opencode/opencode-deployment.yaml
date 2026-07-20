@@ -224,7 +224,7 @@ spec:
               value: "1"
             # renovate: datasource=npm depName=opencode-ai
             - name: OPENCODE_VERSION
-              value: "1.18.3"
+              value: "1.18.4"
             # renovate: datasource=npm depName=agent-browser
             - name: AGENT_BROWSER_VERSION
               value: "0.32.3"
@@ -374,7 +374,7 @@ spec:
                 - ALL
           resources:
             requests:
-              cpu: 100m
+              cpu: 300m
               memory: 1Gi
             limits:
               memory: 1Gi
