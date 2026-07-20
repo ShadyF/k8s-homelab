@@ -29,6 +29,138 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       nodeSelector:
         kubernetes.io/arch: amd64
+      initContainers:
+        - name: migrate-workspaces
+          image: mcr.microsoft.com/devcontainers/universal:6.0.8-noble
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/bash
+            - -ec
+          args:
+            - |
+              data_dir=/data
+              source_dir=/source
+              workspaces_dir="$data_dir/workspaces"
+              staging_dir="$data_dir/.workspaces-migration-v2.staging"
+              staging_sentinel="$staging_dir/.migration-sentinel"
+              staging_value='schema=2;owner=opencode-workspaces-migration;projects=Programming,Synapse,k8s-homelab'
+              marker="$data_dir/.workspaces-migration-v2"
+              marker_value='schema=2;projects=Programming,Synapse,k8s-homelab'
+              projects=(Programming Synapse k8s-homelab)
+
+              fail() {
+                printf '%s\n' "$*" >&2
+                exit 1
+              }
+
+              require_directory() {
+                local path="$1"
+                local description="$2"
+                if [ ! -d "$path" ] || [ -L "$path" ]; then
+                  fail "$description must be a real, non-symlink directory: $path"
+                fi
+              }
+
+              for project in "${projects[@]}"; do
+                require_directory "$source_dir/$project" "required source project"
+              done
+
+              ssh_dir="$source_dir/.ssh"
+              require_directory "$ssh_dir" "SSH directory"
+              ssh_uid="$(stat -c '%u' "$ssh_dir")"
+              ssh_mode="$(stat -c '%a' "$ssh_dir")"
+              if [ "$ssh_uid" != 1000 ] || (( 0$ssh_mode & 077 )); then
+                fail "SSH directory must be owned by UID 1000 with no group/other permission bits: $ssh_dir"
+              fi
+
+              if [ -L "$workspaces_dir" ] || { [ -e "$workspaces_dir" ] && [ ! -d "$workspaces_dir" ]; }; then
+                fail "workspace root must be a real, non-symlink directory: $workspaces_dir"
+              fi
+              if [ -L "$marker" ] || { [ -e "$marker" ] && [ ! -f "$marker" ]; }; then
+                fail "workspace migration marker must be a regular file: $marker"
+              fi
+
+              if [ -e "$marker" ]; then
+                test "$(cat "$marker")" = "$marker_value" || fail "unexpected workspace migration marker: $marker"
+                require_directory "$workspaces_dir" "workspace root"
+                for project in "${projects[@]}"; do
+                  require_directory "$workspaces_dir/$project" "migrated workspace"
+                done
+                exit 0
+              fi
+
+              if [ ! -e "$workspaces_dir" ]; then
+                mkdir "$workspaces_dir"
+              fi
+
+              if [ -L "$staging_dir" ] || { [ -e "$staging_dir" ] && [ ! -d "$staging_dir" ]; }; then
+                fail "workspace staging path must be a real, non-symlink directory: $staging_dir"
+              fi
+              if [ -e "$staging_dir" ]; then
+                if [ -L "$staging_sentinel" ] || [ ! -f "$staging_sentinel" ] || [ "$(cat "$staging_sentinel")" != "$staging_value" ]; then
+                  fail "refusing to remove unowned workspace staging directory: $staging_dir"
+                fi
+                rm -rf -- "$staging_dir"
+              fi
+              mkdir "$staging_dir"
+              printf '%s\n' "$staging_value" > "$staging_sentinel"
+
+              for project in "${projects[@]}"; do
+                source_project="$source_dir/$project"
+                staged_project="$staging_dir/$project"
+                destination="$workspaces_dir/$project"
+
+                cp -a -- "$source_project" "$staged_project"
+                if ! diff -qr -- "$source_project" "$staged_project" >/dev/null; then
+                  printf 'workspace migration verification failed: %s\n' "$project" >&2
+                  exit 1
+                fi
+
+                if [ -e "$destination" ] || [ -L "$destination" ]; then
+                  require_directory "$destination" "workspace destination"
+                  if diff -qr -- "$staged_project" "$destination" >/dev/null; then
+                    rm -rf "$staged_project"
+                  else
+                    printf 'workspace destination differs; refusing to overwrite: %s\n' "$destination" >&2
+                    exit 1
+                  fi
+                else
+                  mv -- "$staged_project" "$destination"
+                fi
+              done
+
+              if [ -L "$staging_sentinel" ] || [ ! -f "$staging_sentinel" ] || [ "$(cat "$staging_sentinel")" != "$staging_value" ]; then
+                fail "workspace staging ownership changed: $staging_dir"
+              fi
+              rm -- "$staging_sentinel"
+              rmdir "$staging_dir"
+              marker_tmp="$marker.tmp"
+              if [ -L "$marker_tmp" ] || { [ -e "$marker_tmp" ] && [ ! -f "$marker_tmp" ]; }; then
+                fail "workspace migration marker temporary path is unsafe: $marker_tmp"
+              fi
+              if [ -e "$marker_tmp" ]; then
+                rm -- "$marker_tmp"
+              fi
+              printf '%s\n' "$marker_value" > "$marker_tmp"
+              if [ -e "$marker" ] || [ -L "$marker" ]; then
+                fail "workspace migration marker appeared before atomic rename: $marker"
+              fi
+              mv -- "$marker_tmp" "$marker"
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: opencode-data
+              mountPath: /data
+            - name: openchamber-config
+              mountPath: /source
+              readOnly: true
       containers:
         - name: opencode
           image: mcr.microsoft.com/devcontainers/universal:6.0.8-noble
@@ -83,7 +215,7 @@ spec:
               exec "$NPM_CONFIG_PREFIX/bin/opencode" serve --hostname 0.0.0.0 --port 4096
           env:
             - name: HOME
-              value: /home/opencode
+              value: /home/codespace
             - name: XDG_CONFIG_HOME
               value: /config
             - name: OPENCODE_CONFIG_DIR
@@ -106,7 +238,7 @@ spec:
               value: "19432"
             - name: PLANNOTATOR_SHARE
               value: disabled
-          workingDir: /home/opencode
+          workingDir: /home/codespace
           ports:
             - name: http
               containerPort: 4096
@@ -148,9 +280,20 @@ spec:
             - name: opencode-config
               mountPath: /config
             - name: opencode-data
+              mountPath: /home/codespace
+            # Temporary compatibility alias for persisted /home/opencode paths.
+            - name: opencode-data
               mountPath: /home/opencode
             - name: openchamber-config
+              mountPath: /home/codespace/.ssh
+              subPath: .ssh
+            # Temporary compatibility alias for persisted /home/openchamber paths.
+            - name: opencode-data
               mountPath: /home/openchamber
+              subPath: workspaces
+            - name: opencode-data
+              mountPath: /workspaces
+              subPath: workspaces
             - name: tmp
               mountPath: /tmp
         - name: openchamber
@@ -161,19 +304,19 @@ spec:
             - -ec
           args:
             - |
-              export NPM_CONFIG_PREFIX=/home/openchamber/.npm-global
-              export npm_config_cache=/home/openchamber/.npm
+              export NPM_CONFIG_PREFIX="$HOME/.npm-global"
+              export npm_config_cache="$HOME/.npm"
               export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
               mkdir -p "$NPM_CONFIG_PREFIX" "$npm_config_cache" "$OPENCHAMBER_DATA_DIR"
 
-              if [ ! -x "$NPM_CONFIG_PREFIX/bin/openchamber" ] || [ "$(cat /home/openchamber/.openchamber-version 2>/dev/null || true)" != "$OPENCHAMBER_VERSION" ]; then
+              if [ ! -x "$NPM_CONFIG_PREFIX/bin/openchamber" ] || [ "$(cat "$HOME/.openchamber-version" 2>/dev/null || true)" != "$OPENCHAMBER_VERSION" ]; then
                 npm install --global "@openchamber/web@$OPENCHAMBER_VERSION"
-                echo "$OPENCHAMBER_VERSION" > /home/openchamber/.openchamber-version
+                echo "$OPENCHAMBER_VERSION" > "$HOME/.openchamber-version"
               fi
 
-              if [ ! -x "$NPM_CONFIG_PREFIX/bin/opencode" ] || [ "$(cat /home/openchamber/.opencode-version 2>/dev/null || true)" != "$OPENCODE_VERSION" ]; then
+              if [ ! -x "$NPM_CONFIG_PREFIX/bin/opencode" ] || [ "$(cat "$HOME/.opencode-version" 2>/dev/null || true)" != "$OPENCODE_VERSION" ]; then
                 npm install --global "opencode-ai@$OPENCODE_VERSION"
-                echo "$OPENCODE_VERSION" > /home/openchamber/.opencode-version
+                echo "$OPENCODE_VERSION" > "$HOME/.opencode-version"
               fi
 
               export OPENCODE_BINARY="$NPM_CONFIG_PREFIX/bin/opencode"
@@ -181,7 +324,7 @@ spec:
               exec "$NPM_CONFIG_PREFIX/bin/openchamber" serve --port "$OPENCHAMBER_PORT" --host "$OPENCHAMBER_HOST" --foreground
           env:
             - name: HOME
-              value: /home/openchamber
+              value: /home/node
             - name: OPENCHAMBER_VERSION
               value: "1.16.2"
             # renovate: datasource=npm depName=opencode-ai
@@ -192,7 +335,7 @@ spec:
             - name: OPENCHAMBER_PORT
               value: "3000"
             - name: OPENCHAMBER_DATA_DIR
-              value: /home/openchamber/.config/openchamber
+              value: /home/node/.config/openchamber
             - name: OPENCODE_HOST
               value: http://127.0.0.1:4096
             - name: OPENCODE_SKIP_START
@@ -202,6 +345,7 @@ spec:
           envFrom:
             - secretRef:
                 name: opencode-openchamber-secrets
+          workingDir: /workspaces
           ports:
             - name: openchamber
               containerPort: 3000
@@ -234,7 +378,24 @@ spec:
               memory: 300Mi
           volumeMounts:
             - name: openchamber-config
+              mountPath: /home/node
+            # Temporary compatibility alias for persisted /home/openchamber paths.
+            - name: opencode-data
               mountPath: /home/openchamber
+              subPath: workspaces
+            # Overlay legacy project paths with canonical workspace data.
+            - name: opencode-data
+              mountPath: /home/node/Programming
+              subPath: workspaces/Programming
+            - name: opencode-data
+              mountPath: /home/node/Synapse
+              subPath: workspaces/Synapse
+            - name: opencode-data
+              mountPath: /home/node/k8s-homelab
+              subPath: workspaces/k8s-homelab
+            - name: opencode-data
+              mountPath: /workspaces
+              subPath: workspaces
             - name: tmp
               mountPath: /tmp
       volumes:
