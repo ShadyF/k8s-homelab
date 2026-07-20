@@ -11,6 +11,7 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+    nginx.ingress.kubernetes.io/proxy-body-size: "20m"
     nginx.ingress.kubernetes.io/enable-websocket-upgrade: "true"
     external-dns/is-public: "true"
     external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"

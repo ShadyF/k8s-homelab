@@ -212,7 +212,7 @@ spec:
                 printf '%s\n' "$skill_revision" > "$HOME/.agent-browser-skill-revision"
               fi
 
-              exec "$NPM_CONFIG_PREFIX/bin/opencode" serve --hostname 0.0.0.0 --port 4096 --log-level DEBUG
+              exec "$NPM_CONFIG_PREFIX/bin/opencode" serve --hostname 0.0.0.0 --port 4096 --log-level INFO
           env:
             - name: HOME
               value: /home/codespace
