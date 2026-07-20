@@ -212,7 +212,7 @@ spec:
                 printf '%s\n' "$skill_revision" > "$HOME/.agent-browser-skill-revision"
               fi
 
-              exec "$NPM_CONFIG_PREFIX/bin/opencode" serve --hostname 0.0.0.0 --port 4096
+              exec "$NPM_CONFIG_PREFIX/bin/opencode" serve --hostname 0.0.0.0 --port 4096 --log-level DEBUG
           env:
             - name: HOME
               value: /home/codespace
@@ -220,6 +220,8 @@ spec:
               value: /config
             - name: OPENCODE_CONFIG_DIR
               value: /config/opencode
+            - name: OPENCODE_PRINT_LOGS
+              value: "1"
             # renovate: datasource=npm depName=opencode-ai
             - name: OPENCODE_VERSION
               value: "1.18.3"
