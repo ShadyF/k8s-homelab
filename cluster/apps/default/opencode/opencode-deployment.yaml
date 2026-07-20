@@ -46,7 +46,7 @@ spec:
               staging_value='schema=2;owner=opencode-workspaces-migration;projects=Programming,Synapse,k8s-homelab'
               marker="$data_dir/.workspaces-migration-v2"
               marker_value='schema=2;projects=Programming,Synapse,k8s-homelab'
-              projects=(Programming Synapse k8s-homelab)
+              projects='Programming Synapse k8s-homelab'
 
               fail() {
                 printf '%s\n' "$*" >&2
@@ -61,7 +61,7 @@ spec:
                 fi
               }
 
-              for project in "${projects[@]}"; do
+              for project in $projects; do
                 require_directory "$source_dir/$project" "required source project"
               done
 
@@ -83,7 +83,7 @@ spec:
               if [ -e "$marker" ]; then
                 test "$(cat "$marker")" = "$marker_value" || fail "unexpected workspace migration marker: $marker"
                 require_directory "$workspaces_dir" "workspace root"
-                for project in "${projects[@]}"; do
+                for project in $projects; do
                   require_directory "$workspaces_dir/$project" "migrated workspace"
                 done
                 exit 0
@@ -105,7 +105,7 @@ spec:
               mkdir "$staging_dir"
               printf '%s\n' "$staging_value" > "$staging_sentinel"
 
-              for project in "${projects[@]}"; do
+              for project in $projects; do
                 source_project="$source_dir/$project"
                 staged_project="$staging_dir/$project"
                 destination="$workspaces_dir/$project"
