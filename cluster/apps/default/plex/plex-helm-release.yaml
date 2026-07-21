@@ -64,7 +64,7 @@ spec:
           alloy:
             image:
               repository: grafana/alloy
-              tag: v1.17.1
+              tag: v1.18.0
               pullPolicy: IfNotPresent
             args:
               - run
