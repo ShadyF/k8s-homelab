@@ -164,6 +164,10 @@ spec:
             - name: opencode-data
               mountPath: /home/openchamber
               subPath: workspaces
+            # OpenChamber sends OpenCode absolute paths rooted at its home.
+            - name: opencode-data
+              mountPath: /home/node
+              subPath: workspaces
             - name: opencode-data
               mountPath: /workspaces
               subPath: workspaces
