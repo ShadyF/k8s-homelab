@@ -95,7 +95,7 @@ spec:
               value: "1.18.4"
             # renovate: datasource=npm depName=agent-browser
             - name: AGENT_BROWSER_VERSION
-              value: "0.32.3"
+              value: "0.32.4"
             - name: AGENT_BROWSER_CDP
               value: ws://browserless-chrome-svc.default.svc.cluster.local:3000/chrome
             - name: AGENT_BROWSER_CONTENT_BOUNDARIES
