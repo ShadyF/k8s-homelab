@@ -1,0 +1,59 @@
+---
+- name: Longhorn prerequisites | Install iSCSI package
+  ansible.builtin.apt:
+    name: open-iscsi
+    state: present
+    install_recommends: false
+    update_cache: true
+    cache_valid_time: 86400
+
+- name: Longhorn prerequisites | Ensure iSCSI services are enabled and started
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop:
+    - iscsid
+    - open-iscsi
+
+- name: Longhorn prerequisites | Configure multipath blacklist for Longhorn volumes
+  ansible.builtin.copy:
+    content: |
+      defaults {
+          user_friendly_names yes
+      }
+
+      blacklist {
+          devnode "^sd[a-z0-9]+"
+      }
+    dest: /etc/multipath.conf
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Longhorn prerequisites | Gather service facts
+  ansible.builtin.service_facts:
+
+- name: Longhorn prerequisites | Check installed multipathd unit files
+  ansible.builtin.command:
+    cmd: systemctl list-unit-files multipathd.service multipathd.socket --no-legend --no-pager
+  register: longhorn_multipathd_unit_files
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: Longhorn prerequisites | Stop, disable, and mask multipathd socket when installed
+  ansible.builtin.systemd:
+    name: multipathd.socket
+    state: stopped
+    enabled: false
+    masked: true
+  when: longhorn_multipathd_unit_files.stdout is search('(?m)^multipathd\\.socket\\s')
+
+- name: Longhorn prerequisites | Stop, disable, and mask multipathd service when installed
+  ansible.builtin.systemd:
+    name: multipathd.service
+    state: stopped
+    enabled: false
+    masked: true
+  when: longhorn_multipathd_unit_files.stdout is search('(?m)^multipathd\\.service\\s')

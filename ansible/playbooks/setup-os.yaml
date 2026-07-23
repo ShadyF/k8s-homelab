@@ -78,19 +78,8 @@
 
     - name: System Configuration
       block:
-        # https://longhorn.io/kb/troubleshooting-volume-with-multipath/
-        - name: System Configuration | Adjust Multipath (For longhorn)
-          copy:
-            content: |
-              defaults {
-                  user_friendly_names yes
-              }
-
-              blacklist {
-                  devnode "^sd[a-z0-9]+"
-              }
-            dest: /etc/multipath.conf
-            mode: "preserve"
+        - name: System Configuration | Configure Longhorn node prerequisites
+          ansible.builtin.include_tasks: tasks/longhorn-node-prereqs.yaml
         - name: System Configuration | Disable swap
           mount:
             name: "{{ item }}"

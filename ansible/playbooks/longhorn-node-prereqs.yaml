@@ -1,0 +1,9 @@
+---
+- name: Configure Longhorn node prerequisites
+  hosts: kubernetes
+  become: true
+  gather_facts: true
+  any_errors_fatal: true
+  tasks:
+    - name: Include Longhorn node prerequisite tasks
+      ansible.builtin.include_tasks: tasks/longhorn-node-prereqs.yaml
