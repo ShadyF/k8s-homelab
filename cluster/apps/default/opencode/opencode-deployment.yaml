@@ -84,6 +84,8 @@ spec:
           env:
             - name: HOME
               value: /home/codespace
+            - name: OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS
+              value: "true"
             - name: XDG_CONFIG_HOME
               value: /config
             - name: OPENCODE_CONFIG_DIR
