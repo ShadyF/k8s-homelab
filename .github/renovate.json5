@@ -86,6 +86,17 @@
     },
     {
       matchDatasources: [
+        'npm',
+      ],
+      matchPackageNames: [
+        '@openchamber/web',
+        'opencode-ai',
+        'agent-browser',
+      ],
+      groupName: 'OpenChamber and OpenCode npm packages',
+    },
+    {
+      matchDatasources: [
         'docker',
       ],
       enabled: true,
