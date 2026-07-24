@@ -30,6 +30,47 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       nodeSelector:
         kubernetes.io/arch: amd64
+      initContainers:
+        - name: homebrew-bootstrap
+          image: mcr.microsoft.com/devcontainers/universal:6.0.8-noble
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/bash
+            - -ec
+          args:
+            - |
+              # Initialize the shared Homebrew toolchain before application startup.
+              export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
+              if [ ! -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+                NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+              fi
+              eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+              if ! brew list --formula kubernetes-cli >/dev/null 2>&1; then
+                brew install kubernetes-cli
+              fi
+              test -x "$(command -v brew)"
+              test -x "$(command -v kubectl)"
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: opencode-homebrew
+              mountPath: /home/linuxbrew
+            - name: tmp
+              mountPath: /tmp
       containers:
         - name: opencode
           image: mcr.microsoft.com/devcontainers/universal:6.0.8-noble
@@ -39,16 +80,9 @@ spec:
             - -ec
           args:
             - |
-              # Bootstrap Homebrew and kubectl on the persistent tool volume.
+              # Reuse the shared Homebrew toolchain initialized before application startup.
               export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
-              if [ ! -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
-                NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-              fi
               eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-              if ! brew list --formula kubernetes-cli >/dev/null 2>&1; then
-                brew install kubernetes-cli
-              fi
-              test -x "$(command -v kubectl)"
 
               export NPM_CONFIG_PREFIX="$HOME/.npm-global"
               export npm_config_cache="$HOME/.npm"
@@ -96,6 +130,8 @@ spec:
           env:
             - name: HOME
               value: /home/codespace
+            - name: PATH
+              value: /home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
             - name: OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS
               value: "true"
             - name: XDG_CONFIG_HOME
@@ -200,6 +236,10 @@ spec:
             - -ec
           args:
             - |
+              # Reuse the shared Homebrew toolchain initialized before application startup.
+              export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
+              eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
               export NPM_CONFIG_PREFIX="$HOME/.npm-global"
               export npm_config_cache="$HOME/.npm"
               export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
@@ -221,6 +261,8 @@ spec:
           env:
             - name: HOME
               value: /home/node
+            - name: PATH
+              value: /home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
             # renovate: datasource=npm depName=@openchamber/web
             - name: OPENCHAMBER_VERSION
               value: "1.16.3"
@@ -276,6 +318,8 @@ spec:
           volumeMounts:
             - name: openchamber-config
               mountPath: /home/node
+            - name: opencode-homebrew
+              mountPath: /home/linuxbrew
             # Temporary compatibility alias for persisted /home/openchamber paths.
             - name: opencode-data
               mountPath: /home/openchamber
