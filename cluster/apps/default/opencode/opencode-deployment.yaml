@@ -21,6 +21,7 @@ spec:
         app.kubernetes.io/component: backend
     spec:
       automountServiceAccountToken: false
+      serviceAccountName: opencode
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -175,6 +176,9 @@ spec:
               subPath: workspaces
             - name: tmp
               mountPath: /tmp
+            - name: opencode-api-access
+              mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+              readOnly: true
         - name: openchamber
           image: node:22-bookworm
           imagePullPolicy: IfNotPresent
@@ -204,6 +208,7 @@ spec:
           env:
             - name: HOME
               value: /home/node
+            # renovate: datasource=npm depName=@openchamber/web
             - name: OPENCHAMBER_VERSION
               value: "1.16.3"
             # renovate: datasource=npm depName=opencode-ai
@@ -277,6 +282,9 @@ spec:
               subPath: workspaces
             - name: tmp
               mountPath: /tmp
+            - name: opencode-api-access
+              mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+              readOnly: true
       volumes:
         - name: opencode-config
           persistentVolumeClaim:
@@ -289,3 +297,18 @@ spec:
             claimName: openchamber-config
         - name: tmp
           emptyDir: {}
+        - name: opencode-api-access
+          projected:
+            sources:
+              - serviceAccountToken:
+                  path: token
+              - configMap:
+                  name: kube-root-ca.crt
+                  items:
+                    - key: ca.crt
+                      path: ca.crt
+              - downwardAPI:
+                  items:
+                    - path: namespace
+                      fieldRef:
+                        fieldPath: metadata.namespace
