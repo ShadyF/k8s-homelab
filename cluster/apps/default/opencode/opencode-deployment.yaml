@@ -50,6 +50,9 @@ spec:
               fi
               test -x "$(command -v brew)"
               test -x "$(command -v kubectl)"
+          env:
+            - name: HOMEBREW_CACHE
+              value: /tmp/Homebrew
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000
