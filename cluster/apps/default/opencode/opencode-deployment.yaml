@@ -229,7 +229,7 @@ spec:
               mountPath: /var/run/secrets/kubernetes.io/serviceaccount
               readOnly: true
         - name: openchamber
-          image: node:22-bookworm
+          image: node:26-bookworm
           imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
