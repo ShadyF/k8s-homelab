@@ -39,6 +39,17 @@ spec:
             - -ec
           args:
             - |
+              # Bootstrap Homebrew and kubectl on the persistent tool volume.
+              export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
+              if [ ! -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+                NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+              fi
+              eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+              if ! brew list --formula kubernetes-cli >/dev/null 2>&1; then
+                brew install kubernetes-cli
+              fi
+              test -x "$(command -v kubectl)"
+
               export NPM_CONFIG_PREFIX="$HOME/.npm-global"
               export npm_config_cache="$HOME/.npm"
               export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
@@ -155,6 +166,8 @@ spec:
           volumeMounts:
             - name: opencode-config
               mountPath: /config
+            - name: opencode-homebrew
+              mountPath: /home/linuxbrew
             - name: opencode-data
               mountPath: /home/codespace
             # Temporary compatibility alias for persisted /home/opencode paths.
@@ -292,6 +305,9 @@ spec:
         - name: opencode-data
           persistentVolumeClaim:
             claimName: opencode-data
+        - name: opencode-homebrew
+          persistentVolumeClaim:
+            claimName: opencode-homebrew
         - name: openchamber-config
           persistentVolumeClaim:
             claimName: openchamber-config

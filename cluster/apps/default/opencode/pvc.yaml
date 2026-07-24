@@ -33,6 +33,22 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  name: opencode-homebrew
+  namespace: default
+  labels:
+    app.kubernetes.io/name: opencode
+    app.kubernetes.io/component: homebrew
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 3Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
   name: openchamber-config
   namespace: default
   labels:
