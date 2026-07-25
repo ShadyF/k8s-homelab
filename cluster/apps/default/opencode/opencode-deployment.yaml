@@ -134,7 +134,7 @@ spec:
             - name: HOME
               value: /home/codespace
             - name: PATH
-              value: /home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+              value: /home/linuxbrew/.linuxbrew/bin:/usr/local/share/nvm/current/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
             - name: OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS
               value: "true"
             - name: XDG_CONFIG_HOME
@@ -294,7 +294,7 @@ spec:
           startupProbe:
             tcpSocket:
               port: openchamber
-            failureThreshold: 60
+            failureThreshold: 120
             periodSeconds: 5
           readinessProbe:
             tcpSocket:
