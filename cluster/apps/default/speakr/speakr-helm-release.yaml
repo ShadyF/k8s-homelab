@@ -41,7 +41,7 @@ spec:
           main:
             image:
               repository: docker.io/learnedmachine/speakr
-              tag: v0.10.2-alpha-lite
+              tag: 0.10.2-alpha-lite
               pullPolicy: IfNotPresent
             securityContext:
               runAsUser: 0
