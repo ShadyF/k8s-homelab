@@ -63,6 +63,8 @@ spec:
                 value: "true"
               - name: TRUSTED_PROXY_HOPS
                 value: "1"
+              - name: TRANSCRIPTION_CONNECTOR
+                value: openai_whisper
               - name: TRANSCRIPTION_BASE_URL
                 value: https://openrouter.ai/api/v1
               - name: TRANSCRIPTION_MODEL
