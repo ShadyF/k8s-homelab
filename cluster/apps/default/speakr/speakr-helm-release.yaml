@@ -41,7 +41,7 @@ spec:
           main:
             image:
               repository: docker.io/learnedmachine/speakr
-              tag: 0.10.2-alpha-lite
+              tag: 0.10.2-alpha
               pullPolicy: IfNotPresent
             securityContext:
               runAsUser: 0
@@ -77,6 +77,22 @@ spec:
                 value: mp3
               - name: AUDIO_BITRATE
                 value: 128k
+              - name: ENABLE_SERVER_RECORDING_CHUNKS
+                value: "true"
+              - name: RECORDING_MAX_HOURS
+                value: "8"
+              - name: RECORDING_SESSION_TTL_HOURS
+                value: "24"
+              - name: RECORDING_SESSION_MAX_BYTES_PER_USER
+                value: "1073741824"
+              - name: RECORDING_SESSION_MAX_CHUNK_BYTES
+                value: "16777216"
+              - name: RECORDING_CHUNK_SECONDS
+                value: "5"
+              - name: RECORDING_SESSION_CLEANUP_INTERVAL_SECONDS
+                value: "3600"
+              - name: RECORDING_SESSION_COMMIT_BATCH_SIZE
+                value: "1"
               - name: ADMIN_PASSWORD
                 valueFrom:
                   secretKeyRef:
@@ -141,6 +157,7 @@ spec:
         annotations:
           nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
           nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+          nginx.ingress.kubernetes.io/proxy-body-size: "32m"
           nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.networking.svc.cluster.local/oauth2/auth"
           nginx.ingress.kubernetes.io/auth-signin: "https://auth.${SECRET_DOMAIN}/oauth2/sign_in"
           external-dns/is-public: "true"
