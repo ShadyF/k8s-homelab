@@ -73,6 +73,10 @@ spec:
                 value: https://openrouter.ai/api/v1
               - name: TEXT_MODEL_NAME
                 value: openai/gpt-4o-mini
+              - name: EMBEDDING_BASE_URL
+                value: https://openrouter.ai/api/v1
+              - name: EMBEDDING_MODEL
+                value: baai/bge-m3
               - name: AUDIO_COMPRESS_UPLOADS
                 value: "true"
               - name: AUDIO_CODEC
@@ -115,6 +119,11 @@ spec:
                   secretKeyRef:
                     name: speakr-secrets
                     key: OPENROUTER_API_KEY
+              - name: EMBEDDING_API_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: speakr-secrets
+                    key: OPENROUTER_API_KEY
             probes:
               liveness: &probe
                 enabled: true
@@ -141,8 +150,8 @@ spec:
                 cpu: 200m
                 memory: 500Mi
               limits:
-                cpu: 500m
-                memory: 500Mi
+                cpu: 800m
+                memory: 1Gi
 
     service:
       main:
