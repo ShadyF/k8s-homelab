@@ -63,6 +63,8 @@ spec:
                 value: "true"
               - name: TRUSTED_PROXY_HOPS
                 value: "1"
+              - name: ENABLE_INQUIRE_MODE
+                value: "true"
               - name: TRANSCRIPTION_CONNECTOR
                 value: openai_transcribe
               - name: TRANSCRIPTION_BASE_URL
