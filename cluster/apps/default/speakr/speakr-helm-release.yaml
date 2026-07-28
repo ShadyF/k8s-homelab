@@ -41,7 +41,7 @@ spec:
           main:
             image:
               repository: docker.io/learnedmachine/speakr
-              tag: 0.10.2-alpha
+              tag: 0.10.2-alpha-lite
               pullPolicy: IfNotPresent
             securityContext:
               runAsUser: 0
@@ -139,10 +139,10 @@ spec:
             resources:
               requests:
                 cpu: 200m
-                memory: 1Gi
+                memory: 500Mi
               limits:
-                cpu: 1000m
-                memory: 1.8Gi
+                cpu: 500m
+                memory: 500Mi
 
     service:
       main:
