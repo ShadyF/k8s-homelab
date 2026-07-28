@@ -145,10 +145,10 @@ spec:
               value: "1"
             # renovate: datasource=npm depName=opencode-ai
             - name: OPENCODE_VERSION
-              value: "1.18.7"
+              value: "1.18.8"
             # renovate: datasource=npm depName=agent-browser
             - name: AGENT_BROWSER_VERSION
-              value: "0.33.0"
+              value: "0.33.1"
             - name: AGENT_BROWSER_CDP
               value: ws://browserless-chrome-svc.default.svc.cluster.local:3000/chrome
             - name: AGENT_BROWSER_CONTENT_BOUNDARIES
@@ -271,7 +271,7 @@ spec:
               value: "1.16.3"
             # renovate: datasource=npm depName=opencode-ai
             - name: OPENCODE_VERSION
-              value: "1.18.7"
+              value: "1.18.8"
             - name: OPENCHAMBER_HOST
               value: 0.0.0.0
             - name: OPENCHAMBER_PORT
