@@ -72,7 +72,7 @@ spec:
               - name: TEXT_MODEL_BASE_URL
                 value: https://openrouter.ai/api/v1
               - name: TEXT_MODEL_NAME
-                value: openai/gpt-4o-mini
+                value: openai/gpt-5.4-mini
               - name: EMBEDDING_BASE_URL
                 value: https://openrouter.ai/api/v1
               - name: EMBEDDING_MODEL
@@ -147,10 +147,10 @@ spec:
                   failureThreshold: 60
             resources:
               requests:
-                cpu: 200m
+                cpu: 300m
                 memory: 700Mi
               limits:
-                cpu: 800m
+                cpu: 1000m
                 memory: 1.2Gi
 
     service:
