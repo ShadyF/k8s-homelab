@@ -68,7 +68,7 @@ spec:
               - name: TRANSCRIPTION_BASE_URL
                 value: https://openrouter.ai/api/v1
               - name: TRANSCRIPTION_MODEL
-                value: openai/gpt-4o-mini-transcribe
+                value: openai/gpt-4o-transcribe
               - name: TEXT_MODEL_BASE_URL
                 value: https://openrouter.ai/api/v1
               - name: TEXT_MODEL_NAME
