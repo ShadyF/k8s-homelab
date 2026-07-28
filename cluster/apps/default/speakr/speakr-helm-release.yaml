@@ -41,7 +41,7 @@ spec:
           main:
             image:
               repository: docker.io/learnedmachine/speakr
-              tag: 0.10.2-alpha-lite
+              tag: 0.10.2-alpha
               pullPolicy: IfNotPresent
             securityContext:
               runAsUser: 0
@@ -82,9 +82,9 @@ spec:
               - name: ENABLE_SERVER_RECORDING_CHUNKS
                 value: "true"
               - name: RECORDING_MAX_HOURS
-                value: "8"
+                value: "4"
               - name: RECORDING_SESSION_TTL_HOURS
-                value: "24"
+                value: "12"
               - name: RECORDING_SESSION_MAX_BYTES_PER_USER
                 value: "1073741824"
               - name: RECORDING_SESSION_MAX_CHUNK_BYTES
@@ -138,10 +138,10 @@ spec:
                   failureThreshold: 60
             resources:
               requests:
-                cpu: 100m
+                cpu: 200m
                 memory: 512Mi
               limits:
-                cpu: 500m
+                cpu: 1500m
                 memory: 1Gi
 
     service:
