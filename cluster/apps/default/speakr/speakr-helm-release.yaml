@@ -64,11 +64,11 @@ spec:
               - name: TRUSTED_PROXY_HOPS
                 value: "1"
               - name: TRANSCRIPTION_CONNECTOR
-                value: openai_whisper
+                value: openai_transcribe
               - name: TRANSCRIPTION_BASE_URL
-                value: https://openrouter.ai/api/v1
+                value: https://api.openai.com/v1
               - name: TRANSCRIPTION_MODEL
-                value: openai/gpt-4o-transcribe
+                value: gpt-4o-transcribe-diarize
               - name: TEXT_MODEL_BASE_URL
                 value: https://openrouter.ai/api/v1
               - name: TEXT_MODEL_NAME
@@ -113,7 +113,7 @@ spec:
                 valueFrom:
                   secretKeyRef:
                     name: speakr-secrets
-                    key: OPENROUTER_API_KEY
+                    key: OPENAI_API_KEY
               - name: TEXT_MODEL_API_KEY
                 valueFrom:
                   secretKeyRef:
