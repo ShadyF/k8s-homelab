@@ -145,7 +145,7 @@ spec:
               value: "1"
             # renovate: datasource=npm depName=opencode-ai
             - name: OPENCODE_VERSION
-              value: "1.18.8"
+              value: "1.18.9"
             # renovate: datasource=npm depName=agent-browser
             - name: AGENT_BROWSER_VERSION
               value: "0.33.1"
@@ -268,10 +268,10 @@ spec:
               value: /home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
             # renovate: datasource=npm depName=@openchamber/web
             - name: OPENCHAMBER_VERSION
-              value: "1.16.3"
+              value: "1.17.0"
             # renovate: datasource=npm depName=opencode-ai
             - name: OPENCODE_VERSION
-              value: "1.18.8"
+              value: "1.18.9"
             - name: OPENCHAMBER_HOST
               value: 0.0.0.0
             - name: OPENCHAMBER_PORT
