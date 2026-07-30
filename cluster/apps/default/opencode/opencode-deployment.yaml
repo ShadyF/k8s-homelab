@@ -268,7 +268,7 @@ spec:
               value: /home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
             # renovate: datasource=npm depName=@openchamber/web
             - name: OPENCHAMBER_VERSION
-              value: "1.17.0"
+              value: "1.17.1"
             # renovate: datasource=npm depName=opencode-ai
             - name: OPENCODE_VERSION
               value: "1.18.9"
