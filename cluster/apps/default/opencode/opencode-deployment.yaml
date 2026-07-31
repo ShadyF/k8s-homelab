@@ -32,7 +32,7 @@ spec:
         kubernetes.io/arch: amd64
       initContainers:
         - name: homebrew-bootstrap
-          image: mcr.microsoft.com/devcontainers/universal:6.0.8-noble
+          image: mcr.microsoft.com/devcontainers/universal:6.1.1-noble
           imagePullPolicy: IfNotPresent
           command:
             - /bin/bash
@@ -76,7 +76,7 @@ spec:
               mountPath: /tmp
       containers:
         - name: opencode
-          image: mcr.microsoft.com/devcontainers/universal:6.0.8-noble
+          image: mcr.microsoft.com/devcontainers/universal:6.1.1-noble
           imagePullPolicy: IfNotPresent
           command:
             - /bin/bash
