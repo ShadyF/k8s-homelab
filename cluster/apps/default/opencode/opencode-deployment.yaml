@@ -145,7 +145,7 @@ spec:
               value: "1"
             # renovate: datasource=npm depName=opencode-ai
             - name: OPENCODE_VERSION
-              value: "1.18.13"
+              value: "1.18.14"
             # renovate: datasource=npm depName=agent-browser
             - name: AGENT_BROWSER_VERSION
               value: "0.33.2"
@@ -271,7 +271,7 @@ spec:
               value: "1.18.1"
             # renovate: datasource=npm depName=opencode-ai
             - name: OPENCODE_VERSION
-              value: "1.18.13"
+              value: "1.18.14"
             - name: OPENCHAMBER_HOST
               value: 0.0.0.0
             - name: OPENCHAMBER_PORT
