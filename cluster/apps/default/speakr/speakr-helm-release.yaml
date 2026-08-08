@@ -88,7 +88,7 @@ spec:
               - name: AUDIO_BITRATE
                 value: 128k
               - name: AUDIO_UNSUPPORTED_CODECS
-                value: aac
+                value: aac,mp3
               - name: ENABLE_SERVER_RECORDING_CHUNKS
                 value: "true"
               - name: RECORDING_MAX_HOURS
