@@ -137,6 +137,8 @@ spec:
               value: /home/linuxbrew/.linuxbrew/bin:/usr/local/share/nvm/current/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
             - name: OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS
               value: "true"
+            - name: OPENCODE_ENABLE_EXA
+              value: "true"
             - name: XDG_CONFIG_HOME
               value: /config
             - name: OPENCODE_CONFIG_DIR
