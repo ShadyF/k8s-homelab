@@ -28,7 +28,7 @@ spec:
     image:
       repository: n8nio/n8n
       pullPolicy: IfNotPresent
-      tag: 2.34.0
+      tag: 2.34.4
 
     deploymentStrategy:
       type: "Recreate"
@@ -85,6 +85,23 @@ spec:
 
     extraEnv:
       N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "true"
+
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 30
+
+    readinessProbe:
+      httpGet:
+        path: /healthz/readiness
+        port: http
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 30
 
 # Removed persistence because n8n-pvc was not even used.
 # Have a hunch it isn't used because we're using a PSQL database for persistence
