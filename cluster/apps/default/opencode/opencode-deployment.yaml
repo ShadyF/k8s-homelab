@@ -200,10 +200,10 @@ spec:
                 - ALL
           resources:
             requests:
-              cpu: 100m
-              memory: 2Gi
-            limits:
+              cpu: 400m
               memory: 3.5Gi
+            limits:
+              memory: 5Gi
           volumeMounts:
             - name: opencode-config
               mountPath: /config
