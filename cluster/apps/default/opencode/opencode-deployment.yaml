@@ -201,9 +201,9 @@ spec:
           resources:
             requests:
               cpu: 400m
-              memory: 3.5Gi
+              memory: 4.5Gi
             limits:
-              memory: 5Gi
+              memory: 6Gi
           volumeMounts:
             - name: opencode-config
               mountPath: /config
@@ -317,9 +317,9 @@ spec:
           resources:
             requests:
               cpu: 300m
-              memory: 1Gi
+              memory: 300Mi
             limits:
-              memory: 1Gi
+              memory: 700Mi
           volumeMounts:
             - name: openchamber-config
               mountPath: /home/node
