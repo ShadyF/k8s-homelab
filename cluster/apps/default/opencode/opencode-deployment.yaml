@@ -31,7 +31,7 @@ spec:
       nodeSelector:
         kubernetes.io/arch: amd64
       initContainers:
-        - name: homebrew-bootstrap
+        - name: bootstrap-and-migrate
           image: mcr.microsoft.com/devcontainers/universal:6.1.1-noble
           imagePullPolicy: IfNotPresent
           command:
@@ -39,7 +39,8 @@ spec:
             - -ec
           args:
             - |
-              # Initialize the shared Homebrew toolchain before application startup.
+              set -o pipefail
+
               export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
               if [ ! -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
                 NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -50,68 +51,180 @@ spec:
               fi
               test -x "$(command -v brew)"
               test -x "$(command -v kubectl)"
-          env:
-            - name: HOMEBREW_CACHE
-              value: /tmp/Homebrew
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop:
-                - ALL
-          resources:
-            requests:
-              cpu: 100m
-              memory: 128Mi
-            limits:
-              cpu: 500m
-              memory: 512Mi
-          volumeMounts:
-            - name: opencode-homebrew
-              mountPath: /home/linuxbrew
-            - name: tmp
-              mountPath: /tmp
-      containers:
-        - name: opencode
-          image: mcr.microsoft.com/devcontainers/universal:6.1.1-noble
-          imagePullPolicy: IfNotPresent
-          command:
-            - /bin/bash
-            - -ec
-          args:
-            - |
-              # Reuse the shared Homebrew toolchain initialized before application startup.
-              export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
-              eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+              migration_marker="$HOME/.opencode-home-migration-v1.complete"
+              legacy_opencode=/legacy/opencode-config
+              legacy_openchamber=/legacy/openchamber-config
+
+              path_exists() {
+                [ -e "$1" ] || [ -L "$1" ]
+              }
+
+              fail_preflight() {
+                printf 'migration preflight failed: %s\n' "$1" >&2
+                exit 1
+              }
+
+              require_source_directory() {
+                [ -d "$1" ] || fail_preflight "required source directory missing: $1"
+              }
+
+              preflight_same_path() {
+                source_path="$1"
+                destination_path="$2"
+                path_exists "$destination_path" || return 0
+                if [ -L "$source_path" ] || [ -L "$destination_path" ]; then
+                  [ -L "$source_path" ] && [ -L "$destination_path" ] \
+                    || fail_preflight "path type differs: $destination_path"
+                  [ "$(readlink -- "$source_path")" = "$(readlink -- "$destination_path")" ] \
+                    || fail_preflight "path differs: $destination_path"
+                elif [ -d "$source_path" ] && [ -d "$destination_path" ]; then
+                  return 0
+                elif [ -f "$source_path" ] && [ -f "$destination_path" ]; then
+                  cmp -s -- "$source_path" "$destination_path" || fail_preflight "path differs: $destination_path"
+                else
+                  fail_preflight "path type differs: $destination_path"
+                fi
+              }
+
+              preflight_strict_merge() {
+                source_path="$1"
+                destination_path="$2"
+                path_exists "$source_path" || return 0
+                if [ -d "$source_path" ]; then
+                  if path_exists "$destination_path" && [ ! -d "$destination_path" ]; then
+                    fail_preflight "path type differs: $destination_path"
+                  fi
+                  while IFS= read -r -d '' child_source; do
+                    child_destination="$destination_path/${child_source#"$source_path"/}"
+                    preflight_same_path "$child_source" "$child_destination"
+                  done < <(find "$source_path" -mindepth 1 -print0)
+                else
+                  preflight_same_path "$source_path" "$destination_path"
+                fi
+              }
+
+              apply_strict_merge() {
+                source_path="$1"
+                destination_path="$2"
+                path_exists "$source_path" || return 0
+                if [ -d "$source_path" ]; then
+                  mkdir -p -- "$destination_path"
+                  while IFS= read -r -d '' child_source; do
+                    child_destination="$destination_path/${child_source#"$source_path"/}"
+                    if ! path_exists "$child_destination"; then
+                      mkdir -p -- "$(dirname -- "$child_destination")"
+                      cp -a -- "$child_source" "$child_destination"
+                    fi
+                  done < <(find "$source_path" -mindepth 1 -print0)
+                elif ! path_exists "$destination_path"; then
+                  mkdir -p -- "$(dirname -- "$destination_path")"
+                  cp -a -- "$source_path" "$destination_path"
+                fi
+              }
+
+              merge_missing() {
+                source_path="$1"
+                destination_path="$2"
+                path_exists "$source_path" || return 0
+                if [ -d "$source_path" ]; then
+                  mkdir -p -- "$destination_path"
+                  while IFS= read -r -d '' child_source; do
+                    child_destination="$destination_path/${child_source#"$source_path"/}"
+                    if ! path_exists "$child_destination"; then
+                      mkdir -p -- "$(dirname -- "$child_destination")"
+                      cp -a -- "$child_source" "$child_destination"
+                    fi
+                  done < <(find "$source_path" -mindepth 1 -print0)
+                elif ! path_exists "$destination_path"; then
+                  mkdir -p -- "$(dirname -- "$destination_path")"
+                  cp -a -- "$source_path" "$destination_path"
+                fi
+              }
+
+              if [ ! -f "$migration_marker" ]; then
+                # Verify every source and conflict before changing canonical state.
+                require_source_directory "$legacy_opencode/opencode"
+                require_source_directory "$legacy_openchamber/.config/openchamber"
+                require_source_directory "$legacy_openchamber/.ssh"
+                preflight_strict_merge "$legacy_openchamber/Programming" "$HOME/workspaces/Programming"
+                preflight_strict_merge "$legacy_openchamber/Synapse" "$HOME/workspaces/Synapse"
+                preflight_strict_merge "$legacy_openchamber/k8s-homelab" "$HOME/workspaces/k8s-homelab"
+                preflight_strict_merge "$legacy_openchamber/.local/share/opencode" "$HOME/.local/share/opencode"
+                preflight_strict_merge "$legacy_openchamber/.gitconfig" "$HOME/.gitconfig"
+                preflight_strict_merge "$legacy_openchamber/.git-credentials" "$HOME/.git-credentials"
+                preflight_strict_merge "$legacy_openchamber/.config/git" "$HOME/.config/git"
+                preflight_strict_merge "$legacy_openchamber/.config/gh" "$HOME/.config/gh"
+
+                stage_root="$(mktemp -d "$HOME/.opencode-migration-v1.stage.XXXXXX")"
+                trap 'rm -rf -- "$stage_root"' EXIT
+                cp -a -- "$legacy_opencode/opencode" "$stage_root/opencode"
+                cp -a -- "$legacy_openchamber/.config/openchamber" "$stage_root/openchamber"
+                cp -a -- "$legacy_openchamber/.ssh" "$stage_root/ssh"
+
+                # Promote staged authoritative state only after all conflict checks pass.
+                mkdir -p -- "$HOME/.config" "$HOME/.local/share" "$HOME/workspaces"
+                rm -rf -- "$HOME/.config/opencode" "$HOME/.config/openchamber" "$HOME/.ssh"
+                mv -- "$stage_root/opencode" "$HOME/.config/opencode"
+                mv -- "$stage_root/openchamber" "$HOME/.config/openchamber"
+                mv -- "$stage_root/ssh" "$HOME/.ssh"
+
+                # Strict merges preserve both source-only and destination-only state.
+                apply_strict_merge "$legacy_openchamber/Programming" "$HOME/workspaces/Programming"
+                apply_strict_merge "$legacy_openchamber/Synapse" "$HOME/workspaces/Synapse"
+                apply_strict_merge "$legacy_openchamber/k8s-homelab" "$HOME/workspaces/k8s-homelab"
+                apply_strict_merge "$legacy_openchamber/.local/share/opencode" "$HOME/.local/share/opencode"
+                apply_strict_merge "$legacy_openchamber/.gitconfig" "$HOME/.gitconfig"
+                apply_strict_merge "$legacy_openchamber/.git-credentials" "$HOME/.git-credentials"
+                apply_strict_merge "$legacy_openchamber/.config/git" "$HOME/.config/git"
+                apply_strict_merge "$legacy_openchamber/.config/gh" "$HOME/.config/gh"
+                mkdir -p "$HOME/workspaces/Programming" "$HOME/workspaces/Synapse" "$HOME/workspaces/k8s-homelab"
+
+                # The destination is the OpenCode-side authority for pnpm configuration.
+                merge_missing "$legacy_opencode/.npmrc" "$HOME/.npmrc"
+                merge_missing "$legacy_openchamber/.npmrc" "$HOME/.npmrc"
+                merge_missing "$legacy_opencode/pnpm" "$HOME/.config/pnpm"
+                merge_missing "$legacy_openchamber/.config/pnpm" "$HOME/.config/pnpm"
+
+                # Do not copy legacy npm caches, globals, or version markers.  Existing .agents is retained.
+                rm -rf -- "$stage_root"
+                trap - EXIT
+                touch "$migration_marker"
+              fi
 
               export NPM_CONFIG_PREFIX="$HOME/.npm-global"
               export npm_config_cache="$HOME/.npm"
               export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
-
               mkdir -p "$NPM_CONFIG_PREFIX" "$npm_config_cache" "$HOME/.agents/skills/agent-browser" "$AGENT_BROWSER_SOCKET_DIR"
 
-              runtime_version="$OPENCODE_VERSION:$AGENT_BROWSER_VERSION"
-              opencode_bin="$NPM_CONFIG_PREFIX/bin/opencode"
-              agent_browser_bin="$NPM_CONFIG_PREFIX/bin/agent-browser"
-              if [ ! -x "$opencode_bin" ] \
-                || [ ! -x "$agent_browser_bin" ] \
-                || [ "$("$agent_browser_bin" --version 2>/dev/null || true)" != "agent-browser $AGENT_BROWSER_VERSION" ] \
-                || [ "$("$opencode_bin" --version 2>/dev/null || true)" != "$OPENCODE_VERSION" ] \
-                || [ "$(cat "$HOME/.development-runtime-version" 2>/dev/null || true)" != "$runtime_version" ]; then
-                npm install --global "opencode-ai@$OPENCODE_VERSION" "agent-browser@$AGENT_BROWSER_VERSION"
-                test -x "$opencode_bin"
-                test -x "$agent_browser_bin"
-                test "$("$agent_browser_bin" --version)" = "agent-browser $AGENT_BROWSER_VERSION"
-                test "$("$opencode_bin" --version)" = "$OPENCODE_VERSION"
-                printf '%s\n' "$runtime_version" > "$HOME/.development-runtime-version"
+              package_is_pinned() {
+                package_name="$1"
+                package_version="$2"
+                executable_name="$3"
+                [ -x "$NPM_CONFIG_PREFIX/bin/$executable_name" ] || return 1
+                node -e 'try { process.exit(require(process.argv[1]).version === process.argv[2] ? 0 : 1); } catch (_) { process.exit(1); }' \
+                  "$NPM_CONFIG_PREFIX/lib/node_modules/$package_name/package.json" "$package_version"
+              }
+
+              if ! package_is_pinned opencode-ai "$OPENCODE_VERSION" opencode; then
+                npm install --global "opencode-ai@$OPENCODE_VERSION"
               fi
+              if ! package_is_pinned @openchamber/web "$OPENCHAMBER_VERSION" openchamber; then
+                npm install --global "@openchamber/web@$OPENCHAMBER_VERSION"
+              fi
+              if ! package_is_pinned agent-browser "$AGENT_BROWSER_VERSION" agent-browser; then
+                npm install --global "agent-browser@$AGENT_BROWSER_VERSION"
+              fi
+              test -x "$NPM_CONFIG_PREFIX/bin/opencode"
+              test -x "$NPM_CONFIG_PREFIX/bin/openchamber"
+              test -x "$NPM_CONFIG_PREFIX/bin/agent-browser"
 
               skill_file="$HOME/.agents/skills/agent-browser/SKILL.md"
               skill_revision="v$AGENT_BROWSER_VERSION"
-              if [ ! -s "$skill_file" ] || [ "$(cat "$HOME/.agent-browser-skill-revision" 2>/dev/null || true)" != "$skill_revision" ]; then
+              skill_revision_marker="$HOME/.agent-browser-skill-revision"
+              if [ ! -s "$skill_file" ] \
+                || [ "$(cat "$skill_revision_marker" 2>/dev/null || true)" != "$skill_revision" ] \
+                || ! grep -Fq -- '## OpenCode cluster environment' "$skill_file"; then
                 curl --fail --silent --show-error --location \
                   "https://raw.githubusercontent.com/vercel-labs/agent-browser/$skill_revision/skills/agent-browser/SKILL.md" \
                   --output "$skill_file.tmp"
@@ -126,31 +239,103 @@ spec:
               - Close browser sessions after verification.
               EOF
                 mv "$skill_file.tmp" "$skill_file"
-                printf '%s\n' "$skill_revision" > "$HOME/.agent-browser-skill-revision"
+                printf '%s\n' "$skill_revision" > "$skill_revision_marker"
               fi
-
-              exec "$NPM_CONFIG_PREFIX/bin/opencode" serve --hostname 0.0.0.0 --port 4096 --log-level INFO
           env:
             - name: HOME
-              value: /home/codespace
+              value: /home/node
+            - name: HOMEBREW_CACHE
+              value: /tmp/Homebrew
+            - name: XDG_CONFIG_HOME
+              value: /home/node/.config
+            - name: XDG_DATA_HOME
+              value: /home/node/.local/share
+            # renovate: datasource=npm depName=opencode-ai
+            - name: OPENCODE_VERSION
+              value: "1.18.18"
+            # renovate: datasource=npm depName=@openchamber/web
+            - name: OPENCHAMBER_VERSION
+              value: "1.18.4"
+            # renovate: datasource=npm depName=agent-browser
+            - name: AGENT_BROWSER_VERSION
+              value: "0.34.0"
+            - name: AGENT_BROWSER_SOCKET_DIR
+              value: /tmp/agent-browser
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 100m
+              memory: 1Gi
+            limits:
+              cpu: 500m
+              memory: 2Gi
+          volumeMounts:
+            - name: opencode-data
+              mountPath: /home/node
+            - name: opencode-config
+              mountPath: /legacy/opencode-config
+              readOnly: true
+            - name: openchamber-config
+              mountPath: /legacy/openchamber-config
+              readOnly: true
+            - name: opencode-homebrew
+              mountPath: /home/linuxbrew
+            - name: tmp
+              mountPath: /tmp
+      containers:
+        - name: openchamber
+          image: mcr.microsoft.com/devcontainers/universal:6.1.1-noble
+          imagePullPolicy: IfNotPresent
+          command:
+            - /home/node/.npm-global/bin/openchamber
+          args:
+            - serve
+            - --port
+            - $(OPENCHAMBER_PORT)
+            - --host
+            - $(OPENCHAMBER_HOST)
+            - --foreground
+          env:
+            - name: HOME
+              value: /home/node
+            - name: XDG_CONFIG_HOME
+              value: /home/node/.config
+            - name: XDG_DATA_HOME
+              value: /home/node/.local/share
             - name: PATH
-              value: /home/linuxbrew/.linuxbrew/bin:/usr/local/share/nvm/current/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+              value: /home/node/.npm-global/bin:/home/node/.local/share/pnpm:/home/linuxbrew/.linuxbrew/bin:/usr/local/share/nvm/current/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+            - name: NPM_CONFIG_PREFIX
+              value: /home/node/.npm-global
+            - name: PNPM_HOME
+              value: /home/node/.local/share/pnpm
+            - name: OPENCODE_BINARY
+              value: /home/node/.npm-global/bin/opencode
+            - name: OPENCODE_PORT
+              value: "4096"
+            - name: OPENCHAMBER_OPENCODE_HOSTNAME
+              value: 127.0.0.1
+            - name: OPENCHAMBER_OPENCODE_CWD
+              value: /home/node/workspaces
+            - name: OPENCHAMBER_HOST
+              value: 0.0.0.0
+            - name: OPENCHAMBER_PORT
+              value: "3000"
+            - name: OPENCHAMBER_DATA_DIR
+              value: /home/node/.config/openchamber
             - name: OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS
               value: "true"
             - name: OPENCODE_ENABLE_EXA
               value: "true"
-            - name: XDG_CONFIG_HOME
-              value: /config
-            - name: OPENCODE_CONFIG_DIR
-              value: /config/opencode
             - name: OPENCODE_PRINT_LOGS
               value: "1"
-            # renovate: datasource=npm depName=opencode-ai
-            - name: OPENCODE_VERSION
-              value: "1.18.18"
-            # renovate: datasource=npm depName=agent-browser
-            - name: AGENT_BROWSER_VERSION
-              value: "0.34.0"
             - name: AGENT_BROWSER_CDP
               value: ws://browserless-chrome-svc.default.svc.cluster.local:3000/chrome
             - name: AGENT_BROWSER_CONTENT_BOUNDARIES
@@ -163,32 +348,41 @@ spec:
               value: "19432"
             - name: PLANNOTATOR_SHARE
               value: disabled
-          workingDir: /home/codespace
+          envFrom:
+            - secretRef:
+                name: opencode-openchamber-secrets
+          workingDir: /home/node/workspaces
           ports:
-            - name: http
-              containerPort: 4096
+            - name: openchamber
+              containerPort: 3000
             - name: preview
               containerPort: 4173
             - name: plannotator
               containerPort: 19432
           startupProbe:
-            httpGet:
-              path: /global/health
-              port: http
+            exec:
+              command:
+                - node
+                - -e
+                - "require('http').get('http://127.0.0.1:3000/health', r => { let b=''; r.on('data', c => b += c); r.on('end', () => { try { const h=JSON.parse(b); process.exit(r.statusCode >= 200 && r.statusCode < 300 && h.openCodeRunning === true && h.isOpenCodeReady === true ? 0 : 1); } catch (_) { process.exit(1); } }); }).on('error', () => process.exit(1));"
             failureThreshold: 120
             periodSeconds: 5
             timeoutSeconds: 5
           readinessProbe:
-            httpGet:
-              path: /global/health
-              port: http
+            exec:
+              command:
+                - node
+                - -e
+                - "require('http').get('http://127.0.0.1:3000/health', r => { let b=''; r.on('data', c => b += c); r.on('end', () => { try { const h=JSON.parse(b); process.exit(r.statusCode >= 200 && r.statusCode < 300 && h.openCodeRunning === true && h.isOpenCodeReady === true ? 0 : 1); } catch (_) { process.exit(1); } }); }).on('error', () => process.exit(1));"
             initialDelaySeconds: 5
             periodSeconds: 10
             timeoutSeconds: 5
           livenessProbe:
-            httpGet:
-              path: /global/health
-              port: http
+            exec:
+              command:
+                - node
+                - -e
+                - "require('http').get('http://127.0.0.1:3000/health', r => process.exit(r.statusCode >= 200 && r.statusCode < 300 ? 0 : 1)).on('error', () => process.exit(1));"
             initialDelaySeconds: 30
             periodSeconds: 30
             timeoutSeconds: 5
@@ -200,136 +394,21 @@ spec:
                 - ALL
           resources:
             requests:
-              cpu: 400m
-              memory: 4.5Gi
+              cpu: 700m
+              memory: 3Gi
             limits:
-              memory: 6Gi
+              memory: 4Gi
           volumeMounts:
-            - name: opencode-config
-              mountPath: /config
-            - name: opencode-homebrew
-              mountPath: /home/linuxbrew
+            - name: opencode-data
+              mountPath: /home/node
+            # Temporary compatibility aliases for pre-v1 home and workspace paths.
             - name: opencode-data
               mountPath: /home/codespace
-            # Temporary compatibility alias for persisted /home/opencode paths.
             - name: opencode-data
               mountPath: /home/opencode
-            - name: openchamber-config
-              mountPath: /home/codespace/.ssh
-              subPath: .ssh
-            # Temporary compatibility alias for persisted /home/openchamber paths.
             - name: opencode-data
               mountPath: /home/openchamber
               subPath: workspaces
-            # OpenChamber sends OpenCode absolute paths rooted at its home.
-            - name: opencode-data
-              mountPath: /home/node
-              subPath: workspaces
-            - name: opencode-data
-              mountPath: /workspaces
-              subPath: workspaces
-            - name: tmp
-              mountPath: /tmp
-            - name: opencode-api-access
-              mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-              readOnly: true
-        - name: openchamber
-          image: node:26-bookworm
-          imagePullPolicy: IfNotPresent
-          command:
-            - /bin/sh
-            - -ec
-          args:
-            - |
-              # Reuse the shared Homebrew toolchain initialized before application startup.
-              export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
-              eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-
-              export NPM_CONFIG_PREFIX="$HOME/.npm-global"
-              export npm_config_cache="$HOME/.npm"
-              export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
-              mkdir -p "$NPM_CONFIG_PREFIX" "$npm_config_cache" "$OPENCHAMBER_DATA_DIR"
-
-              if [ ! -x "$NPM_CONFIG_PREFIX/bin/openchamber" ] || [ "$(cat "$HOME/.openchamber-version" 2>/dev/null || true)" != "$OPENCHAMBER_VERSION" ]; then
-                npm install --global "@openchamber/web@$OPENCHAMBER_VERSION"
-                echo "$OPENCHAMBER_VERSION" > "$HOME/.openchamber-version"
-              fi
-
-              if [ ! -x "$NPM_CONFIG_PREFIX/bin/opencode" ] || [ "$(cat "$HOME/.opencode-version" 2>/dev/null || true)" != "$OPENCODE_VERSION" ]; then
-                npm install --global "opencode-ai@$OPENCODE_VERSION"
-                echo "$OPENCODE_VERSION" > "$HOME/.opencode-version"
-              fi
-
-              export OPENCODE_BINARY="$NPM_CONFIG_PREFIX/bin/opencode"
-
-              exec "$NPM_CONFIG_PREFIX/bin/openchamber" serve --port "$OPENCHAMBER_PORT" --host "$OPENCHAMBER_HOST" --foreground
-          env:
-            - name: HOME
-              value: /home/node
-            - name: PATH
-              value: /home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-            # renovate: datasource=npm depName=@openchamber/web
-            - name: OPENCHAMBER_VERSION
-              value: "1.18.4"
-            # renovate: datasource=npm depName=opencode-ai
-            - name: OPENCODE_VERSION
-              value: "1.18.18"
-            - name: OPENCHAMBER_HOST
-              value: 0.0.0.0
-            - name: OPENCHAMBER_PORT
-              value: "3000"
-            - name: OPENCHAMBER_DATA_DIR
-              value: /home/node/.config/openchamber
-            - name: OPENCODE_HOST
-              value: http://127.0.0.1:4096
-            - name: OPENCODE_SKIP_START
-              value: "true"
-            - name: OPENCHAMBER_OPENCODE_HOSTNAME
-              value: localhost
-          envFrom:
-            - secretRef:
-                name: opencode-openchamber-secrets
-          workingDir: /workspaces
-          ports:
-            - name: openchamber
-              containerPort: 3000
-          startupProbe:
-            tcpSocket:
-              port: openchamber
-            failureThreshold: 120
-            periodSeconds: 5
-          readinessProbe:
-            tcpSocket:
-              port: openchamber
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          livenessProbe:
-            tcpSocket:
-              port: openchamber
-            initialDelaySeconds: 60
-            periodSeconds: 30
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop:
-                - ALL
-          resources:
-            requests:
-              cpu: 300m
-              memory: 300Mi
-            limits:
-              memory: 700Mi
-          volumeMounts:
-            - name: openchamber-config
-              mountPath: /home/node
-            - name: opencode-homebrew
-              mountPath: /home/linuxbrew
-            # Temporary compatibility alias for persisted /home/openchamber paths.
-            - name: opencode-data
-              mountPath: /home/openchamber
-              subPath: workspaces
-            # Overlay legacy project paths with canonical workspace data.
             - name: opencode-data
               mountPath: /home/node/Programming
               subPath: workspaces/Programming
@@ -342,6 +421,8 @@ spec:
             - name: opencode-data
               mountPath: /workspaces
               subPath: workspaces
+            - name: opencode-homebrew
+              mountPath: /home/linuxbrew
             - name: tmp
               mountPath: /tmp
             - name: opencode-api-access

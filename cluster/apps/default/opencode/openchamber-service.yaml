@@ -12,6 +12,6 @@ spec:
     app.kubernetes.io/name: opencode
     app.kubernetes.io/component: backend
   ports:
-    - name: http
+    - name: openchamber
       port: 3000
       targetPort: openchamber
