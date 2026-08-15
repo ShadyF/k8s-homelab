@@ -96,7 +96,7 @@ spec:
                     fail_preflight "path type differs: $destination_path"
                   fi
                   while IFS= read -r -d '' child_source; do
-                    child_destination="$destination_path/${child_source#"$source_path"/}"
+                    child_destination="$destination_path/$${child_source#"$source_path"/}"
                     preflight_same_path "$child_source" "$child_destination"
                   done < <(find "$source_path" -mindepth 1 -print0)
                 else
@@ -111,7 +111,7 @@ spec:
                 if [ -d "$source_path" ]; then
                   mkdir -p -- "$destination_path"
                   while IFS= read -r -d '' child_source; do
-                    child_destination="$destination_path/${child_source#"$source_path"/}"
+                    child_destination="$destination_path/$${child_source#"$source_path"/}"
                     if ! path_exists "$child_destination"; then
                       mkdir -p -- "$(dirname -- "$child_destination")"
                       cp -a -- "$child_source" "$child_destination"
@@ -130,7 +130,7 @@ spec:
                 if [ -d "$source_path" ]; then
                   mkdir -p -- "$destination_path"
                   while IFS= read -r -d '' child_source; do
-                    child_destination="$destination_path/${child_source#"$source_path"/}"
+                    child_destination="$destination_path/$${child_source#"$source_path"/}"
                     if ! path_exists "$child_destination"; then
                       mkdir -p -- "$(dirname -- "$child_destination")"
                       cp -a -- "$child_source" "$child_destination"
