@@ -31,7 +31,7 @@ spec:
       nodeSelector:
         kubernetes.io/arch: amd64
       initContainers:
-        - name: bootstrap-and-migrate
+        - name: bootstrap
           image: mcr.microsoft.com/devcontainers/universal:6.1.1-noble
           imagePullPolicy: IfNotPresent
           command:
@@ -51,146 +51,6 @@ spec:
               fi
               test -x "$(command -v brew)"
               test -x "$(command -v kubectl)"
-
-              migration_marker="$HOME/.opencode-home-migration-v1.complete"
-              legacy_opencode=/legacy/opencode-config
-              legacy_openchamber=/legacy/openchamber-config
-
-              path_exists() {
-                [ -e "$1" ] || [ -L "$1" ]
-              }
-
-              fail_preflight() {
-                printf 'migration preflight failed: %s\n' "$1" >&2
-                exit 1
-              }
-
-              require_source_directory() {
-                [ -d "$1" ] || fail_preflight "required source directory missing: $1"
-              }
-
-              preflight_same_path() {
-                source_path="$1"
-                destination_path="$2"
-                path_exists "$destination_path" || return 0
-                if [ -L "$source_path" ] || [ -L "$destination_path" ]; then
-                  [ -L "$source_path" ] && [ -L "$destination_path" ] \
-                    || fail_preflight "path type differs: $destination_path"
-                  [ "$(readlink -- "$source_path")" = "$(readlink -- "$destination_path")" ] \
-                    || fail_preflight "path differs: $destination_path"
-                elif [ -d "$source_path" ] && [ -d "$destination_path" ]; then
-                  return 0
-                elif [ -f "$source_path" ] && [ -f "$destination_path" ]; then
-                  cmp -s -- "$source_path" "$destination_path" || fail_preflight "path differs: $destination_path"
-                else
-                  fail_preflight "path type differs: $destination_path"
-                fi
-              }
-
-              preflight_strict_merge() {
-                source_path="$1"
-                destination_path="$2"
-                path_exists "$source_path" || return 0
-                if [ -d "$source_path" ]; then
-                  if path_exists "$destination_path" && [ ! -d "$destination_path" ]; then
-                    fail_preflight "path type differs: $destination_path"
-                  fi
-                  while IFS= read -r -d '' child_source; do
-                    child_destination="$destination_path/$${child_source#"$source_path"/}"
-                    preflight_same_path "$child_source" "$child_destination"
-                  done < <(find "$source_path" -mindepth 1 -print0)
-                else
-                  preflight_same_path "$source_path" "$destination_path"
-                fi
-              }
-
-              apply_strict_merge() {
-                source_path="$1"
-                destination_path="$2"
-                path_exists "$source_path" || return 0
-                if [ -d "$source_path" ]; then
-                  mkdir -p -- "$destination_path"
-                  while IFS= read -r -d '' child_source; do
-                    child_destination="$destination_path/$${child_source#"$source_path"/}"
-                    if ! path_exists "$child_destination"; then
-                      mkdir -p -- "$(dirname -- "$child_destination")"
-                      cp -a -- "$child_source" "$child_destination"
-                    fi
-                  done < <(find "$source_path" -mindepth 1 -print0)
-                elif ! path_exists "$destination_path"; then
-                  mkdir -p -- "$(dirname -- "$destination_path")"
-                  cp -a -- "$source_path" "$destination_path"
-                fi
-              }
-
-              merge_missing() {
-                source_path="$1"
-                destination_path="$2"
-                path_exists "$source_path" || return 0
-                if [ -d "$source_path" ]; then
-                  mkdir -p -- "$destination_path"
-                  while IFS= read -r -d '' child_source; do
-                    child_destination="$destination_path/$${child_source#"$source_path"/}"
-                    if ! path_exists "$child_destination"; then
-                      mkdir -p -- "$(dirname -- "$child_destination")"
-                      cp -a -- "$child_source" "$child_destination"
-                    fi
-                  done < <(find "$source_path" -mindepth 1 -print0)
-                elif ! path_exists "$destination_path"; then
-                  mkdir -p -- "$(dirname -- "$destination_path")"
-                  cp -a -- "$source_path" "$destination_path"
-                fi
-              }
-
-              if [ ! -f "$migration_marker" ]; then
-                # Verify every source and conflict before changing canonical state.
-                require_source_directory "$legacy_opencode/opencode"
-                require_source_directory "$legacy_openchamber/.config/openchamber"
-                require_source_directory "$legacy_openchamber/.ssh"
-                preflight_strict_merge "$legacy_openchamber/Programming" "$HOME/workspaces/Programming"
-                preflight_strict_merge "$legacy_openchamber/Synapse" "$HOME/workspaces/Synapse"
-                preflight_strict_merge "$legacy_openchamber/k8s-homelab" "$HOME/workspaces/k8s-homelab"
-                preflight_strict_merge "$legacy_openchamber/.local/share/opencode" "$HOME/.local/share/opencode"
-                preflight_strict_merge "$legacy_openchamber/.gitconfig" "$HOME/.gitconfig"
-                preflight_strict_merge "$legacy_openchamber/.git-credentials" "$HOME/.git-credentials"
-                preflight_strict_merge "$legacy_openchamber/.config/git" "$HOME/.config/git"
-                preflight_strict_merge "$legacy_openchamber/.config/gh" "$HOME/.config/gh"
-
-                stage_root="$(mktemp -d "$HOME/.opencode-migration-v1.stage.XXXXXX")"
-                trap 'rm -rf -- "$stage_root"' EXIT
-                cp -a -- "$legacy_opencode/opencode" "$stage_root/opencode"
-                cp -a -- "$legacy_openchamber/.config/openchamber" "$stage_root/openchamber"
-                cp -a -- "$legacy_openchamber/.ssh" "$stage_root/ssh"
-
-                # Promote staged authoritative state only after all conflict checks pass.
-                mkdir -p -- "$HOME/.config" "$HOME/.local/share" "$HOME/workspaces"
-                rm -rf -- "$HOME/.config/opencode" "$HOME/.config/openchamber" "$HOME/.ssh"
-                mv -- "$stage_root/opencode" "$HOME/.config/opencode"
-                mv -- "$stage_root/openchamber" "$HOME/.config/openchamber"
-                mv -- "$stage_root/ssh" "$HOME/.ssh"
-
-                # Strict merges preserve both source-only and destination-only state.
-                apply_strict_merge "$legacy_openchamber/Programming" "$HOME/workspaces/Programming"
-                apply_strict_merge "$legacy_openchamber/Synapse" "$HOME/workspaces/Synapse"
-                apply_strict_merge "$legacy_openchamber/k8s-homelab" "$HOME/workspaces/k8s-homelab"
-                apply_strict_merge "$legacy_openchamber/.local/share/opencode" "$HOME/.local/share/opencode"
-                apply_strict_merge "$legacy_openchamber/.gitconfig" "$HOME/.gitconfig"
-                apply_strict_merge "$legacy_openchamber/.git-credentials" "$HOME/.git-credentials"
-                apply_strict_merge "$legacy_openchamber/.config/git" "$HOME/.config/git"
-                apply_strict_merge "$legacy_openchamber/.config/gh" "$HOME/.config/gh"
-                mkdir -p "$HOME/workspaces/Programming" "$HOME/workspaces/Synapse" "$HOME/workspaces/k8s-homelab"
-
-                # The destination is the OpenCode-side authority for pnpm configuration.
-                merge_missing "$legacy_opencode/.npmrc" "$HOME/.npmrc"
-                merge_missing "$legacy_openchamber/.npmrc" "$HOME/.npmrc"
-                merge_missing "$legacy_opencode/pnpm" "$HOME/.config/pnpm"
-                merge_missing "$legacy_openchamber/.config/pnpm" "$HOME/.config/pnpm"
-
-                # Do not copy legacy npm caches, globals, or version markers.  Existing .agents is retained.
-                rm -rf -- "$stage_root"
-                trap - EXIT
-                touch "$migration_marker"
-              fi
 
               export NPM_CONFIG_PREFIX="$HOME/.npm-global"
               export npm_config_cache="$HOME/.npm"
@@ -280,12 +140,6 @@ spec:
           volumeMounts:
             - name: opencode-data
               mountPath: /home/node
-            - name: opencode-config
-              mountPath: /legacy/opencode-config
-              readOnly: true
-            - name: openchamber-config
-              mountPath: /legacy/openchamber-config
-              readOnly: true
             - name: opencode-homebrew
               mountPath: /home/linuxbrew
             - name: tmp
@@ -429,18 +283,12 @@ spec:
               mountPath: /var/run/secrets/kubernetes.io/serviceaccount
               readOnly: true
       volumes:
-        - name: opencode-config
-          persistentVolumeClaim:
-            claimName: opencode-config
         - name: opencode-data
           persistentVolumeClaim:
             claimName: opencode-data
         - name: opencode-homebrew
           persistentVolumeClaim:
             claimName: opencode-homebrew
-        - name: openchamber-config
-          persistentVolumeClaim:
-            claimName: openchamber-config
         - name: tmp
           emptyDir: {}
         - name: opencode-api-access

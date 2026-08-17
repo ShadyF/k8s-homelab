@@ -1,22 +1,6 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: opencode-config
-  namespace: default
-  labels:
-    app.kubernetes.io/name: opencode
-    app.kubernetes.io/component: config
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: longhorn
-  resources:
-    requests:
-      storage: 2Gi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
   name: opencode-data
   namespace: default
   labels:
@@ -45,19 +29,3 @@ spec:
   resources:
     requests:
       storage: 3Gi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: openchamber-config
-  namespace: default
-  labels:
-    app.kubernetes.io/name: openchamber
-    app.kubernetes.io/component: config
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: longhorn
-  resources:
-    requests:
-      storage: 8Gi
