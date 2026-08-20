@@ -251,9 +251,9 @@ spec:
           resources:
             requests:
               cpu: 700m
-              memory: 2Gi
-            limits:
               memory: 3Gi
+            limits:
+              memory: 4Gi
           volumeMounts:
             - name: opencode-data
               mountPath: /home/node
