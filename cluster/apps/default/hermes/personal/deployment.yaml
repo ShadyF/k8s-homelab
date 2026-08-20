@@ -257,11 +257,11 @@ spec:
               mountPath: /run
           resources:
             requests:
-              cpu: 500m
-              memory: 1Gi
+              cpu: 400m
+              memory: 500Gi
             limits:
-              cpu: 2500m
-              memory: 2Gi
+              cpu: 1
+              memory: 1Gi
       volumes:
         - name: data
           persistentVolumeClaim:
