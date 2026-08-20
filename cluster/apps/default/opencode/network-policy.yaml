@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: opencode-ingress
+  namespace: default
+  labels:
+    app.kubernetes.io/name: opencode
+    app.kubernetes.io/component: backend
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: opencode
+      app.kubernetes.io/component: backend
+  policyTypes:
+    - Ingress
+  ingress:
+    # Limit public application ports to the ingress controllers in the networking namespace.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: networking
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ingress-nginx
+              app.kubernetes.io/component: controller
+      ports:
+        - protocol: TCP
+          port: 3000
+        - protocol: TCP
+          port: 19432
+    # Browserless drives preview applications through the dedicated preview port.
+    - from:
+        - podSelector:
+            matchLabels:
+              app: browserless-chrome
+      ports:
+        - protocol: TCP
+          port: 4173

@@ -30,6 +30,8 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       nodeSelector:
         kubernetes.io/arch: amd64
+      # Preserve the workspace while allowing the nested Docker engine to shut down cleanly.
+      terminationGracePeriodSeconds: 60
       initContainers:
         - name: bootstrap
           image: mcr.microsoft.com/devcontainers/universal:6.1.1-noble
@@ -51,6 +53,87 @@ spec:
               fi
               test -x "$(command -v brew)"
               test -x "$(command -v kubectl)"
+
+              # Install only missing Docker client formulas; Homebrew retains their state across restarts.
+              for formula in docker docker-compose docker-buildx; do
+                if ! brew list --formula "$formula" >/dev/null 2>&1; then
+                  brew install "$formula"
+                fi
+              done
+
+              docker_cli_path="$(command -v docker)"
+              homebrew_prefix="$(brew --prefix)"
+              docker_config_dir="$HOME/.config/docker"
+              export DOCKER_CONFIG="$docker_config_dir"
+              mkdir -p "$docker_config_dir/cli-plugins"
+              test -x "$docker_cli_path"
+
+              # Discover formula-specific plugin paths without assuming a single Homebrew layout.
+              find_homebrew_plugin() {
+                formula="$1"
+                plugin_name="$2"
+                formula_prefix="$(brew --prefix "$formula")"
+                for candidate in \
+                  "$homebrew_prefix/libexec/docker/cli-plugins/$plugin_name" \
+                  "$homebrew_prefix/lib/docker/cli-plugins/$plugin_name" \
+                  "$formula_prefix/libexec/docker/cli-plugins/$plugin_name" \
+                  "$formula_prefix/lib/docker/cli-plugins/$plugin_name" \
+                  "$formula_prefix/bin/$plugin_name"; do
+                  if [ -x "$candidate" ]; then
+                    printf '%s\n' "$candidate"
+                    return 0
+                  fi
+                done
+                return 1
+              }
+
+              # Link Homebrew's plugin binaries into Docker's user plugin directory.
+              docker_compose_path="$(find_homebrew_plugin docker-compose docker-compose)"
+              docker_buildx_path="$(find_homebrew_plugin docker-buildx docker-buildx)"
+              test -x "$docker_compose_path"
+              test -x "$docker_buildx_path"
+              ln -sfn "$docker_compose_path" "$docker_config_dir/cli-plugins/docker-compose"
+              ln -sfn "$docker_buildx_path" "$docker_config_dir/cli-plugins/docker-buildx"
+              test -x "$docker_config_dir/cli-plugins/docker-compose"
+              test -x "$docker_config_dir/cli-plugins/docker-buildx"
+
+              # Verify client-side commands without contacting the not-yet-started DinD daemon.
+              docker_client_version="$("$docker_cli_path" version --format '{{.Client.Version}}' 2>/dev/null || true)"
+              if [ -z "$docker_client_version" ]; then
+                "$docker_cli_path" version --help >/dev/null
+              fi
+              "$docker_cli_path" --version >/dev/null
+              "$docker_cli_path" compose version --short >/dev/null
+              "$docker_cli_path" buildx version >/dev/null
+
+              # Wait for TLS material and the sidecar daemon so early agent commands fail clearly.
+              mkdir -p "$HOME/.local/bin" /certs/client
+              cat > "$HOME/.local/bin/docker" <<'EOF'
+              #!/bin/sh
+              set -eu
+
+              docker_cli=/home/linuxbrew/.linuxbrew/bin/docker
+              if [ "${DOCKER_HOST:-}" = "tcp://127.0.0.1:2376" ]; then
+                max_attempts=30
+                attempt=0
+                while [ "$attempt" -lt "$max_attempts" ]; do
+                  if [ -r "${DOCKER_CERT_PATH:-/certs/client}/ca.pem" ] \
+                    && [ -r "${DOCKER_CERT_PATH:-/certs/client}/cert.pem" ] \
+                    && [ -r "${DOCKER_CERT_PATH:-/certs/client}/key.pem" ] \
+                    && "$docker_cli" info >/dev/null 2>&1; then
+                    break
+                  fi
+                  attempt=$((attempt + 1))
+                  sleep 1
+                done
+                if [ "$attempt" -eq "$max_attempts" ]; then
+                  printf '%s\n' 'Docker is starting or unavailable; retry after the DinD sidecar is ready.' >&2
+                  exit 1
+                fi
+              fi
+              exec "$docker_cli" "$@"
+              EOF
+              chmod 0755 "$HOME/.local/bin/docker"
 
               export NPM_CONFIG_PREFIX="$HOME/.npm-global"
               export npm_config_cache="$HOME/.npm"
@@ -97,6 +180,15 @@ spec:
               - Start project preview servers on `0.0.0.0:4173`.
               - Browse previews at `http://opencode.default.svc.cluster.local:4173`, not localhost.
               - Close browser sessions after verification.
+              - Run Docker and Compose from canonical paths under `/home/node/workspaces`.
+              - Treat Dockerfiles and Compose files as executable code; inspect privileged mounts, published ports, and network access first.
+              - Set a unique `COMPOSE_PROJECT_NAME` when workspaces or sessions can overlap.
+              - Prefer project-provided Docker and Compose commands unchanged and wait on health checks instead of fixed sleeps.
+              - Capture container logs and browser artifacts before tearing down failed test environments.
+              - Use `docker compose down --volumes --remove-orphans` for project-scoped cleanup; keep global cleanup confirmation-gated.
+              - Normal Docker and Compose inspection/lifecycle commands are allowed; request confirmation for destructive global cleanup.
+              - Do not use `--privileged`, host-like mounts, or broad network exposure unless explicitly required and approved.
+              - The DinD TLS API has no Service or Ingress but is reachable through the Pod IP; never treat port 2376 as unauthenticated or expose it further.
               EOF
                 mv "$skill_file.tmp" "$skill_file"
                 printf '%s\n' "$skill_revision" > "$skill_revision_marker"
@@ -142,9 +234,60 @@ spec:
               mountPath: /home/node
             - name: opencode-homebrew
               mountPath: /home/linuxbrew
+            - name: docker-certs
+              mountPath: /certs
             - name: tmp
               mountPath: /tmp
       containers:
+        - name: dind
+          # renovate: datasource=docker depName=docker versioning=docker
+          image: docker:29.6.2-dind
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DOCKER_TLS_CERTDIR
+              value: /certs
+            - name: DOCKER_HOST
+              value: tcp://127.0.0.1:2376
+            - name: DOCKER_TLS_VERIFY
+              value: "1"
+            - name: DOCKER_CERT_PATH
+              value: /certs/client
+          # Keep the first argument as an option so dockerd-entrypoint.sh prepends dockerd and generates TLS certificates.
+          args:
+            - --default-pids-limit=256
+          readinessProbe:
+            exec:
+              command:
+                - docker
+                - info
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 12
+          securityContext:
+            privileged: true
+            runAsNonRoot: false
+            runAsUser: 0
+            runAsGroup: 0
+            allowPrivilegeEscalation: true
+            readOnlyRootFilesystem: false
+          resources:
+            requests:
+              cpu: 200m
+              memory: 1Gi
+              ephemeral-storage: 20Gi
+            limits:
+              cpu: "2"
+              memory: 4Gi
+              ephemeral-storage: 50Gi
+          volumeMounts:
+            - name: docker-certs
+              mountPath: /certs
+            - name: docker-data
+              mountPath: /var/lib/docker
+            - name: opencode-data
+              mountPath: /home/node/workspaces
+              subPath: workspaces
         - name: openchamber
           image: mcr.microsoft.com/devcontainers/universal:6.1.1-noble
           imagePullPolicy: IfNotPresent
@@ -165,11 +308,19 @@ spec:
             - name: XDG_DATA_HOME
               value: /home/node/.local/share
             - name: PATH
-              value: /home/node/.npm-global/bin:/home/node/.local/share/pnpm:/home/linuxbrew/.linuxbrew/bin:/usr/local/share/nvm/current/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+              value: /home/node/.local/bin:/home/node/.npm-global/bin:/home/node/.local/share/pnpm:/home/linuxbrew/.linuxbrew/bin:/usr/local/share/nvm/current/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
             - name: NPM_CONFIG_PREFIX
               value: /home/node/.npm-global
             - name: PNPM_HOME
               value: /home/node/.local/share/pnpm
+            - name: DOCKER_HOST
+              value: tcp://127.0.0.1:2376
+            - name: DOCKER_TLS_VERIFY
+              value: "1"
+            - name: DOCKER_CERT_PATH
+              value: /certs/client
+            - name: DOCKER_CONFIG
+              value: /home/node/.config/docker
             - name: OPENCODE_BINARY
               value: /home/node/.npm-global/bin/opencode
             - name: OPENCODE_PORT
@@ -249,9 +400,9 @@ spec:
           resources:
             requests:
               cpu: 700m
-              memory: 3Gi
+              memory: 2Gi
             limits:
-              memory: 4Gi
+              memory: 3Gi
           volumeMounts:
             - name: opencode-data
               mountPath: /home/node
@@ -279,6 +430,10 @@ spec:
               mountPath: /home/linuxbrew
             - name: tmp
               mountPath: /tmp
+            - name: docker-certs
+              mountPath: /certs/client
+              subPath: client
+              readOnly: true
             - name: opencode-api-access
               mountPath: /var/run/secrets/kubernetes.io/serviceaccount
               readOnly: true
@@ -289,6 +444,14 @@ spec:
         - name: opencode-homebrew
           persistentVolumeClaim:
             claimName: opencode-homebrew
+        # Share generated TLS material while exposing only the DinD client directory to OpenChamber.
+        - name: docker-certs
+          emptyDir:
+            sizeLimit: 16Mi
+        # Docker state is intentionally disposable and bounded to the Pod's ephemeral storage.
+        - name: docker-data
+          emptyDir:
+            sizeLimit: 20Gi
         - name: tmp
           emptyDir: {}
         - name: opencode-api-access
