@@ -92,7 +92,7 @@ spec:
       containers:
         - name: dind
           # renovate: datasource=docker depName=docker versioning=docker
-          image: docker:29.6.2-dind
+          image: docker:29.7.2-dind
           imagePullPolicy: IfNotPresent
           env:
             - name: DOCKER_TLS_CERTDIR
