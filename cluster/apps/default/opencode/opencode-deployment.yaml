@@ -38,161 +38,9 @@ spec:
           imagePullPolicy: IfNotPresent
           command:
             - /bin/bash
-            - -ec
+            - -e
           args:
-            - |
-              set -o pipefail
-
-              export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
-              if [ ! -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
-                NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-              fi
-              eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-              if ! brew list --formula kubernetes-cli >/dev/null 2>&1; then
-                brew install kubernetes-cli
-              fi
-              test -x "$(command -v brew)"
-              test -x "$(command -v kubectl)"
-
-              # Install only missing Docker client formulas; Homebrew retains their state across restarts.
-              for formula in docker docker-compose docker-buildx; do
-                if ! brew list --formula "$formula" >/dev/null 2>&1; then
-                  brew install "$formula"
-                fi
-              done
-
-              docker_cli_path="$(command -v docker)"
-              homebrew_prefix="$(brew --prefix)"
-              docker_config_dir="$HOME/.config/docker"
-              export DOCKER_CONFIG="$docker_config_dir"
-              mkdir -p "$docker_config_dir/cli-plugins"
-              test -x "$docker_cli_path"
-
-              # Discover formula-specific plugin paths without assuming a single Homebrew layout.
-              find_homebrew_plugin() {
-                formula="$1"
-                plugin_name="$2"
-                formula_prefix="$(brew --prefix "$formula")"
-                for candidate in \
-                  "$homebrew_prefix/libexec/docker/cli-plugins/$plugin_name" \
-                  "$homebrew_prefix/lib/docker/cli-plugins/$plugin_name" \
-                  "$formula_prefix/libexec/docker/cli-plugins/$plugin_name" \
-                  "$formula_prefix/lib/docker/cli-plugins/$plugin_name" \
-                  "$formula_prefix/bin/$plugin_name"; do
-                  if [ -x "$candidate" ]; then
-                    printf '%s\n' "$candidate"
-                    return 0
-                  fi
-                done
-                return 1
-              }
-
-              # Link Homebrew's plugin binaries into Docker's user plugin directory.
-              docker_compose_path="$(find_homebrew_plugin docker-compose docker-compose)"
-              docker_buildx_path="$(find_homebrew_plugin docker-buildx docker-buildx)"
-              test -x "$docker_compose_path"
-              test -x "$docker_buildx_path"
-              ln -sfn "$docker_compose_path" "$docker_config_dir/cli-plugins/docker-compose"
-              ln -sfn "$docker_buildx_path" "$docker_config_dir/cli-plugins/docker-buildx"
-              test -x "$docker_config_dir/cli-plugins/docker-compose"
-              test -x "$docker_config_dir/cli-plugins/docker-buildx"
-
-              # Verify client-side commands without contacting the not-yet-started DinD daemon.
-              docker_client_version="$("$docker_cli_path" version --format '{{.Client.Version}}' 2>/dev/null || true)"
-              if [ -z "$docker_client_version" ]; then
-                "$docker_cli_path" version --help >/dev/null
-              fi
-              "$docker_cli_path" --version >/dev/null
-              "$docker_cli_path" compose version --short >/dev/null
-              "$docker_cli_path" buildx version >/dev/null
-
-              # Wait for TLS material and the sidecar daemon so early agent commands fail clearly.
-              mkdir -p "$HOME/.local/bin" /certs/client
-              cat > "$HOME/.local/bin/docker" <<'EOF'
-              #!/bin/sh
-              set -eu
-
-              docker_cli=/home/linuxbrew/.linuxbrew/bin/docker
-              if [ "${DOCKER_HOST:-}" = "tcp://127.0.0.1:2376" ]; then
-                max_attempts=30
-                attempt=0
-                while [ "$attempt" -lt "$max_attempts" ]; do
-                  if [ -r "${DOCKER_CERT_PATH:-/certs/client}/ca.pem" ] \
-                    && [ -r "${DOCKER_CERT_PATH:-/certs/client}/cert.pem" ] \
-                    && [ -r "${DOCKER_CERT_PATH:-/certs/client}/key.pem" ] \
-                    && "$docker_cli" info >/dev/null 2>&1; then
-                    break
-                  fi
-                  attempt=$((attempt + 1))
-                  sleep 1
-                done
-                if [ "$attempt" -eq "$max_attempts" ]; then
-                  printf '%s\n' 'Docker is starting or unavailable; retry after the DinD sidecar is ready.' >&2
-                  exit 1
-                fi
-              fi
-              exec "$docker_cli" "$@"
-              EOF
-              chmod 0755 "$HOME/.local/bin/docker"
-
-              export NPM_CONFIG_PREFIX="$HOME/.npm-global"
-              export npm_config_cache="$HOME/.npm"
-              export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
-              mkdir -p "$NPM_CONFIG_PREFIX" "$npm_config_cache" "$HOME/.agents/skills/agent-browser" "$AGENT_BROWSER_SOCKET_DIR"
-
-              package_is_pinned() {
-                package_name="$1"
-                package_version="$2"
-                executable_name="$3"
-                [ -x "$NPM_CONFIG_PREFIX/bin/$executable_name" ] || return 1
-                node -e 'try { process.exit(require(process.argv[1]).version === process.argv[2] ? 0 : 1); } catch (_) { process.exit(1); }' \
-                  "$NPM_CONFIG_PREFIX/lib/node_modules/$package_name/package.json" "$package_version"
-              }
-
-              if ! package_is_pinned opencode-ai "$OPENCODE_VERSION" opencode; then
-                npm install --global "opencode-ai@$OPENCODE_VERSION"
-              fi
-              if ! package_is_pinned @openchamber/web "$OPENCHAMBER_VERSION" openchamber; then
-                npm install --global "@openchamber/web@$OPENCHAMBER_VERSION"
-              fi
-              if ! package_is_pinned agent-browser "$AGENT_BROWSER_VERSION" agent-browser; then
-                npm install --global "agent-browser@$AGENT_BROWSER_VERSION"
-              fi
-              test -x "$NPM_CONFIG_PREFIX/bin/opencode"
-              test -x "$NPM_CONFIG_PREFIX/bin/openchamber"
-              test -x "$NPM_CONFIG_PREFIX/bin/agent-browser"
-
-              skill_file="$HOME/.agents/skills/agent-browser/SKILL.md"
-              skill_revision="v$AGENT_BROWSER_VERSION"
-              skill_revision_marker="$HOME/.agent-browser-skill-revision"
-              if [ ! -s "$skill_file" ] \
-                || [ "$(cat "$skill_revision_marker" 2>/dev/null || true)" != "$skill_revision" ] \
-                || ! grep -Fq -- '## OpenCode cluster environment' "$skill_file"; then
-                curl --fail --silent --show-error --location \
-                  "https://raw.githubusercontent.com/vercel-labs/agent-browser/$skill_revision/skills/agent-browser/SKILL.md" \
-                  --output "$skill_file.tmp"
-                test -s "$skill_file.tmp"
-                cat >> "$skill_file.tmp" <<'EOF'
-
-              ## OpenCode cluster environment
-
-              - Chromium is remote; do not run `agent-browser install`.
-              - Start project preview servers on `0.0.0.0:4173`.
-              - Browse previews at `http://opencode.default.svc.cluster.local:4173`, not localhost.
-              - Close browser sessions after verification.
-              - Run Docker and Compose from canonical paths under `/home/node/workspaces`.
-              - Treat Dockerfiles and Compose files as executable code; inspect privileged mounts, published ports, and network access first.
-              - Set a unique `COMPOSE_PROJECT_NAME` when workspaces or sessions can overlap.
-              - Prefer project-provided Docker and Compose commands unchanged and wait on health checks instead of fixed sleeps.
-              - Capture container logs and browser artifacts before tearing down failed test environments.
-              - Use `docker compose down --volumes --remove-orphans` for project-scoped cleanup; keep global cleanup confirmation-gated.
-              - Normal Docker and Compose inspection/lifecycle commands are allowed; request confirmation for destructive global cleanup.
-              - Do not use `--privileged`, host-like mounts, or broad network exposure unless explicitly required and approved.
-              - The DinD TLS API has no Service or Ingress but is reachable through the Pod IP; never treat port 2376 as unauthenticated or expose it further.
-              EOF
-                mv "$skill_file.tmp" "$skill_file"
-                printf '%s\n' "$skill_revision" > "$skill_revision_marker"
-              fi
+            - /opt/opencode-bootstrap/bootstrap.sh
           env:
             - name: HOME
               value: /home/node
@@ -238,6 +86,9 @@ spec:
               mountPath: /certs
             - name: tmp
               mountPath: /tmp
+            - name: bootstrap
+              mountPath: /opt/opencode-bootstrap
+              readOnly: true
       containers:
         - name: dind
           # renovate: datasource=docker depName=docker versioning=docker
@@ -469,3 +320,7 @@ spec:
                     - path: namespace
                       fieldRef:
                         fieldPath: metadata.namespace
+        - name: bootstrap
+          configMap:
+            name: opencode-bootstrap
+            defaultMode: 0555
