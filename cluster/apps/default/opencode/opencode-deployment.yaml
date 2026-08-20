@@ -124,13 +124,13 @@ spec:
             readOnlyRootFilesystem: false
           resources:
             requests:
-              cpu: 200m
-              memory: 1Gi
+              cpu: 400m
+              memory: 2.5Gi
               ephemeral-storage: 20Gi
             limits:
               cpu: "2"
-              memory: 4Gi
-              ephemeral-storage: 50Gi
+              memory: 2.5Gi
+              ephemeral-storage: 40Gi
           volumeMounts:
             - name: docker-certs
               mountPath: /certs
