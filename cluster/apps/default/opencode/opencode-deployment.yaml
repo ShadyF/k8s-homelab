@@ -128,7 +128,6 @@ spec:
               memory: 2.5Gi
               ephemeral-storage: 20Gi
             limits:
-              cpu: "2"
               memory: 2.5Gi
               ephemeral-storage: 40Gi
           volumeMounts:
@@ -250,7 +249,7 @@ spec:
                 - ALL
           resources:
             requests:
-              cpu: 700m
+              cpu: 500m
               memory: 3Gi
             limits:
               memory: 4Gi
