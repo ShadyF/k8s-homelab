@@ -252,9 +252,9 @@ spec:
               value: "1"
             - name: DOCKER_CERT_PATH
               value: /certs/client
-          # Keep the first argument as an option so dockerd-entrypoint.sh prepends dockerd and generates TLS certificates.
+          # Set a default process ulimit for nested containers while preserving the DinD entrypoint's TLS setup.
           args:
-            - --default-pids-limit=256
+            - --default-ulimit=nproc=256:256
           readinessProbe:
             exec:
               command:
