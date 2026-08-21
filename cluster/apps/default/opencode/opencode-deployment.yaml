@@ -52,7 +52,7 @@ spec:
               value: /home/node/.local/share
             # renovate: datasource=npm depName=opencode-ai
             - name: OPENCODE_VERSION
-              value: "1.18.19"
+              value: "1.18.21"
             # renovate: datasource=npm depName=@openchamber/web
             - name: OPENCHAMBER_VERSION
               value: "1.19.0"
