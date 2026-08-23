@@ -90,54 +90,54 @@ spec:
               mountPath: /opt/opencode-bootstrap
               readOnly: true
       containers:
-#        - name: dind
-#          # renovate: datasource=docker depName=docker versioning=docker
-#          image: docker:29.7.2-dind
-#          imagePullPolicy: IfNotPresent
-#          env:
-#            - name: DOCKER_TLS_CERTDIR
-#              value: /certs
-#            - name: DOCKER_HOST
-#              value: tcp://127.0.0.1:2376
-#            - name: DOCKER_TLS_VERIFY
-#              value: "1"
-#            - name: DOCKER_CERT_PATH
-#              value: /certs/client
-#          # Set a default process ulimit for nested containers while preserving the DinD entrypoint's TLS setup.
-#          args:
-#            - --default-ulimit=nproc=256:256
-#          readinessProbe:
-#            exec:
-#              command:
-#                - docker
-#                - info
-#            initialDelaySeconds: 5
-#            periodSeconds: 5
-#            timeoutSeconds: 5
-#            failureThreshold: 12
-#          securityContext:
-#            privileged: true
-#            runAsNonRoot: false
-#            runAsUser: 0
-#            runAsGroup: 0
-#            allowPrivilegeEscalation: true
-#            readOnlyRootFilesystem: false
-#          resources:
-#            requests:
-#              cpu: 400m
-#              memory: 1Gi
-#              ephemeral-storage: 20Gi
-#            limits:
-#              memory: 2Gi
-#              ephemeral-storage: 40Gi
-#          volumeMounts:
-#            - name: docker-certs
-#              mountPath: /certs
-#            - name: docker-data
-#              mountPath: /var/lib/docker
-#            - name: opencode-data
-#              mountPath: /home/node/workspaces
-#              subPath: workspaces
+       - name: dind
+         # renovate: datasource=docker depName=docker versioning=docker
+         image: docker:29.7.2-dind
+         imagePullPolicy: IfNotPresent
+         env:
+           - name: DOCKER_TLS_CERTDIR
+             value: /certs
+           - name: DOCKER_HOST
+             value: tcp://127.0.0.1:2376
+           - name: DOCKER_TLS_VERIFY
+             value: "1"
+           - name: DOCKER_CERT_PATH
+             value: /certs/client
+         # Set a default process ulimit for nested containers while preserving the DinD entrypoint's TLS setup.
+         args:
+           - --default-ulimit=nproc=256:256
+         readinessProbe:
+           exec:
+             command:
+               - docker
+               - info
+           initialDelaySeconds: 5
+           periodSeconds: 5
+           timeoutSeconds: 5
+           failureThreshold: 12
+         securityContext:
+           privileged: true
+           runAsNonRoot: false
+           runAsUser: 0
+           runAsGroup: 0
+           allowPrivilegeEscalation: true
+           readOnlyRootFilesystem: false
+         resources:
+           requests:
+             cpu: 1
+             memory: 12Gi
+             ephemeral-storage: 20Gi
+           limits:
+             memory: 16Gi
+             ephemeral-storage: 40Gi
+         volumeMounts:
+           - name: docker-certs
+             mountPath: /certs
+           - name: docker-data
+             mountPath: /var/lib/docker
+           - name: opencode-data
+             mountPath: /home/node/workspaces
+             subPath: workspaces
         - name: openchamber
           image: mcr.microsoft.com/devcontainers/universal:6.1.1-noble
           imagePullPolicy: IfNotPresent
@@ -249,10 +249,10 @@ spec:
                 - ALL
           resources:
             requests:
-              cpu: 500m
-              memory: 3.5Gi
+              cpu: 1
+              memory: 3Gi
             limits:
-              memory: 3.5Gi
+              memory: 5Gi
           volumeMounts:
             - name: opencode-data
               mountPath: /home/node
