@@ -1,0 +1,56 @@
+---
+- name: Stage K3s registry configuration on every node
+  hosts: kubernetes
+  become: true
+  gather_facts: false
+  any_errors_fatal: true
+  tasks:
+    # Create the shared K3s configuration directory before writing the registry file.
+    - name: Create K3s configuration directory
+      ansible.builtin.file:
+        path: /etc/rancher/k3s
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    # Enable the embedded mirror for every registry without defining an external endpoint.
+    - name: Install wildcard registry mirror configuration
+      ansible.builtin.copy:
+        content: |
+          mirrors:
+            "*":
+        dest: /etc/rancher/k3s/registries.yaml
+        owner: root
+        group: root
+        mode: "0600"
+        backup: true
+
+- name: Stage K3s server configuration
+  hosts: master
+  become: true
+  gather_facts: false
+  any_errors_fatal: true
+  tasks:
+    # Keep server-only options out of the worker configuration.
+    - name: Create K3s server drop-in directory
+      ansible.builtin.file:
+        path: /etc/rancher/k3s/config.yaml.d
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    # Preserve registry and bundled-component settings across installer changes.
+    - name: Install K3s server configuration drop-in
+      ansible.builtin.copy:
+        content: |
+          embedded-registry: true
+          disable:
+            - servicelb
+            - traefik
+        dest: /etc/rancher/k3s/config.yaml.d/20-homelab-server.yaml
+        owner: root
+        group: root
+        mode: "0600"
+        backup: true
