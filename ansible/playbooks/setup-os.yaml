@@ -3,7 +3,8 @@
 # https://github.com/onedr0p/home-ops/blob/main/ansible/main/playbooks/cluster-prepare.yaml
 ---
 - name: Prepare System
-  hosts: k8-w2
+  # Require an explicit target so an omitted variable cannot select every host.
+  hosts: "{{ target | mandatory }}"
   become: true
   gather_facts: true
   any_errors_fatal: true
@@ -14,8 +15,8 @@
       - telnet
     unnecessary_software:
       - tcpdump
-      - nmap-ncat
-      - wpa_supplicant
+      - ncat
+      - wpasupplicant
       - snapd
   pre_tasks:
     - name: Pausing for 2 seconds...
@@ -31,7 +32,7 @@
             cache_valid_time: 86400 #One day
         - name: Packages | Install
           apt:
-            name: htop,ncdu,neofetch,lm-sensors,gnupg,fish,curl,apt-transport-https,ca-certificates,nfs-common,nfs-kernel-server,open-iscsi,nano
+            name: htop,ncdu,lm-sensors,gnupg,fish,curl,apt-transport-https,ca-certificates,nfs-common,nfs-kernel-server,open-iscsi,nano
             install_recommends: false
 
     - name: User Configuration
@@ -40,6 +41,8 @@
           group:
             name: admin
             state: present
+          register: admin_group
+        # Avoid checking the dependent user until a missing group is created in check mode.
         - name: Add local user
           user:
             name: "{{ new_user }}"
@@ -48,6 +51,7 @@
             home: "/home/{{ new_user }}"
             create_home: yes
             state: present
+          when: not (ansible_check_mode and admin_group.changed)
         - name: Add SSH public key for user
           authorized_key:
             user: "{{ new_user }}"
@@ -55,7 +59,8 @@
             state: present
         - name: Add sudoer rule for local user
           copy:
-            content: "{{ new_user }} ALL=(ALL:ALL) NOPASSWD:ALL"
+            content: |
+              {{ new_user }} ALL=(ALL:ALL) NOPASSWD:ALL
             dest: "/etc/sudoers.d/{{ new_user }}"
             owner: root
             group: root
@@ -80,21 +85,27 @@
       block:
         - name: System Configuration | Configure Longhorn node prerequisites
           ansible.builtin.include_tasks: tasks/longhorn-node-prereqs.yaml
-        - name: System Configuration | Disable swap
-          mount:
-            name: "{{ item }}"
-            fstype: swap
+        # Remove persistent swap entries before disabling active swap.
+        - name: System Configuration | Remove uncommented swap entries from fstab
+          ansible.builtin.lineinfile:
+            path: /etc/fstab
+            regexp: '^\s*[^#\s]\S*\s+\S+\s+swap(?:\s|$)'
             state: absent
-          loop: [ "none", "swap" ]
+        - name: System Configuration | Disable active swap
+          ansible.builtin.command:
+            cmd: swapoff -a
+          when: ansible_swaptotal_mb | int > 0
+          changed_when: not ansible_check_mode and (ansible_swaptotal_mb | int > 0)
+        # Validate the hardened configuration before replacing the active SSH config.
         - name: System Configuration | Add hardened SSH config
           notify: Reload SSH
-          copy:
-            content:
+          ansible.builtin.copy:
             src: files/sshd_config
             dest: /etc/ssh/sshd_config
             owner: root
             group: root
             mode: "0600"
+            validate: /usr/sbin/sshd -t -f %s
 
     - name: Network Configuration
       notify: Reboot
@@ -122,11 +133,11 @@
 #      'true' \
 
   handlers:
+    - name: Reload SSH
+      service:
+        name: ssh
+        state: reloaded
     - name: Reboot
       reboot:
         msg: Rebooting nodes
         reboot_timeout: 3600
-    - name: Reload SSH
-      service:
-        name: sshd
-        state: reloaded

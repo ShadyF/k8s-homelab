@@ -15,6 +15,9 @@ kubernetes:
         k8-w4:
           ansible_host: 192.168.1.200
           ansible_user: worker
+        k8-w5:
+          ansible_host: 192.168.1.204
+          ansible_user: worker
     workers:
       hosts:
         k8-w2:

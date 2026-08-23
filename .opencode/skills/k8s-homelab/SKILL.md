@@ -53,9 +53,10 @@ Use this skill when working in this repository.
 ### SSH access
 - For node-level diagnostics, the current SSH targets are:
   - `k8-w1`: `ssh master@192.168.1.201`
-  - `k8-w2`: `ssh worker@192.168.1.200`
-  - `k8-w3`: `ssh worker@192.168.1.202`
-  - `k8-w4`: `ssh worker@192.168.1.203`
+  - `k8-w2`: `ssh worker@192.168.1.202`
+  - `k8-w3`: `ssh worker@192.168.1.203`
+  - `k8-w4`: `ssh worker@192.168.1.200`
+  - `k8-w5`: `ssh worker@192.168.1.204`
 - Use SSH narrowly for diagnostics, logs, service inspection, and carefully scoped maintenance.
 - Do not use SSH to bypass Flux/GitOps for permanent Kubernetes changes.
 

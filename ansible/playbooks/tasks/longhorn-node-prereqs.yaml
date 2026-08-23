@@ -6,7 +6,9 @@
     install_recommends: false
     update_cache: true
     cache_valid_time: 86400
+  register: longhorn_iscsi_package
 
+# Avoid starting dependent services in check mode when package installation is only predicted.
 - name: Longhorn prerequisites | Ensure iSCSI services are enabled and started
   ansible.builtin.service:
     name: "{{ item }}"
@@ -15,6 +17,7 @@
   loop:
     - iscsid
     - open-iscsi
+  when: not (ansible_check_mode and longhorn_iscsi_package.changed)
 
 - name: Longhorn prerequisites | Configure multipath blacklist for Longhorn volumes
   ansible.builtin.copy:
