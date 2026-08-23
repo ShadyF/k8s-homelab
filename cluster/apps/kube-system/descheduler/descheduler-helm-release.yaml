@@ -23,6 +23,12 @@ spec:
                   verbs: ["get", "watch", "list"]
                   apiGroups: ["metrics.k8s.io"]
                   resources: ["nodes"]
+              - op: add
+                path: /rules/-
+                value:
+                  verbs: ["get", "watch", "list"]
+                  apiGroups: ["metrics.k8s.io"]
+                  resources: ["pods"]
   chart:
     spec:
       # renovate: registryUrl=https://kubernetes-sigs.github.io/descheduler
