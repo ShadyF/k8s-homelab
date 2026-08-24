@@ -1,0 +1,23 @@
+---
+- name: Configure inotify limits for Kubernetes
+  hosts: kubernetes
+  become: true
+  tasks:
+    # Store the inotify limits so they persist after each node restarts.
+    - name: Configure persistent inotify limits
+      notify: Load inotify limits
+      ansible.builtin.copy:
+        content: |
+          fs.inotify.max_user_watches=524288
+          fs.inotify.max_user_instances=1024
+          fs.inotify.max_queued_events=32768
+        dest: /etc/sysctl.d/99-k8s-homelab-inotify.conf
+        owner: root
+        group: root
+        mode: "0644"
+
+  handlers:
+    # Load the updated limits without changing settings from other sysctl files.
+    - name: Load inotify limits
+      ansible.builtin.command:
+        cmd: sysctl -p /etc/sysctl.d/99-k8s-homelab-inotify.conf
