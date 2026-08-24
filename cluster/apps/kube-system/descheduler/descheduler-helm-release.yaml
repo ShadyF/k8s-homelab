@@ -5,30 +5,6 @@ metadata:
   namespace: kube-system
 spec:
   interval: 15m
-  postRenderers:
-    - kustomize:
-        patches:
-          - target:
-              kind: ClusterRole
-            patch: |
-              - op: add
-                path: /rules/-
-                value:
-                  verbs: ["get", "watch", "list"]
-                  apiGroups: ["policy"]
-                  resources: ["poddisruptionbudgets"]
-              - op: add
-                path: /rules/-
-                value:
-                  verbs: ["get", "watch", "list"]
-                  apiGroups: ["metrics.k8s.io"]
-                  resources: ["nodes"]
-              - op: add
-                path: /rules/-
-                value:
-                  verbs: ["get", "watch", "list"]
-                  apiGroups: ["metrics.k8s.io"]
-                  resources: ["pods"]
   chart:
     spec:
       # renovate: registryUrl=https://kubernetes-sigs.github.io/descheduler
@@ -53,17 +29,20 @@ spec:
     deschedulingInterval: 5m
 
     deschedulerPolicy:
-      metricsCollector:
-        enabled: true
+      metricsProviders:
+        - source: KubernetesMetrics
       profiles:
         - name: default
           pluginConfig:
             - name: DefaultEvictor
               args:
-                evictFailedBarePods: true
-                ignorePvcPods: true
-                evictLocalStoragePods: true
                 nodeFit: true
+                podProtections:
+                  defaultDisabled:
+                    - PodsWithLocalStorage
+                    - FailedBarePods
+                  extraEnabled:
+                    - PodsWithPVC
             - name: RemoveDuplicates
             - name: RemovePodsHavingTooManyRestarts
               args:
@@ -87,7 +66,7 @@ spec:
                   "memory": 70
                   "pods": 50
                 metricsUtilization:
-                  metricsServer: true
+                  source: KubernetesMetrics
           plugins:
             balance:
               enabled:
@@ -102,6 +81,5 @@ spec:
                 - RemovePodsViolatingInterPodAntiAffinity
     service:
       enabled: true
-    # For prometheus, enable later
     serviceMonitor:
       enabled: true
