@@ -1,0 +1,70 @@
+---
+- name: Restart K3s on one explicitly selected node
+  hosts: "{{ target | mandatory }}"
+  become: true
+  gather_facts: false
+  any_errors_fatal: true
+  vars:
+    k3s_service_name: "{{ 'k3s' if inventory_hostname in groups['master'] else 'k3s-agent' }}"
+  pre_tasks:
+    # Reject grouped or multi-host targets before restarting a service.
+    - name: Require one known inventory node
+      ansible.builtin.assert:
+        that:
+          - ansible_play_hosts | length == 1
+          - inventory_hostname in groups['master'] or inventory_hostname in groups['workers']
+          - not (inventory_hostname in groups['master'] and inventory_hostname in groups['workers'])
+        fail_msg: "target must select exactly one host from the master or workers groups"
+
+  tasks:
+    # Restart only the service associated with the selected node role.
+    - name: Restart the selected K3s service
+      ansible.builtin.systemd_service:
+        name: "{{ k3s_service_name }}"
+        state: restarted
+
+    # Wait for the local service before checking cluster-level readiness.
+    - name: Wait for the selected K3s service to become active
+      ansible.builtin.command:
+        argv:
+          - systemctl
+          - is-active
+          - "{{ k3s_service_name }}"
+      register: k3s_service_status
+      changed_when: false
+      retries: 30
+      delay: 2
+      until: k3s_service_status.rc == 0 and (k3s_service_status.stdout | trim) == "active"
+
+    # Confirm a restarted server can serve the Kubernetes readiness endpoint.
+    - name: Wait for the local Kubernetes API to become ready
+      ansible.builtin.command:
+        argv:
+          - k3s
+          - kubectl
+          - get
+          - --raw=/readyz
+      register: k3s_api_status
+      changed_when: false
+      retries: 30
+      delay: 2
+      until: k3s_api_status.rc == 0 and (k3s_api_status.stdout | trim) == "ok"
+      when: inventory_hostname in groups['master']
+
+    # Check the selected node through a control-plane server for every node role.
+    - name: Wait for the selected Kubernetes node to become Ready
+      ansible.builtin.command:
+        argv:
+          - k3s
+          - kubectl
+          - get
+          - node
+          - "{{ inventory_hostname }}"
+          - -o
+          - 'jsonpath={.status.conditions[?(@.type=="Ready")].status}'
+      delegate_to: "{{ groups['master'][0] }}"
+      register: k3s_node_status
+      changed_when: false
+      retries: 30
+      delay: 2
+      until: k3s_node_status.rc == 0 and (k3s_node_status.stdout | trim) == "True"

@@ -21,6 +21,13 @@ data:
               docker.io/falcosecurity/k8s-metacollector,
               quay.io/metallb/speaker
             )
+            or (k8smeta.ns.name == "default" and k8smeta.pod.name startswith "opencode-" and k8smeta.pod.label[app.kubernetes.io/name] == "opencode" and container.name == "openchamber" and container.image.repository == "mcr.microsoft.com/devcontainers/universal" and proc.name == "kubectl" and proc.exepath == "/usr/local/bin/kubectl")
+          override:
+            condition: append
+
+        - macro: user_expected_terminal_shell_in_container_conditions
+          condition: >
+            or (k8smeta.ns.name == "default" and k8smeta.pod.name startswith "opencode-" and k8smeta.pod.label[app.kubernetes.io/name] == "opencode" and container.name == "dind" and container.image.repository == "docker.io/library/docker" and proc.name == "sh" and proc.exepath == "/bin/busybox" and proc.cmdline == "sh -c command -v bash >/dev/null && exec bash || exec sh")
           override:
             condition: append
 
@@ -40,7 +47,9 @@ data:
             condition: append
 
         - macro: allowed_clear_log_files
-          condition: or (container.image.repository == "docker.io/longhornio/longhorn-instance-manager" and proc.name == "tee" and fd.name == "/var/log/tgtd.log")
+          condition: >
+            or (container.image.repository == "docker.io/longhornio/longhorn-instance-manager" and proc.name == "tee" and fd.name == "/var/log/tgtd.log")
+            or (k8smeta.ns.name == "default" and k8smeta.pod.name startswith "opencode-" and k8smeta.pod.label[app.kubernetes.io/name] == "opencode" and container.name == "dind" and container.image.repository == "docker.io/library/docker" and proc.name == "containerd" and proc.exepath == "/usr/local/bin/containerd" and fd.name startswith "/var/lib/docker/containerd/daemon/tmpmounts/" and fd.name endswith "/var/log/dpkg.log")
           override:
             condition: append
 
