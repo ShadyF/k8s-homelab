@@ -125,10 +125,10 @@ spec:
           resources:
             requests:
               cpu: 1
-              memory: 12Gi
+              memory: 10Gi
               ephemeral-storage: 20Gi
             limits:
-              memory: 16Gi
+              memory: 14Gi
               ephemeral-storage: 40Gi
           volumeMounts:
             - name: docker-certs
@@ -250,9 +250,9 @@ spec:
           resources:
             requests:
               cpu: 1
-              memory: 3Gi
+              memory: 4Gi
             limits:
-              memory: 5Gi
+              memory: 6Gi
           volumeMounts:
             - name: opencode-data
               mountPath: /home/node
