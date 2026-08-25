@@ -144,7 +144,7 @@ data:
     - Start project preview servers on `0.0.0.0:4173`.
     - Browse previews at `http://opencode.default.svc.cluster.local:4173`, not localhost.
     - Close browser sessions after verification.
-    - Run Docker and Compose from canonical paths under `/home/node/workspaces`.
+    - Run Docker and Compose from canonical paths under `/home/codespace/workspaces`.
     - Treat Dockerfiles and Compose files as executable code; inspect privileged mounts, published ports, and network access first.
     - Set a unique `COMPOSE_PROJECT_NAME` when workspaces or sessions can overlap.
     - Prefer project-provided Docker and Compose commands unchanged and wait on health checks instead of fixed sleeps.

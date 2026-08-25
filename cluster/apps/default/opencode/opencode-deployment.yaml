@@ -43,13 +43,13 @@ spec:
             - /opt/opencode-bootstrap/bootstrap.sh
           env:
             - name: HOME
-              value: /home/node
+              value: /home/codespace
             - name: HOMEBREW_CACHE
               value: /tmp/Homebrew
             - name: XDG_CONFIG_HOME
-              value: /home/node/.config
+              value: /home/codespace/.config
             - name: XDG_DATA_HOME
-              value: /home/node/.local/share
+              value: /home/codespace/.local/share
             # renovate: datasource=npm depName=opencode-ai
             - name: OPENCODE_VERSION
               value: "1.18.22"
@@ -79,7 +79,7 @@ spec:
               memory: 2Gi
           volumeMounts:
             - name: opencode-data
-              mountPath: /home/node
+              mountPath: /home/codespace
             - name: opencode-homebrew
               mountPath: /home/linuxbrew
             - name: docker-certs
@@ -136,13 +136,13 @@ spec:
             - name: docker-data
               mountPath: /var/lib/docker
             - name: opencode-data
-              mountPath: /home/node/workspaces
+              mountPath: /home/codespace/workspaces
               subPath: workspaces
         - name: openchamber
           image: mcr.microsoft.com/devcontainers/universal:6.1.1-noble
           imagePullPolicy: IfNotPresent
           command:
-            - /home/node/.npm-global/bin/openchamber
+            - /home/codespace/.npm-global/bin/openchamber
           args:
             - serve
             - --port
@@ -152,17 +152,17 @@ spec:
             - --foreground
           env:
             - name: HOME
-              value: /home/node
+              value: /home/codespace
             - name: XDG_CONFIG_HOME
-              value: /home/node/.config
+              value: /home/codespace/.config
             - name: XDG_DATA_HOME
-              value: /home/node/.local/share
+              value: /home/codespace/.local/share
             - name: PATH
-              value: /home/node/.local/bin:/home/node/.npm-global/bin:/home/node/.local/share/pnpm:/home/linuxbrew/.linuxbrew/bin:/usr/local/share/nvm/current/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+              value: /home/codespace/.local/bin:/home/codespace/.npm-global/bin:/home/codespace/.local/share/pnpm:/home/linuxbrew/.linuxbrew/bin:/usr/local/share/nvm/current/bin:/usr/local/sbin:/usr/bin:/sbin:/bin
             - name: NPM_CONFIG_PREFIX
-              value: /home/node/.npm-global
+              value: /home/codespace/.npm-global
             - name: PNPM_HOME
-              value: /home/node/.local/share/pnpm
+              value: /home/codespace/.local/share/pnpm
             - name: DOCKER_HOST
               value: tcp://127.0.0.1:2376
             - name: DOCKER_TLS_VERIFY
@@ -170,21 +170,21 @@ spec:
             - name: DOCKER_CERT_PATH
               value: /certs/client
             - name: DOCKER_CONFIG
-              value: /home/node/.config/docker
+              value: /home/codespace/.config/docker
             - name: OPENCODE_BINARY
-              value: /home/node/.npm-global/bin/opencode
+              value: /home/codespace/.npm-global/bin/opencode
             - name: OPENCODE_PORT
               value: "4096"
             - name: OPENCHAMBER_OPENCODE_HOSTNAME
               value: 127.0.0.1
             - name: OPENCHAMBER_OPENCODE_CWD
-              value: /home/node/workspaces
+              value: /home/codespace/workspaces
             - name: OPENCHAMBER_HOST
               value: 0.0.0.0
             - name: OPENCHAMBER_PORT
               value: "3000"
             - name: OPENCHAMBER_DATA_DIR
-              value: /home/node/.config/openchamber
+              value: /home/codespace/.config/openchamber
             - name: OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS
               value: "true"
             - name: OPENCODE_ENABLE_EXA
@@ -206,7 +206,7 @@ spec:
           envFrom:
             - secretRef:
                 name: opencode-openchamber-secrets
-          workingDir: /home/node/workspaces
+          workingDir: /home/codespace/workspaces
           ports:
             - name: openchamber
               containerPort: 3000
@@ -255,7 +255,7 @@ spec:
               memory: 6Gi
           volumeMounts:
             - name: opencode-data
-              mountPath: /home/node
+              mountPath: /home/codespace
             - name: opencode-homebrew
               mountPath: /home/linuxbrew
             - name: tmp
