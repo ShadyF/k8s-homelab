@@ -256,26 +256,6 @@ spec:
           volumeMounts:
             - name: opencode-data
               mountPath: /home/node
-            # Temporary compatibility aliases for pre-v1 home and workspace paths.
-            - name: opencode-data
-              mountPath: /home/codespace
-            - name: opencode-data
-              mountPath: /home/opencode
-            - name: opencode-data
-              mountPath: /home/openchamber
-              subPath: workspaces
-            - name: opencode-data
-              mountPath: /home/node/Programming
-              subPath: workspaces/Programming
-            - name: opencode-data
-              mountPath: /home/node/Synapse
-              subPath: workspaces/Synapse
-            - name: opencode-data
-              mountPath: /home/node/k8s-homelab
-              subPath: workspaces/k8s-homelab
-            - name: opencode-data
-              mountPath: /workspaces
-              subPath: workspaces
             - name: opencode-homebrew
               mountPath: /home/linuxbrew
             - name: tmp
