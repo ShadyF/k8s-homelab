@@ -278,10 +278,10 @@ spec:
         - name: docker-certs
           emptyDir:
             sizeLimit: 16Mi
-        # Docker state is intentionally disposable and bounded to the Pod's ephemeral storage.
+        # Persist DinD state separately from workspace storage.
         - name: docker-data
-          emptyDir:
-            sizeLimit: 20Gi
+          persistentVolumeClaim:
+            claimName: opencode-docker-data
         - name: tmp
           emptyDir: {}
         - name: opencode-api-access

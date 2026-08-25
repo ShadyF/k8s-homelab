@@ -29,3 +29,19 @@ spec:
   resources:
     requests:
       storage: 3Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: opencode-docker-data
+  namespace: default
+  labels:
+    app.kubernetes.io/name: opencode
+    app.kubernetes.io/component: docker-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 80Gi
