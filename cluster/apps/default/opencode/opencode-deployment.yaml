@@ -101,9 +101,9 @@ spec:
               value: "1"
             - name: DOCKER_CERT_PATH
               value: /certs/client
-          # Set a default process ulimit for nested containers while preserving the DinD entrypoint's TLS setup.
+          # Allow concurrent nested development workloads while retaining a process ceiling.
           args:
-            - --default-ulimit=nproc=256:256
+            - --default-ulimit=nproc=4096:4096
           readinessProbe:
             exec:
               command:
