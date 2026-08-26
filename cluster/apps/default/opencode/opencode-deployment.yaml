@@ -127,7 +127,7 @@ spec:
               ephemeral-storage: 20Gi
             limits:
               memory: 14Gi
-              ephemeral-storage: 40Gi
+              ephemeral-storage: 80Gi
           volumeMounts:
             - name: docker-certs
               mountPath: /certs
@@ -276,10 +276,10 @@ spec:
         - name: docker-certs
           emptyDir:
             sizeLimit: 16Mi
-        # Persist DinD state separately from workspace storage.
+        # Keep Docker state only for the lifetime of this pod.
         - name: docker-data
-          persistentVolumeClaim:
-            claimName: opencode-docker-data
+          emptyDir:
+            sizeLimit: 80Gi
         - name: tmp
           emptyDir: {}
         - name: opencode-api-access
