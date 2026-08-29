@@ -32,7 +32,7 @@ spec:
       terminationGracePeriodSeconds: 60
       initContainers:
         - name: bootstrap
-          image: mcr.microsoft.com/devcontainers/universal:6.1.1-noble
+          image: mcr.microsoft.com/devcontainers/universal:6.1.6-noble
           imagePullPolicy: IfNotPresent
           command:
             - /bin/bash
@@ -137,7 +137,7 @@ spec:
               mountPath: /home/codespace/workspaces
               subPath: workspaces
         - name: openchamber
-          image: mcr.microsoft.com/devcontainers/universal:6.1.1-noble
+          image: mcr.microsoft.com/devcontainers/universal:6.1.6-noble
           imagePullPolicy: IfNotPresent
           command:
             - /home/codespace/.npm-global/bin/openchamber
