@@ -276,10 +276,10 @@ spec:
         - name: docker-certs
           emptyDir:
             sizeLimit: 16Mi
-        # Keep Docker state only for the lifetime of this pod.
+        # Preserve Docker state across pod restarts with dedicated storage.
         - name: docker-data
-          emptyDir:
-            sizeLimit: 80Gi
+          persistentVolumeClaim:
+            claimName: opencode-docker-data
         - name: tmp
           emptyDir: {}
         - name: opencode-api-access
