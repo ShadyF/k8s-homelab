@@ -32,7 +32,7 @@ spec:
       terminationGracePeriodSeconds: 60
       initContainers:
         - name: bootstrap
-          image: mcr.microsoft.com/devcontainers/universal:6.1.1-noble
+          image: mcr.microsoft.com/devcontainers/universal:6.1.6-noble
           imagePullPolicy: IfNotPresent
           command:
             - /bin/bash
@@ -50,13 +50,13 @@ spec:
               value: /home/codespace/.local/share
             # renovate: datasource=npm depName=opencode-ai
             - name: OPENCODE_VERSION
-              value: "1.18.23"
+              value: "1.18.25"
             # renovate: datasource=npm depName=@openchamber/web
             - name: OPENCHAMBER_VERSION
-              value: "1.20.0"
+              value: "1.21.1"
             # renovate: datasource=npm depName=agent-browser
             - name: AGENT_BROWSER_VERSION
-              value: "0.35.0"
+              value: "0.35.1"
             - name: AGENT_BROWSER_SOCKET_DIR
               value: /tmp/agent-browser
           securityContext:
@@ -137,7 +137,7 @@ spec:
               mountPath: /home/codespace/workspaces
               subPath: workspaces
         - name: openchamber
-          image: mcr.microsoft.com/devcontainers/universal:6.1.1-noble
+          image: mcr.microsoft.com/devcontainers/universal:6.1.6-noble
           imagePullPolicy: IfNotPresent
           command:
             - /home/codespace/.npm-global/bin/openchamber

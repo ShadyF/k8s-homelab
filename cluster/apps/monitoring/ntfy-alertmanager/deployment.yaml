@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: main
-          image: xenrox/ntfy-alertmanager:1.0.0
+          image: xenrox/ntfy-alertmanager:1.0.1
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
