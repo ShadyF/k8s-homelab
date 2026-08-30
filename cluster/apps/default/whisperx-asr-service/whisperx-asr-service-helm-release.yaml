@@ -62,6 +62,7 @@ spec:
               MODEL_KEEP_ALIVE_SECONDS: "900"
               MODEL_EVICTION_INTERVAL_SECONDS: "60"
               RESEGMENT_BY_SPEAKER: true
+              DIARIZE_FILL_NEAREST: true
               DIARIZE_CLUSTERING_THRESHOLD: 0.4
               CACHE_DIR: /.cache
               HF_HOME: /.cache
