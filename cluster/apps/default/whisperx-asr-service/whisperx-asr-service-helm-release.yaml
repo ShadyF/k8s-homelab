@@ -70,6 +70,7 @@ spec:
               XDG_CACHE_HOME: /.cache
               TORCH_HOME: /.cache/torch
               MPLCONFIGDIR: /.cache/matplotlib
+              NLTK_DATA: /.cache/nltk_data
               HF_TOKEN:
                 valueFrom:
                   secretKeyRef:
