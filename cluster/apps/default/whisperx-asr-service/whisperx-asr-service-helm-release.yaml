@@ -1,0 +1,139 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: whisperx-asr-service
+  namespace: default
+spec:
+  interval: 15m
+  chart:
+    spec:
+      # renovate: registryUrl=https://bjw-s-labs.github.io/helm-charts
+      chart: app-template
+      version: 5.1.0
+      interval: 15m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  dependsOn:
+    - name: longhorn
+      namespace: longhorn-system
+  values:
+    # Keep the model cache on its own persistent Longhorn volume.
+    controllers:
+      main:
+        replicas: 1
+        strategy: Recreate
+        pod:
+          runtimeClassName: nvidia
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+        containers:
+          main:
+            image:
+              repository: learnedmachine/whisperx-asr-service
+              tag: 0.4.1
+              pullPolicy: IfNotPresent
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+            # Configure CUDA inference and keep downloaded model files on the PVC.
+            env:
+              DEVICE: cuda
+              COMPUTE_TYPE: float16
+              SERVE_MODE: simple
+              GPU_CONCURRENCY: "1"
+              BATCH_SIZE: "4"
+              ALIGN_DEVICE: cpu
+              PRELOAD_MODEL: large-v3-turbo
+              MAX_FILE_SIZE_MB: "400"
+              MODEL_KEEP_ALIVE_SECONDS: "900"
+              MODEL_EVICTION_INTERVAL_SECONDS: "60"
+              CACHE_DIR: /.cache
+              HF_HOME: /.cache
+              HF_TOKEN:
+                valueFrom:
+                  secretKeyRef:
+                    name: whisperx-asr-service
+                    key: HF_TOKEN
+            # Allow a long first start while the image downloads and preloads its model.
+            probes:
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: &port http
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 90
+              readiness: &healthProbe
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: *port
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              liveness: *healthProbe
+            resources:
+              requests:
+                cpu: "2"
+                memory: 8Gi
+                nvidia.com/gpu: 1
+              limits:
+                cpu: "6"
+                memory: 14Gi
+                nvidia.com/gpu: 1
+
+    # Publish only the HTTP API inside the cluster.
+    service:
+      main:
+        controller: main
+        type: ClusterIP
+        ports:
+          http:
+            port: 9000
+            protocol: TCP
+
+    # Let Prometheus discover the application's native metrics endpoint.
+    serviceMonitor:
+      main:
+        enabled: true
+        serviceName: whisperx-asr-service
+        endpoints:
+          - port: http
+            scheme: http
+            path: /metrics
+            interval: 1m
+            scrapeTimeout: 10s
+
+    # Provide the only writable paths required by the read-only application root.
+    persistence:
+      cache:
+        enabled: true
+        type: persistentVolumeClaim
+        existingClaim: whisperx-asr-service-cache
+        globalMounts:
+          - path: /.cache
+      tmp:
+        enabled: true
+        type: emptyDir
+        sizeLimit: 1Gi
+        globalMounts:
+          - path: /tmp
