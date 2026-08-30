@@ -120,13 +120,14 @@ spec:
             runAsGroup: 0
             allowPrivilegeEscalation: true
             readOnlyRootFilesystem: false
+          # Reserve typical build usage while allowing short Docker workload bursts.
           resources:
             requests:
-              cpu: 1
-              memory: 10Gi
+              cpu: 500m
+              memory: 3Gi
               ephemeral-storage: 1Gi
             limits:
-              memory: 14Gi
+              memory: 5Gi
               ephemeral-storage: 5Gi
           volumeMounts:
             - name: docker-certs
@@ -245,6 +246,7 @@ spec:
             capabilities:
               drop:
                 - ALL
+          # Reserve observed interactive usage while retaining headroom for busy sessions.
           resources:
             requests:
               cpu: 1
