@@ -57,13 +57,15 @@ spec:
               GPU_CONCURRENCY: "1"
               BATCH_SIZE: "4"
               ALIGN_DEVICE: cpu
-              PRELOAD_MODEL: large-v3
+              # PRELOAD_MODEL: large-v3
               MAX_FILE_SIZE_MB: "400"
               MODEL_KEEP_ALIVE_SECONDS: "900"
               MODEL_EVICTION_INTERVAL_SECONDS: "60"
               RESEGMENT_BY_SPEAKER: true
-              DIARIZE_FILL_NEAREST: true
-              DIARIZE_CLUSTERING_THRESHOLD: 0.4
+              DIARIZE_CLUSTERING_THRESHOLD: 0.3
+              QWEN3_ASR_MODEL: Qwen/Qwen3-ASR-0.6B-hf
+              QWEN3_ALIGNER_MODEL: Qwen/Qwen3-ForcedAligner-0.6B-hf
+              QWEN3_CHUNK_SECONDS: 90
               CACHE_DIR: /.cache
               HF_HOME: /.cache
               XDG_CACHE_HOME: /.cache
