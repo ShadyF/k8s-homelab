@@ -63,6 +63,8 @@ spec:
               MODEL_EVICTION_INTERVAL_SECONDS: "60"
               CACHE_DIR: /.cache
               HF_HOME: /.cache
+              XDG_CACHE_HOME: /.cache
+              TORCH_HOME: /.cache/torch
               HF_TOKEN:
                 valueFrom:
                   secretKeyRef:
@@ -76,7 +78,7 @@ spec:
                 spec:
                   httpGet:
                     path: /health
-                    port: &port http
+                    port: &port 9000
                   periodSeconds: 10
                   timeoutSeconds: 5
                   failureThreshold: 90
