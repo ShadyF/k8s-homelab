@@ -32,5 +32,8 @@ spec:
       config:
         core:
           labelSources: ["pci", "system", "usb"]
+        sources:
+          pci:
+            deviceLabelFields: ["vendor"]
     prometheus:
       enable: true
