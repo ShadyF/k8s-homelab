@@ -6,6 +6,7 @@ metadata:
   namespace: default
 spec:
   interval: 15m
+  timeout: 20m
   chart:
     spec:
       # renovate: registryUrl=https://bjw-s-labs.github.io/helm-charts
