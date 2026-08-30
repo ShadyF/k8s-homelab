@@ -38,5 +38,8 @@ spec:
       limits:
         cpu: 100m
         memory: 128Mi
+    config:
+      default: time-slicing
+      name: nvidia-device-plugin-config
     nfd:
       enabled: false
