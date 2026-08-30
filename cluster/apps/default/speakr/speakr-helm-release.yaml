@@ -66,11 +66,15 @@ spec:
               - name: ENABLE_INQUIRE_MODE
                 value: "true"
               - name: TRANSCRIPTION_CONNECTOR
-                value: openai_transcribe
-              - name: TRANSCRIPTION_BASE_URL
-                value: https://api.openai.com/v1
-              - name: TRANSCRIPTION_MODEL
-                value: gpt-4o-transcribe-diarize
+                value: asr_endpoint
+              - name: ASR_BASE_URL
+                value: http://whisperx-asr-service.default.svc.cluster.local:9000
+              - name: ASR_DIARIZE
+                value: "true"
+              - name: ASR_RETURN_SPEAKER_EMBEDDINGS
+                value: "true"
+              - name: ASR_TIMEOUT
+                value: "10800"
               - name: TEXT_MODEL_BASE_URL
                 value: https://openrouter.ai/api/v1
               - name: TEXT_MODEL_NAME
@@ -115,11 +119,6 @@ spec:
                   secretKeyRef:
                     name: speakr-secrets
                     key: SECRET_KEY
-              - name: TRANSCRIPTION_API_KEY
-                valueFrom:
-                  secretKeyRef:
-                    name: speakr-secrets
-                    key: OPENAI_API_KEY
               - name: TEXT_MODEL_API_KEY
                 valueFrom:
                   secretKeyRef:
