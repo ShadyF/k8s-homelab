@@ -12,7 +12,7 @@ spec:
   storageClassName: longhorn
   resources:
     requests:
-      storage: 30Gi
+      storage: 40Gi
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -28,7 +28,7 @@ spec:
   storageClassName: opencode-docker
   resources:
     requests:
-      storage: 50Gi
+      storage: 60Gi
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -44,4 +44,4 @@ spec:
   storageClassName: longhorn
   resources:
     requests:
-      storage: 3Gi
+      storage: 5Gi
