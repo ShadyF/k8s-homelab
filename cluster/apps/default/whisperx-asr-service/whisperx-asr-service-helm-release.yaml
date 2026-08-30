@@ -108,6 +108,39 @@ spec:
                 cpu: "6"
                 memory: 14Gi
                 nvidia.com/gpu: 1
+        # Populate NLTK resources on the PVC before the read-only application starts.
+        initContainers:
+          nltk-data:
+            image:
+              repository: learnedmachine/whisperx-asr-service
+              tag: 0.4.1
+              pullPolicy: IfNotPresent
+            command:
+              - python3
+              - -c
+              - |
+                import nltk
+
+                nltk.download(
+                    "punkt_tab",
+                    download_dir="/.cache/nltk_data",
+                    quiet=True,
+                    raise_on_error=True,
+                )
+            env:
+              NLTK_DATA: /.cache/nltk_data
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
 
     # Publish only the HTTP API inside the cluster.
     service:
