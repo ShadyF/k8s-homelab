@@ -67,6 +67,7 @@ spec:
               HF_HOME: /.cache
               XDG_CACHE_HOME: /.cache
               TORCH_HOME: /.cache/torch
+              MPLCONFIGDIR: /.cache/matplotlib
               HF_TOKEN:
                 valueFrom:
                   secretKeyRef:
@@ -83,7 +84,7 @@ spec:
                     port: &port 9000
                   periodSeconds: 10
                   timeoutSeconds: 5
-                  failureThreshold: 90
+                  failureThreshold: 120
               readiness: &healthProbe
                 enabled: true
                 custom: true
