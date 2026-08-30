@@ -58,12 +58,13 @@ spec:
               GPU_CONCURRENCY: "1"
               BATCH_SIZE: "4"
               ALIGN_DEVICE: cpu
-              PRELOAD_MODEL: large-v2
+              PRELOAD_MODEL: large-v3
               MAX_FILE_SIZE_MB: "400"
               MODEL_KEEP_ALIVE_SECONDS: "900"
               MODEL_EVICTION_INTERVAL_SECONDS: "60"
-              RESEGMENT_BY_SPEAKER: false
-              DIARIZE_CLUSTERING_THRESHOLD: 0.2
+              RESEGMENT_BY_SPEAKER: true
+              DIARIZE_CLUSTERING_THRESHOLD: 0.1
+              DIARIZE_FILL_NEAREST: false
               CACHE_DIR: /.cache
               HF_HOME: /.cache
               XDG_CACHE_HOME: /.cache
