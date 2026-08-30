@@ -52,7 +52,7 @@ spec:
             # Configure CUDA inference and keep downloaded model files on the PVC.
             env:
               DEVICE: cuda
-              COMPUTE_TYPE: float16
+              COMPUTE_TYPE: int8_float16
               SERVE_MODE: simple
               GPU_CONCURRENCY: "1"
               BATCH_SIZE: "1"

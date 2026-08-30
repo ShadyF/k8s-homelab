@@ -10,10 +10,10 @@ not support the Blackwell-specific CUDA target.
 
 ## Configuration and capacity
 
-- The service uses CUDA with `float16`, `large-v3-turbo`, simple serving mode,
-  one GPU worker, batch size 4, and CPU alignment. These settings favor a
-  useful quality/latency balance within the node's limited VRAM; lower batch
-  size or a smaller model are the first tuning steps after GPU OOMs.
+- The service uses CUDA with `int8_float16`, `large-v3`, simple serving mode,
+  one GPU worker, batch size 1, and CPU alignment. This experimental compute
+  type reduces model memory on the 6 GiB GPU; use `large-v3-turbo` if memory,
+  speed, or transcription quality is unacceptable.
 - The NVIDIA device plugin exposes the physical GPU as four time-sliced
   `nvidia.com/gpu` slots. This pod requests one slot. Time slicing does **not**
   partition VRAM, so all four potential clients share the 6 GiB device memory
@@ -24,7 +24,7 @@ not support the Blackwell-specific CUDA target.
 - A 30 GiB Longhorn RWO PVC persists `/.cache` for Hugging Face and model
   downloads. `/tmp` is a bounded 1 GiB `emptyDir` so uploads and temporary
   files can work while the container root filesystem stays read-only.
-- `large-v3-turbo` is preloaded. Models remain loaded for 900 seconds (15
+- `large-v3` is preloaded. Models remain loaded for 900 seconds (15
   minutes) and the eviction loop runs every 60 seconds. Expect a cold start
   after eviction, after a restart, or when the cache is not yet populated.
 - Uploads are limited to 400 MiB, but the service handles uploads in memory.
