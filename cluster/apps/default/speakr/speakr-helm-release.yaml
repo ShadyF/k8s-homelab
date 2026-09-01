@@ -75,6 +75,8 @@ spec:
                 value: "true"
               - name: ASR_TIMEOUT
                 value: "10800"
+              - name: ENABLE_INQUIRE_AGENT
+                value: true
               - name: TEXT_MODEL_BASE_URL
                 value: https://openrouter.ai/api/v1
               - name: TEXT_MODEL_NAME
