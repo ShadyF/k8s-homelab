@@ -69,7 +69,8 @@ data:
         - rule: Packet socket created in container
           exceptions:
             - name: opencode_dind_dockerd_packet_socket
-              fields: [k8smeta.ns.name, k8smeta.pod.name, "k8smeta.pod.label[app.kubernetes.io/name]", container.name, container.image.repository, container.image.tag, proc.name, proc.pname, proc.exepath, user.uid, fd.sockfamily]
-              comps: [=, startswith, =, =, =, =, =, =, =, =, =]
-              values: [default, opencode-, opencode, dind, docker.io/library/docker, 29.7.2-dind, dockerd, docker-init, /usr/local/bin/dockerd, 0, packet]
-          append: true
+              fields: [k8smeta.ns.name, k8smeta.pod.name, "k8smeta.pod.label[app.kubernetes.io/name]", container.name, container.image.repository, container.image.tag, proc.name, proc.pname, proc.exepath, user.uid, evt.arg.domain]
+              comps: [=, startswith, =, =, =, =, =, =, =, =, contains]
+              values: [default, opencode-, opencode, dind, docker.io/library/docker, 29.7.2-dind, dockerd, docker-init, /usr/local/bin/dockerd, 0, AF_PACKET]
+          override:
+            exceptions: append
