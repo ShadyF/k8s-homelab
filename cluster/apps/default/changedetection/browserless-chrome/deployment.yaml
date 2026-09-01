@@ -29,10 +29,10 @@ spec:
           resources:
             requests:
               cpu: 500m
-              memory: 500Mi
+              memory: 1Gi
             limits:
               cpu: 2
-              memory: 1Gi
+              memory: 1536Mi
       # Disallow running on arm64
       affinity:
         nodeAffinity:
