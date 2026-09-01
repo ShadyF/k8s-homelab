@@ -46,10 +46,11 @@ data:
           override:
             condition: append
 
+        # Allow only the DinD overlayfs mount used when containerd rotates dpkg.log.
         - macro: allowed_clear_log_files
           condition: >
             or (container.image.repository == "docker.io/longhornio/longhorn-instance-manager" and proc.name == "tee" and fd.name == "/var/log/tgtd.log")
-            or (k8smeta.ns.name == "default" and k8smeta.pod.name startswith "opencode-" and k8smeta.pod.label[app.kubernetes.io/name] == "opencode" and container.name == "dind" and container.image.repository == "docker.io/library/docker" and proc.name == "containerd" and proc.exepath == "/usr/local/bin/containerd" and fd.name startswith "/var/lib/docker/containerd/daemon/tmpmounts/" and fd.name endswith "/var/log/dpkg.log")
+            or (k8smeta.ns.name == "default" and k8smeta.pod.name startswith "opencode-" and k8smeta.pod.label[app.kubernetes.io/name] == "opencode" and container.name == "dind" and container.image.repository == "docker.io/library/docker" and container.image.tag == "29.7.2-dind" and proc.name == "containerd" and proc.pname == "dockerd" and proc.exepath == "/usr/local/bin/containerd" and user.uid == 0 and fd.name startswith "/var/lib/docker/containerd/daemon/io.containerd.snapshotter.v1.overlayfs/snapshots/" and fd.name endswith "/fs/var/log/dpkg.log")
           override:
             condition: append
 
@@ -63,3 +64,12 @@ data:
           items: [speaker]
           override:
             items: append
+
+        # Allow the privileged OpenCode DinD daemon to create its required packet socket.
+        - rule: Packet socket created in container
+          exceptions:
+            - name: opencode_dind_dockerd_packet_socket
+              fields: [k8smeta.ns.name, k8smeta.pod.name, "k8smeta.pod.label[app.kubernetes.io/name]", container.name, container.image.repository, container.image.tag, proc.name, proc.pname, proc.exepath, user.uid, fd.sockfamily]
+              comps: [=, startswith, =, =, =, =, =, =, =, =, =]
+              values: [default, opencode-, opencode, dind, docker.io/library/docker, 29.7.2-dind, dockerd, docker-init, /usr/local/bin/dockerd, 0, packet]
+          append: true
