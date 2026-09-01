@@ -9,5 +9,8 @@ venv/
 /site/
 
 /docs/superpowers
-.opencode/package-lock.json
+
+.opencode/
+!.opencode/skills
+
 ./falco.yaml
