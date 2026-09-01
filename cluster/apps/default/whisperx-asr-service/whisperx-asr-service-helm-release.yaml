@@ -56,7 +56,7 @@ spec:
               COMPUTE_TYPE: int8_float16
               SERVE_MODE: simple
               GPU_CONCURRENCY: "1"
-              BATCH_SIZE: "6"
+              BATCH_SIZE: "4"
               ALIGN_DEVICE: cpu
               PRELOAD_MODEL: large-v3
               MAX_FILE_SIZE_MB: "400"
