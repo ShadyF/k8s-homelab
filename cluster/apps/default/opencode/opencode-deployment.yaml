@@ -184,6 +184,8 @@ spec:
               value: "3000"
             - name: OPENCHAMBER_DATA_DIR
               value: /home/codespace/.config/openchamber
+            - name: OPENCHAMBER_ALLOW_REMOTE_OPENAI_COMPAT_URLS
+              value: "true"
             - name: OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS
               value: "true"
             - name: OPENCODE_ENABLE_EXA
