@@ -64,7 +64,7 @@ spec:
               MODEL_EVICTION_INTERVAL_SECONDS: "60"
               DIARIZE_CLUSTERING_THRESHOLD: 0.6
               # DIARIZE_MIN_DURATION_OFF: 0.1
-              DIARIZE_FILL_NEAREST: true
+              DIARIZE_FILL_NEAREST: false
               RESEGMENT_BY_SPEAKER: true
               CACHE_DIR: /.cache
               HF_HOME: /.cache
