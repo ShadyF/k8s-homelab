@@ -27,6 +27,19 @@ spec:
   dependsOn:
     - name: longhorn
       namespace: longhorn-system
+  # Keep Kubernetes from declaring a cold image pull stalled before Helm times out.
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              group: apps
+              version: v1
+              kind: Deployment
+              name: whisperx-asr-service
+            patch: |
+              - op: add
+                path: /spec/progressDeadlineSeconds
+                value: 900
   values:
     # Keep the model cache on its own persistent Longhorn volume.
     controllers:
