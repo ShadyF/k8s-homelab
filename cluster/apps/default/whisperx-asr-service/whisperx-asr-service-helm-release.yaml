@@ -41,8 +41,8 @@ spec:
         containers:
           main:
             image:
-              repository: learnedmachine/whisperx-asr-service
-              tag: 0.4.1
+              repository: ghcr.io/shadyf/whisperx-asr-service
+              tag: 0.4.2
               pullPolicy: IfNotPresent
             securityContext:
               allowPrivilegeEscalation: false
@@ -57,6 +57,9 @@ spec:
               SERVE_MODE: simple
               GPU_CONCURRENCY: "1"
               BATCH_SIZE: "2"
+              VAD_CHUNK_SIZE: "20"
+              VAD_ONSET: "0.500"
+              VAD_OFFSET: "0.363"
               ALIGN_DEVICE: cpu
               PRELOAD_MODEL: large-v3
               MAX_FILE_SIZE_MB: "400"
@@ -113,8 +116,8 @@ spec:
         initContainers:
           nltk-data:
             image:
-              repository: learnedmachine/whisperx-asr-service
-              tag: 0.4.1
+              repository: ghcr.io/shadyf/whisperx-asr-service
+              tag: 0.4.2
               pullPolicy: IfNotPresent
             command:
               - python3
