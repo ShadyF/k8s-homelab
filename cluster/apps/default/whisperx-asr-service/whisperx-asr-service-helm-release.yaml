@@ -71,7 +71,7 @@ spec:
               WHISPER_DECODE_MODE: native
               GPU_CONCURRENCY: "1"
               BATCH_SIZE: "2"
-              VAD_CHUNK_SIZE: "15"
+              VAD_CHUNK_SIZE: "20"
               VAD_ONSET: "0.500"
               VAD_OFFSET: "0.363"
               ALIGN_DEVICE: cpu
