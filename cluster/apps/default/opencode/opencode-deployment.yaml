@@ -50,13 +50,13 @@ spec:
               value: /home/codespace/.local/share
             # renovate: datasource=npm depName=opencode-ai
             - name: OPENCODE_VERSION
-              value: "1.18.25"
+              value: "1.18.27"
             # renovate: datasource=npm depName=@openchamber/web
             - name: OPENCHAMBER_VERSION
               value: "1.22.0"
             # renovate: datasource=npm depName=agent-browser
             - name: AGENT_BROWSER_VERSION
-              value: "0.35.1"
+              value: "0.36.0"
             - name: AGENT_BROWSER_SOCKET_DIR
               value: /tmp/agent-browser
           securityContext:
