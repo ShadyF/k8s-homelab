@@ -82,7 +82,7 @@ spec:
               DIARIZE_CLUSTERING_THRESHOLD: 0.6
               # DIARIZE_MIN_DURATION_OFF: 0.1
               DIARIZE_FILL_NEAREST: false
-              RESEGMENT_BY_SPEAKER: true
+              RESEGMENT_BY_SPEAKER: false
               CACHE_DIR: /.cache
               HF_HOME: /.cache
               XDG_CACHE_HOME: /.cache
