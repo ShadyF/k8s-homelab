@@ -72,7 +72,7 @@ spec:
               GPU_CONCURRENCY: "1"
               BATCH_SIZE: "2"
               VAD_CHUNK_SIZE: "25"
-              VAD_ONSET: "0.500"
+              VAD_ONSET: "0.400"
               VAD_OFFSET: "0.363"
               ALIGN_DEVICE: cpu
               PRELOAD_MODEL: large-v3
