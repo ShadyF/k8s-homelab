@@ -79,7 +79,7 @@ spec:
               MAX_FILE_SIZE_MB: "400"
               MODEL_KEEP_ALIVE_SECONDS: "900"
               MODEL_EVICTION_INTERVAL_SECONDS: "60"
-              DIARIZE_CLUSTERING_THRESHOLD: 0.6
+              DIARIZE_CLUSTERING_THRESHOLD: 0.5
               # DIARIZE_MIN_DURATION_OFF: 0.1
               DIARIZE_FILL_NEAREST: false
               RESEGMENT_BY_SPEAKER: false
