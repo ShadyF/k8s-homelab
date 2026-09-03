@@ -55,7 +55,7 @@ spec:
           main:
             image:
               repository: ghcr.io/shadyf/whisperx-asr-service
-              tag: 0.4.2
+              tag: 0.4.3
               pullPolicy: IfNotPresent
             securityContext:
               allowPrivilegeEscalation: false
@@ -68,6 +68,7 @@ spec:
               DEVICE: cuda
               COMPUTE_TYPE: int8_float16
               SERVE_MODE: simple
+              WHISPER_DECODE_MODE: native
               GPU_CONCURRENCY: "1"
               BATCH_SIZE: "2"
               VAD_CHUNK_SIZE: "20"
@@ -130,7 +131,7 @@ spec:
           nltk-data:
             image:
               repository: ghcr.io/shadyf/whisperx-asr-service
-              tag: 0.4.2
+              tag: 0.4.3
               pullPolicy: IfNotPresent
             command:
               - python3
