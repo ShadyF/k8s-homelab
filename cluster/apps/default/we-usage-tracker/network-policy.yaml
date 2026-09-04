@@ -1,0 +1,13 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: we-usage-tracker-deny-ingress
+  namespace: default
+spec:
+  # Deny all inbound traffic to the explicitly labelled headless worker pods.
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: we-usage-tracker
+  policyTypes:
+    - Ingress
+  ingress: []

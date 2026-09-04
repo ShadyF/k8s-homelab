@@ -1,0 +1,99 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-5.1.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: we-usage-tracker
+  namespace: default
+spec:
+  interval: 15m
+  chart:
+    spec:
+      # Track app-template releases from the configured Helm repository.
+      # renovate: registryUrl=https://bjw-s-labs.github.io/helm-charts
+      chart: app-template
+      version: 5.1.0
+      interval: 15m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+
+  # Retry failed chart operations and wait for Longhorn before creating the PVC-backed worker.
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  dependsOn:
+    - name: longhorn
+      namespace: longhorn-system
+
+  values:
+    # Run one headless worker and label its pods for the companion deny-all policy.
+    controllers:
+      main:
+        replicas: 1
+        strategy: Recreate
+        pod:
+          labels:
+            app.kubernetes.io/name: we-usage-tracker
+          imagePullSecrets:
+            - name: ghcr-login-secret
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 999
+            fsGroup: 999
+            seccompProfile:
+              type: RuntimeDefault
+        containers:
+          main:
+            image:
+              repository: ghcr.io/shadyf/we-usage-tracker
+              tag: 1.0.0
+              pullPolicy: IfNotPresent
+            args:
+              - worker
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+
+            # Load worker settings and credentials from their separate resources.
+            envFrom:
+              - configMapRef:
+                  name: we-usage-tracker-config
+              - secretRef:
+                  name: we-usage-tracker-secrets
+            env:
+              WE_ACCOUNT_ID:
+                valueFrom:
+                  secretKeyRef:
+                    name: we-usage-tracker-secrets
+                    key: WE_ACCT_ID
+            resources:
+              requests:
+                cpu: 25m
+                memory: 64Mi
+              limits:
+                cpu: 250m
+                memory: 256Mi
+
+    # Mount durable worker state and bound the writable temporary directory.
+    persistence:
+      data:
+        enabled: true
+        type: persistentVolumeClaim
+        existingClaim: we-usage-tracker-data
+        globalMounts:
+          - path: /data
+      tmp:
+        enabled: true
+        type: emptyDir
+        sizeLimit: 128Mi
+        globalMounts:
+          - path: /tmp
