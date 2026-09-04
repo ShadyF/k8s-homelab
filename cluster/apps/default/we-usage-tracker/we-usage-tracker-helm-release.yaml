@@ -83,6 +83,37 @@ spec:
                 cpu: 250m
                 memory: 256Mi
 
+        # Give the hardened state-file code an owner-only data directory.
+        initContainers:
+          data-permissions:
+            image:
+              repository: busybox
+              tag: 1.37.0
+              pullPolicy: IfNotPresent
+            command:
+              - sh
+              - -c
+              - chown 999:999 /data && chmod 0700 /data
+            securityContext:
+              runAsNonRoot: false
+              runAsUser: 0
+              runAsGroup: 0
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+                add:
+                  - CHOWN
+                  - FOWNER
+            resources:
+              requests:
+                cpu: 5m
+                memory: 8Mi
+              limits:
+                cpu: 50m
+                memory: 32Mi
+
     # Mount durable worker state and bound the writable temporary directory.
     persistence:
       data:
