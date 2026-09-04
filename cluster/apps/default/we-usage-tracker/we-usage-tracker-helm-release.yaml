@@ -45,7 +45,6 @@ spec:
             runAsNonRoot: true
             runAsUser: 999
             runAsGroup: 999
-            fsGroup: 999
             seccompProfile:
               type: RuntimeDefault
         containers:
@@ -93,7 +92,10 @@ spec:
             command:
               - sh
               - -c
-              - chown 999:999 /data && chmod 0700 /data
+              - |
+                chown 999:999 /data
+                chmod 0700 /data
+                find /data -xdev -maxdepth 1 -type f -exec chown 999:999 {} \; -exec chmod 0600 {} \;
             securityContext:
               runAsNonRoot: false
               runAsUser: 0
@@ -105,6 +107,7 @@ spec:
                   - ALL
                 add:
                   - CHOWN
+                  - DAC_OVERRIDE
                   - FOWNER
             resources:
               requests:
