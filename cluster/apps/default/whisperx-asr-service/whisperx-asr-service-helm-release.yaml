@@ -55,7 +55,7 @@ spec:
           main:
             image:
               repository: ghcr.io/shadyf/whisperx-asr-service
-              tag: 0.4.3
+              tag: 0.4.4
               pullPolicy: IfNotPresent
             securityContext:
               allowPrivilegeEscalation: false
@@ -74,6 +74,9 @@ spec:
               VAD_CHUNK_SIZE: "20"
               VAD_ONSET: "0.500"
               VAD_OFFSET: "0.363"
+              NO_SPEECH_THRESHOLD: "0.6"
+              COMPRESSION_RATIO_THRESHOLD: "2.2"
+              LOG_PROB_THRESHOLD: "-1.0"
               ALIGN_DEVICE: cpu
               PRELOAD_MODEL: large-v3
               MAX_FILE_SIZE_MB: "400"
@@ -131,7 +134,7 @@ spec:
           nltk-data:
             image:
               repository: ghcr.io/shadyf/whisperx-asr-service
-              tag: 0.4.3
+              tag: 0.4.4
               pullPolicy: IfNotPresent
             command:
               - python3
