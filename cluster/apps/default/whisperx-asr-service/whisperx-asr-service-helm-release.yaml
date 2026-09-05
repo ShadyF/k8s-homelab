@@ -55,7 +55,7 @@ spec:
           main:
             image:
               repository: ghcr.io/shadyf/whisperx-asr-service
-              tag: 0.4.3
+              tag: 0.4.4
               pullPolicy: IfNotPresent
             securityContext:
               allowPrivilegeEscalation: false
@@ -131,7 +131,7 @@ spec:
           nltk-data:
             image:
               repository: ghcr.io/shadyf/whisperx-asr-service
-              tag: 0.4.3
+              tag: 0.4.4
               pullPolicy: IfNotPresent
             command:
               - python3
