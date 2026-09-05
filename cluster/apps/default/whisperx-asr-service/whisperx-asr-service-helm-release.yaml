@@ -74,9 +74,9 @@ spec:
               VAD_CHUNK_SIZE: "20"
               VAD_ONSET: "0.500"
               VAD_OFFSET: "0.363"
-              NO_SPEECH_THRESHOLD: "0.6"
-              COMPRESSION_RATIO_THRESHOLD: "2.2"
-              LOG_PROB_THRESHOLD: "-1.0"
+              NO_SPEECH_THRESHOLD: "0.55"
+              COMPRESSION_RATIO_THRESHOLD: "2.4"
+              LOG_PROB_THRESHOLD: "-0.9"
               ALIGN_DEVICE: cpu
               PRELOAD_MODEL: large-v3
               MAX_FILE_SIZE_MB: "400"
