@@ -213,7 +213,7 @@ spec:
         probeSelectorNilUsesHelmValues: false
         scrapeConfigSelectorNilUsesHelmValues: false
         retention: 14d
-        retentionSize: 25GB
+        retentionSize: 24GB
         enableAdminAPI: true
         walCompression: true
         storageSpec:
@@ -222,7 +222,7 @@ spec:
               storageClassName: longhorn
               resources:
                 requests:
-                  storage: 25Gi
+                  storage: 30Gi
 #        affinity:
 #         nodeAffinity:
 #           requiredDuringSchedulingIgnoredDuringExecution:
