@@ -26,7 +26,7 @@ metadata:
 rules:
   - apiGroups: [""]
     resources: ["services/proxy"]
-    resourceNames: ["kube-prometheus-stack-prometheus"]
+    resourceNames: ["kube-prometheus-stack-prometheus:9090"]
     verbs: ["get"]
 ---
 # Bind the monitoring permission to the OpenCode service account.
