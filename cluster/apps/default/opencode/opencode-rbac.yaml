@@ -16,3 +16,30 @@ subjects:
   - kind: ServiceAccount
     name: opencode
     namespace: default
+---
+# Allow OpenCode to send read-only queries through the Prometheus service proxy.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: opencode-prometheus-query
+  namespace: monitoring
+rules:
+  - apiGroups: [""]
+    resources: ["services/proxy"]
+    resourceNames: ["kube-prometheus-stack-prometheus:9090"]
+    verbs: ["get"]
+---
+# Bind the monitoring permission to the OpenCode service account.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: opencode-prometheus-query
+  namespace: monitoring
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: opencode-prometheus-query
+subjects:
+  - kind: ServiceAccount
+    name: opencode
+    namespace: default

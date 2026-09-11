@@ -127,7 +127,7 @@ spec:
                 nvidia.com/gpu: 1
               limits:
                 cpu: "6"
-                memory: 14Gi
+                memory: 10Gi
                 nvidia.com/gpu: 1
         # Populate NLTK resources on the PVC before the read-only application starts.
         initContainers:
