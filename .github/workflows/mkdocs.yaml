@@ -32,7 +32,7 @@ jobs:
           python-version: '3.14'
       - uses: abatilo/actions-poetry@v4.0.0
         with:
-          poetry-version: '2.3.4'
+          poetry-version: '2.4.3'
       - run: poetry install --no-interaction
         working-directory: docs
       - run: poetry run mkdocs build --strict
