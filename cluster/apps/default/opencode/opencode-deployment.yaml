@@ -19,6 +19,8 @@ spec:
       labels:
         app.kubernetes.io/name: opencode
         app.kubernetes.io/component: backend
+      annotations:
+        opencode.home.arpa/binary-settings-revision: "1"
     spec:
       automountServiceAccountToken: false
       serviceAccountName: opencode

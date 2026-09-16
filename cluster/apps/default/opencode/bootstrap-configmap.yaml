@@ -126,6 +126,71 @@ data:
     test -x "$NPM_CONFIG_PREFIX/bin/openchamber"
     test -x "$NPM_CONFIG_PREFIX/bin/agent-browser"
 
+    # Clear only the persisted binary override so the Deployment environment owns selection.
+    opencode_settings_dir="$${OPENCHAMBER_DATA_DIR:-$HOME/.config/openchamber}"
+    opencode_settings_file="$opencode_settings_dir/settings.json"
+    node - "$opencode_settings_file" <<'NODE'
+    const fs = require('node:fs');
+    const path = require('node:path');
+
+    const settingsFile = process.argv[2];
+    const settingsDir = path.dirname(settingsFile);
+    let settings = {};
+    let fileMode = 0o600;
+
+    // Read and validate before creating a replacement so malformed settings are never overwritten.
+    try {
+      const stat = fs.statSync(settingsFile);
+      if (!stat.isFile()) {
+        throw new Error('settings path is not a regular file');
+      }
+      fileMode = stat.mode & 0o7777;
+      settings = JSON.parse(fs.readFileSync(settingsFile, 'utf8'));
+    } catch (error) {
+      if (error?.code !== 'ENOENT') {
+        process.stderr.write(error instanceof SyntaxError
+          ? 'OpenChamber settings JSON is malformed; refusing to overwrite it.\n'
+          : 'OpenChamber settings could not be read; refusing to overwrite it.\n');
+        process.exit(1);
+      }
+    }
+
+    // Keep every setting and add the empty sentinel used to clear the binary override.
+    if (!settings || typeof settings !== 'object' || Array.isArray(settings)) {
+      process.stderr.write('OpenChamber settings must contain a JSON object; refusing to overwrite it.\n');
+      process.exit(1);
+    }
+    settings.opencodeBinary = '';
+
+    // Replace the file in one same-directory rename while retaining restrictive permissions.
+    fs.mkdirSync(settingsDir, { recursive: true, mode: 0o700 });
+    const temporaryFile = path.join(
+      settingsDir,
+      '.settings.json.bootstrap-' + process.pid + '-' + Date.now(),
+    );
+    try {
+      const descriptor = fs.openSync(temporaryFile, 'wx', fileMode);
+      try {
+        fs.writeFileSync(descriptor, JSON.stringify(settings, null, 2) + '\n', 'utf8');
+        fs.fsyncSync(descriptor);
+      } finally {
+        fs.closeSync(descriptor);
+      }
+      fs.chmodSync(temporaryFile, fileMode);
+      fs.renameSync(temporaryFile, settingsFile);
+      const directoryDescriptor = fs.openSync(settingsDir, 'r');
+      try {
+        fs.fsyncSync(directoryDescriptor);
+      } finally {
+        fs.closeSync(directoryDescriptor);
+      }
+    } catch (error) {
+      fs.rmSync(temporaryFile, { force: true });
+      process.stderr.write('OpenChamber settings could not be updated atomically.\n');
+      process.exit(1);
+    }
+    NODE
+
     skill_file="$HOME/.agents/skills/agent-browser/SKILL.md"
     skill_revision="v$AGENT_BROWSER_VERSION"
     skill_revision_marker="$HOME/.agent-browser-skill-revision"
