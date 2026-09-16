@@ -171,7 +171,7 @@ spec:
             - name: DOCKER_CONFIG
               value: /home/codespace/.config/docker
             - name: OPENCODE_BINARY
-              value: /home/codespace/.npm-global/bin/opencode
+              value: /opt/opencode-wrapper/opencode-wrapper
             - name: OPENCODE_PORT
               value: "4096"
             - name: OPENCHAMBER_OPENCODE_HOSTNAME
@@ -190,8 +190,6 @@ spec:
               value: "true"
             - name: OPENCODE_ENABLE_EXA
               value: "true"
-            - name: OPENCODE_PRINT_LOGS
-              value: "1"
             - name: AGENT_BROWSER_CDP
               value: ws://browserless-chrome-svc.default.svc.cluster.local:3000/chrome
             - name: AGENT_BROWSER_CONTENT_BOUNDARIES
@@ -269,6 +267,9 @@ spec:
             - name: opencode-api-access
               mountPath: /var/run/secrets/kubernetes.io/serviceaccount
               readOnly: true
+            - name: opencode-log-wrapper
+              mountPath: /opt/opencode-wrapper
+              readOnly: true
       volumes:
         - name: opencode-data
           persistentVolumeClaim:
@@ -301,6 +302,13 @@ spec:
                     - path: namespace
                       fieldRef:
                         fieldPath: metadata.namespace
+        - name: opencode-log-wrapper
+          configMap:
+            name: opencode-log-wrapper
+            defaultMode: 0555
+            items:
+              - key: opencode-wrapper
+                path: opencode-wrapper
         - name: bootstrap
           configMap:
             name: opencode-bootstrap
