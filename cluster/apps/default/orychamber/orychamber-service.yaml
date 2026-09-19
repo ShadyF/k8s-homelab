@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: orychamber
+  namespace: default
+  labels:
+    app.kubernetes.io/name: orychamber
+    app.kubernetes.io/component: ui
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: orychamber
+    app.kubernetes.io/component: backend
+  ports:
+    - name: openchamber
+      port: 3000
+      targetPort: openchamber
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orychamber-preview
+  namespace: default
+  labels:
+    app.kubernetes.io/name: orychamber
+    app.kubernetes.io/component: preview
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: orychamber
+    app.kubernetes.io/component: backend
+  ports:
+    - name: preview
+      port: 4173
+      targetPort: preview

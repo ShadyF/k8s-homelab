@@ -1,0 +1,37 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: orychamber-ingress
+  namespace: default
+  labels:
+    app.kubernetes.io/name: orychamber
+    app.kubernetes.io/component: backend
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: orychamber
+      app.kubernetes.io/component: backend
+  policyTypes:
+    - Ingress
+  ingress:
+    # Limit the public UI to the external ingress controller.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: networking
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ingress-nginx
+              app.kubernetes.io/instance: nginx-external
+              app.kubernetes.io/component: controller
+      ports:
+        - protocol: TCP
+          port: 3000
+    # Allow Browserless to drive project previews through the dedicated port.
+    - from:
+        - podSelector:
+            matchLabels:
+              app: browserless-chrome
+      ports:
+        - protocol: TCP
+          port: 4173

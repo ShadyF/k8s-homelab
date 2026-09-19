@@ -1,0 +1,231 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orychamber
+  namespace: default
+  labels:
+    app.kubernetes.io/name: orychamber
+    app.kubernetes.io/component: backend
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: orychamber
+      app.kubernetes.io/component: backend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: orychamber
+        app.kubernetes.io/component: backend
+      annotations:
+        orychamber.home.arpa/binary-settings-revision: "1"
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      # Preserve the workspace while allowing the managed server to shut down cleanly.
+      terminationGracePeriodSeconds: 60
+      initContainers:
+        - name: bootstrap
+          # renovate: datasource=docker depName=mcr.microsoft.com/devcontainers/universal versioning=docker
+          image: mcr.microsoft.com/devcontainers/universal:6.1.7-noble
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/bash
+            - -e
+          args:
+            - /opt/orychamber-bootstrap/bootstrap.sh
+          env:
+            - name: HOME
+              value: /home/codespace
+            - name: HOMEBREW_CACHE
+              value: /tmp/Homebrew
+            - name: XDG_CONFIG_HOME
+              value: /home/codespace/.config
+            - name: XDG_DATA_HOME
+              value: /home/codespace/.local/share
+            # renovate: datasource=npm depName=opencode-ai
+            - name: OPENCODE_VERSION
+              value: "1.18.31"
+            # renovate: datasource=npm depName=@openchamber/web
+            - name: OPENCHAMBER_VERSION
+              value: "1.23.2"
+            # renovate: datasource=npm depName=agent-browser
+            - name: AGENT_BROWSER_VERSION
+              value: "0.37.1"
+            - name: AGENT_BROWSER_SOCKET_DIR
+              value: /tmp/agent-browser
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          # Keep bootstrap below the application's effective memory request.
+          resources:
+            requests:
+              cpu: 100m
+              memory: 1Gi
+            limits:
+              cpu: 500m
+              memory: 2Gi
+          volumeMounts:
+            - name: orychamber-data
+              mountPath: /home/codespace
+            - name: orychamber-homebrew
+              mountPath: /home/linuxbrew
+            - name: tmp
+              mountPath: /tmp
+            - name: orychamber-bootstrap
+              mountPath: /opt/orychamber-bootstrap
+              readOnly: true
+      containers:
+        - name: openchamber
+          # renovate: datasource=docker depName=mcr.microsoft.com/devcontainers/universal versioning=docker
+          image: mcr.microsoft.com/devcontainers/universal:6.1.7-noble
+          imagePullPolicy: IfNotPresent
+          command:
+            - /home/codespace/.npm-global/bin/openchamber
+          args:
+            - serve
+            - --port
+            - $(OPENCHAMBER_PORT)
+            - --host
+            - $(OPENCHAMBER_HOST)
+            - --foreground
+          env:
+            - name: HOME
+              value: /home/codespace
+            - name: XDG_CONFIG_HOME
+              value: /home/codespace/.config
+            - name: XDG_DATA_HOME
+              value: /home/codespace/.local/share
+            - name: PATH
+              value: /home/codespace/.local/bin:/home/codespace/.npm-global/bin:/home/codespace/.local/share/pnpm:/home/linuxbrew/.linuxbrew/bin:/usr/local/share/nvm/current/bin:/usr/local/sbin:/usr/bin:/sbin:/bin
+            - name: NPM_CONFIG_PREFIX
+              value: /home/codespace/.npm-global
+            - name: PNPM_HOME
+              value: /home/codespace/.local/share/pnpm
+            - name: OPENCODE_BINARY
+              value: /opt/orychamber-opencode-wrapper/opencode-wrapper
+            - name: OPENCODE_PORT
+              value: "4096"
+            - name: OPENCHAMBER_OPENCODE_HOSTNAME
+              value: 127.0.0.1
+            - name: OPENCHAMBER_OPENCODE_CWD
+              value: /home/codespace/workspaces
+            - name: OPENCHAMBER_HOST
+              value: 0.0.0.0
+            - name: OPENCHAMBER_PORT
+              value: "3000"
+            - name: OPENCHAMBER_DATA_DIR
+              value: /home/codespace/.config/openchamber
+            - name: OPENCHAMBER_ALLOW_REMOTE_OPENAI_COMPAT_URLS
+              value: "true"
+            - name: OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS
+              value: "true"
+            - name: OPENCODE_ENABLE_EXA
+              value: "true"
+            - name: AGENT_BROWSER_CDP
+              value: ws://browserless-chrome-svc.default.svc.cluster.local:3000/chrome
+            - name: AGENT_BROWSER_CONTENT_BOUNDARIES
+              value: "1"
+            - name: AGENT_BROWSER_SOCKET_DIR
+              value: /tmp/agent-browser
+          envFrom:
+            - secretRef:
+                name: orychamber-openchamber-secrets
+          workingDir: /home/codespace/workspaces
+          ports:
+            - name: openchamber
+              containerPort: 3000
+            - name: preview
+              containerPort: 4173
+          # Wait for OpenChamber and its managed OpenCode server to become ready.
+          startupProbe:
+            exec:
+              command:
+                - node
+                - -e
+                - "require('http').get('http://127.0.0.1:3000/health', r => { let b=''; r.on('data', c => b += c); r.on('end', () => { try { const h=JSON.parse(b); process.exit(r.statusCode >= 200 && r.statusCode < 300 && h.openCodeRunning === true && h.isOpenCodeReady === true ? 0 : 1); } catch (_) { process.exit(1); } }); }).on('error', () => process.exit(1));"
+            failureThreshold: 120
+            periodSeconds: 5
+            timeoutSeconds: 5
+          # Confirm that both the UI and managed OpenCode server remain ready.
+          readinessProbe:
+            exec:
+              command:
+                - node
+                - -e
+                - "require('http').get('http://127.0.0.1:3000/health', r => { let b=''; r.on('data', c => b += c); r.on('end', () => { try { const h=JSON.parse(b); process.exit(r.statusCode >= 200 && r.statusCode < 300 && h.openCodeRunning === true && h.isOpenCodeReady === true ? 0 : 1); } catch (_) { process.exit(1); } }); }).on('error', () => process.exit(1));"
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+          # Restart the container when the UI health endpoint stops responding.
+          livenessProbe:
+            exec:
+              command:
+                - node
+                - -e
+                - "require('http').get('http://127.0.0.1:3000/health', r => process.exit(r.statusCode >= 200 && r.statusCode < 300 ? 0 : 1)).on('error', () => process.exit(1));"
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          # Reserve interactive usage while retaining headroom for busy sessions.
+          resources:
+            requests:
+              cpu: 500m
+              memory: 2Gi
+            limits:
+              cpu: 2
+              memory: 4Gi
+          volumeMounts:
+            - name: orychamber-data
+              mountPath: /home/codespace
+            - name: orychamber-homebrew
+              mountPath: /home/linuxbrew
+            - name: tmp
+              mountPath: /tmp
+            - name: orychamber-opencode-wrapper
+              mountPath: /opt/orychamber-opencode-wrapper
+              readOnly: true
+      volumes:
+        - name: orychamber-data
+          persistentVolumeClaim:
+            claimName: orychamber-data
+        - name: orychamber-homebrew
+          persistentVolumeClaim:
+            claimName: orychamber-homebrew
+        - name: tmp
+          emptyDir: {}
+        - name: orychamber-opencode-wrapper
+          configMap:
+            name: orychamber-opencode-log-wrapper
+            defaultMode: 0555
+            items:
+              - key: opencode-wrapper
+                path: opencode-wrapper
+        - name: orychamber-bootstrap
+          configMap:
+            name: orychamber-bootstrap
+            defaultMode: 0555

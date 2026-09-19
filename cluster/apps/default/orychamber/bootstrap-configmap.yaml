@@ -1,0 +1,143 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orychamber-bootstrap
+  namespace: default
+data:
+  bootstrap.sh: |
+    # Stop immediately when any pipeline command fails.
+    set -o pipefail
+
+    # Put the persistent Homebrew installation ahead of the base image tools.
+    export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
+
+    # Install Homebrew into persistent storage when the PVC is first used.
+    if [ ! -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+      NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
+
+    # Load the persistent Homebrew environment for the remaining bootstrap steps.
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    test -x "$(command -v brew)"
+
+    # Keep npm packages and agent-browser state on the workspace PVC.
+    export NPM_CONFIG_PREFIX="$HOME/.npm-global"
+    export npm_config_cache="$HOME/.npm"
+    export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
+    mkdir -p "$NPM_CONFIG_PREFIX" "$npm_config_cache" "$HOME/.agents/skills/agent-browser" "$AGENT_BROWSER_SOCKET_DIR" "$HOME/workspaces"
+    test -w "$HOME/workspaces"
+
+    # Reinstall a package only when its executable or exact pinned version is missing.
+    package_is_pinned() {
+      package_name="$1"
+      package_version="$2"
+      executable_name="$3"
+      [ -x "$NPM_CONFIG_PREFIX/bin/$executable_name" ] || return 1
+      node -e 'try { process.exit(require(process.argv[1]).version === process.argv[2] ? 0 : 1); } catch (_) { process.exit(1); }' \
+        "$NPM_CONFIG_PREFIX/lib/node_modules/$package_name/package.json" "$package_version"
+    }
+
+    # Install the pinned OpenCode, OpenChamber, and agent-browser packages.
+    if ! package_is_pinned opencode-ai "$OPENCODE_VERSION" opencode; then
+      npm install --global "opencode-ai@$OPENCODE_VERSION"
+    fi
+    if ! package_is_pinned @openchamber/web "$OPENCHAMBER_VERSION" openchamber; then
+      npm install --global "@openchamber/web@$OPENCHAMBER_VERSION"
+    fi
+    if ! package_is_pinned agent-browser "$AGENT_BROWSER_VERSION" agent-browser; then
+      npm install --global "agent-browser@$AGENT_BROWSER_VERSION"
+    fi
+    test -x "$NPM_CONFIG_PREFIX/bin/opencode"
+    test -x "$NPM_CONFIG_PREFIX/bin/openchamber"
+    test -x "$NPM_CONFIG_PREFIX/bin/agent-browser"
+
+    # Clear only the persisted binary override so the Deployment environment owns selection.
+    opencode_settings_dir="$${OPENCHAMBER_DATA_DIR:-$HOME/.config/openchamber}"
+    opencode_settings_file="$opencode_settings_dir/settings.json"
+    node - "$opencode_settings_file" <<'NODE'
+    const fs = require('node:fs');
+    const path = require('node:path');
+
+    const settingsFile = process.argv[2];
+    const settingsDir = path.dirname(settingsFile);
+    let settings = {};
+    let fileMode = 0o600;
+
+    // Read and validate before creating a replacement so malformed settings are never overwritten.
+    try {
+      const stat = fs.statSync(settingsFile);
+      if (!stat.isFile()) {
+        throw new Error('settings path is not a regular file');
+      }
+      fileMode = stat.mode & 0o7777;
+      settings = JSON.parse(fs.readFileSync(settingsFile, 'utf8'));
+    } catch (error) {
+      if (error?.code !== 'ENOENT') {
+        process.stderr.write(error instanceof SyntaxError
+          ? 'OpenChamber settings JSON is malformed; refusing to overwrite it.\n'
+          : 'OpenChamber settings could not be read; refusing to overwrite it.\n');
+        process.exit(1);
+      }
+    }
+
+    // Keep every setting and add the empty sentinel used to clear the binary override.
+    if (!settings || typeof settings !== 'object' || Array.isArray(settings)) {
+      process.stderr.write('OpenChamber settings must contain a JSON object; refusing to overwrite it.\n');
+      process.exit(1);
+    }
+    settings.opencodeBinary = '';
+
+    // Replace the file in one same-directory rename while retaining restrictive permissions.
+    fs.mkdirSync(settingsDir, { recursive: true, mode: 0o700 });
+    const temporaryFile = path.join(
+      settingsDir,
+      '.settings.json.bootstrap-' + process.pid + '-' + Date.now(),
+    );
+    try {
+      const descriptor = fs.openSync(temporaryFile, 'wx', fileMode);
+      try {
+        fs.writeFileSync(descriptor, JSON.stringify(settings, null, 2) + '\n', 'utf8');
+        fs.fsyncSync(descriptor);
+      } finally {
+        fs.closeSync(descriptor);
+      }
+      fs.chmodSync(temporaryFile, fileMode);
+      fs.renameSync(temporaryFile, settingsFile);
+      const directoryDescriptor = fs.openSync(settingsDir, 'r');
+      try {
+        fs.fsyncSync(directoryDescriptor);
+      } finally {
+        fs.closeSync(directoryDescriptor);
+      }
+    } catch (error) {
+      fs.rmSync(temporaryFile, { force: true });
+      process.stderr.write('OpenChamber settings could not be updated atomically.\n');
+      process.exit(1);
+    }
+    NODE
+
+    # Keep the pinned agent-browser skill synchronized with the installed package.
+    skill_file="$HOME/.agents/skills/agent-browser/SKILL.md"
+    skill_revision="v$AGENT_BROWSER_VERSION"
+    skill_revision_marker="$HOME/.agent-browser-skill-revision"
+    if [ ! -s "$skill_file" ] \
+      || [ "$(cat "$skill_revision_marker" 2>/dev/null || true)" != "$skill_revision" ] \
+      || ! grep -Fq -- '## OpenChamber preview environment' "$skill_file"; then
+      curl --fail --silent --show-error --location \
+        "https://raw.githubusercontent.com/vercel-labs/agent-browser/$skill_revision/skills/agent-browser/SKILL.md" \
+        --output "$skill_file.tmp"
+      test -s "$skill_file.tmp"
+
+      # Add only the remote-browser and cluster-local preview rules needed by this app.
+      cat >> "$skill_file.tmp" <<'EOF'
+
+    ## OpenChamber preview environment
+
+    - Chromium is remote; do not run `agent-browser install`.
+    - Start project preview servers on `0.0.0.0:4173`.
+    - Browse previews at `http://orychamber-preview.default.svc.cluster.local:4173`, not localhost.
+    - Close browser sessions after verification.
+    EOF
+      mv "$skill_file.tmp" "$skill_file"
+      printf '%s\n' "$skill_revision" > "$skill_revision_marker"
+    fi
