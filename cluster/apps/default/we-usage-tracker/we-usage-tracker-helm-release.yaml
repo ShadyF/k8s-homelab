@@ -51,7 +51,7 @@ spec:
           main:
             image:
               repository: ghcr.io/shadyf/we-usage-tracker
-              tag: 1.0.0
+              tag: 1.2.0
               pullPolicy: IfNotPresent
             args:
               - worker
