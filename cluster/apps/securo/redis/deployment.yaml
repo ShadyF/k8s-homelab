@@ -26,6 +26,9 @@ spec:
       automountServiceAccountToken: false
       terminationGracePeriodSeconds: 30
       securityContext:
+        # Give the Redis group write access even when Longhorn adds lost+found.
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault
       containers:
