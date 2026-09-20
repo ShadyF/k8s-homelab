@@ -30,7 +30,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: postgresql
-          image: docker.io/pgvector/pgvector:0.8.1-pg16-bookworm
+          image: docker.io/pgvector/pgvector:0.8.6-pg16-bookworm
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
