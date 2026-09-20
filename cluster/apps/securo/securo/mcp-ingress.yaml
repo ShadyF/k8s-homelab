@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: securo-mcp
+  namespace: securo
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    external-dns/is-public: "false"
+    external-dns.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
+spec:
+  ingressClassName: internal
+  rules:
+    - host: "securo-mcp.${SECRET_DOMAIN}"
+      http:
+        paths:
+          - path: /mcp
+            pathType: Prefix
+            backend:
+              service:
+                name: securo-mcp-server
+                port:
+                  number: 8765
+  tls:
+    - hosts:
+        - "securo-mcp.${SECRET_DOMAIN}"

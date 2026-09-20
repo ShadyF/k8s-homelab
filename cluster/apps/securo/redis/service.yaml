@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: securo-redis
+  namespace: securo
+  labels:
+    app.kubernetes.io/name: securo-redis
+    app.kubernetes.io/part-of: securo
+    securo.homelab/component: cache
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: securo-redis
+    securo.homelab/component: cache
+  ports:
+    - name: redis
+      protocol: TCP
+      port: 6379
+      targetPort: 6379

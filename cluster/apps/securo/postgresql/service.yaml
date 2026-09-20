@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: securo-postgresql
+  namespace: securo
+  labels:
+    app.kubernetes.io/name: securo-postgresql
+    app.kubernetes.io/part-of: securo
+    securo.homelab/component: database
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: securo-postgresql
+    securo.homelab/component: database
+  ports:
+    - name: postgres
+      protocol: TCP
+      port: 5432
+      targetPort: 5432

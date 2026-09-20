@@ -1,0 +1,10 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: securo-charts
+  namespace: flux-system
+spec:
+  interval: 30m
+  type: oci
+  url: oci://ghcr.io/securo-finance/charts
+  timeout: 3m

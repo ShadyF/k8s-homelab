@@ -1,0 +1,138 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: securo-frontend-ingress
+  namespace: securo
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: securo
+      app.kubernetes.io/component: frontend
+  policyTypes:
+    - Ingress
+  ingress:
+    # The frontend Service exposes port 3000 but its pod listens on 8080.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: networking
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ingress-nginx
+              app.kubernetes.io/instance: nginx-external
+              app.kubernetes.io/component: controller
+      ports:
+        - protocol: TCP
+          port: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: securo-backend-ingress
+  namespace: securo
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: securo
+      app.kubernetes.io/component: backend
+  policyTypes:
+    - Ingress
+  ingress:
+    # Keep the API reachable only through the public ingress controller.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: networking
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ingress-nginx
+              app.kubernetes.io/instance: nginx-external
+              app.kubernetes.io/component: controller
+      ports:
+        - protocol: TCP
+          port: 8000
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: securo-mcp-ingress
+  namespace: securo
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: securo
+      app.kubernetes.io/component: mcp-server
+  policyTypes:
+    - Ingress
+  ingress:
+    # Keep the external MCP endpoint reachable through the private ingress
+    # controller.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: networking
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ingress-nginx
+              app.kubernetes.io/instance: nginx-internal
+              app.kubernetes.io/component: controller
+      ports:
+        - protocol: TCP
+          port: 8765
+    # Permit only backend and Celery worker pods to use the built-in MCP URL.
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: securo
+            matchExpressions:
+              - key: app.kubernetes.io/component
+                operator: In
+                values:
+                  - backend
+                  - celery-worker
+      ports:
+        - protocol: TCP
+          port: 8765
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: securo-postgresql-ingress
+  namespace: securo
+spec:
+  podSelector:
+    matchLabels:
+      securo.homelab/component: database
+  policyTypes:
+    - Ingress
+  ingress:
+    # Backend, workers, beat, MCP, and migration pods share this stable chart
+    # instance label and are the only allowed PostgreSQL clients.
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: securo
+      ports:
+        - protocol: TCP
+          port: 5432
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: securo-redis-ingress
+  namespace: securo
+spec:
+  podSelector:
+    matchLabels:
+      securo.homelab/component: cache
+  policyTypes:
+    - Ingress
+  ingress:
+    # Only Securo chart workloads, including the migration job, need Redis.
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: securo
+      ports:
+        - protocol: TCP
+          port: 6379
