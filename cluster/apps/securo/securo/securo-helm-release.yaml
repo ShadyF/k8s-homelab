@@ -1,0 +1,166 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: securo
+  namespace: securo
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: securo
+      version: 0.16.0
+      interval: 15m
+      sourceRef:
+        kind: HelmRepository
+        name: securo-charts
+        namespace: flux-system
+
+  # Retry transient chart installation and upgrade failures without leaving a
+  # failed Helm revision in place.
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+
+  # Longhorn must be ready before the chart creates its persistent volumes.
+  dependsOn:
+    - name: longhorn
+      namespace: longhorn-system
+
+  # Securo v0.16.0 does not expose the required pod and container security
+  # settings as chart values. Apply them only to this release's Deployments;
+  # Helm hook Jobs are not processed by Flux post-renderers.
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              group: apps
+              version: v1
+              kind: Deployment
+              labelSelector: app.kubernetes.io/instance=securo
+            patch: |-
+              - op: add
+                path: /spec/template/spec/automountServiceAccountToken
+                value: false
+              - op: add
+                path: /spec/template/spec/securityContext
+                value:
+                  seccompProfile:
+                    type: RuntimeDefault
+              - op: add
+                path: /spec/template/spec/containers/0/securityContext
+                value:
+                  allowPrivilegeEscalation: false
+                  capabilities:
+                    drop:
+                      - ALL
+
+  values:
+    # Use the external Secret for all chart-managed application credentials.
+    global:
+      domain: "securo.${SECRET_DOMAIN}"
+      tls: true
+      existingSecret: securo-secrets
+
+    # Keep chart-managed databases, caches, and public routes disabled.
+    postgresql:
+      enabled: false
+    redis:
+      enabled: false
+    ingress:
+      enabled: false
+    httpRoute:
+      enabled: false
+
+    # Pin every application component to the verified Securo release image.
+    backend:
+      image:
+        tag: 0.16.0
+      service:
+        type: ClusterIP
+        port: 8000
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+    frontend:
+      image:
+        tag: 0.16.0
+      service:
+        type: ClusterIP
+        port: 3000
+      resources:
+        requests:
+          cpu: 50m
+          memory: 128Mi
+        limits:
+          cpu: 250m
+          memory: 256Mi
+
+    # Reuse the backend image for asynchronous jobs, MCP, and migrations.
+    celeryWorker:
+      enabled: true
+      replicaCount: 1
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+    celeryBeat:
+      enabled: true
+      replicaCount: 1
+      resources:
+        requests:
+          cpu: 50m
+          memory: 128Mi
+        limits:
+          cpu: 250m
+          memory: 256Mi
+    mcpServer:
+      enabled: true
+      service:
+        type: ClusterIP
+        port: 8765
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          cpu: 500m
+          memory: 256Mi
+    # Configure the single local Securo account and the agent/MCP endpoints.
+    config:
+      localAuthEnabled: "true"
+      oidcEnabled: "false"
+      registrationEnabled: "false"
+      agentsEnabled: "true"
+      agentsBuiltinMcpUrl: "http://securo-mcp-server:8765/mcp"
+      agentsExternalMcpUrl: "https://securo-mcp.${SECRET_DOMAIN}/mcp"
+      agentsMcpExternalTtlDays: "90"
+      agentsEmbeddingProvider: "openai_compatible"
+      agentsEmbeddingModel: "openai/text-embedding-3-small"
+      agentsEmbeddingOpenaiBaseUrl: "https://openrouter.ai/api/v1"
+      tesouroDiretoEnabled: "false"
+
+    # Persist user files and agent knowledge on separate Longhorn RWX volumes.
+    persistence:
+      attachments:
+        enabled: true
+        size: 10Gi
+        storageClass: longhorn
+        accessMode: ReadWriteMany
+      agentKnowledge:
+        enabled: true
+        size: 10Gi
+        storageClass: longhorn
+        accessMode: ReadWriteMany
+      agentEmbeddingModels:
+        enabled: false

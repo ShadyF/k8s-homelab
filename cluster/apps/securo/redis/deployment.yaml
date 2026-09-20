@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: securo-redis
+  namespace: securo
+  labels:
+    app.kubernetes.io/name: securo-redis
+    app.kubernetes.io/part-of: securo
+    securo.homelab/component: cache
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: securo-redis
+      securo.homelab/component: cache
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: securo-redis
+        app.kubernetes.io/part-of: securo
+        securo.homelab/component: cache
+    spec:
+      # Redis does not need the Kubernetes service-account token.
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: redis
+          image: docker.io/library/redis:8.2.1-alpine
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              # The official entrypoint must prepare /data and switch to the
+              # image's redis user before starting the server.
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETGID
+                - SETUID
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: securo-redis-secrets
+                  key: REDIS_PASSWORD
+          args:
+            - redis-server
+            - --appendonly
+            - "yes"
+            - --dir
+            - /data
+            - --requirepass
+            - $(REDIS_PASSWORD)
+          ports:
+            - name: redis
+              containerPort: 6379
+              protocol: TCP
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - redis-cli -h 127.0.0.1 --no-auth-warning -a "$REDIS_PASSWORD" shutdown save
+          startupProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - redis-cli -h 127.0.0.1 --no-auth-warning -a "$REDIS_PASSWORD" ping
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 30
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - redis-cli -h 127.0.0.1 --no-auth-warning -a "$REDIS_PASSWORD" ping
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 6
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - redis-cli -h 127.0.0.1 --no-auth-warning -a "$REDIS_PASSWORD" ping
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 6
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: securo-redis-data
