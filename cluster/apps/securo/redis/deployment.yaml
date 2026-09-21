@@ -33,7 +33,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: redis
-          image: docker.io/library/redis:8.2.1-alpine
+          image: docker.io/library/redis:8.10.2-alpine
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
