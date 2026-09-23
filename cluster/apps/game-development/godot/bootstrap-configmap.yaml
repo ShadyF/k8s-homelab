@@ -1,0 +1,292 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: godot-bootstrap
+  namespace: game-development
+  labels:
+    app.kubernetes.io/name: godot
+    app.kubernetes.io/component: bootstrap
+data:
+  install-artifacts.py: |
+    import hashlib
+    import os
+    import shutil
+    import stat
+    import tarfile
+    import tempfile
+    import urllib.request
+    import zipfile
+    from pathlib import Path
+
+
+    # Read the centrally managed release metadata from the ConfigMap environment.
+    GODOT_VERSION = os.environ["GODOT_VERSION"]
+    GODOT_URL = os.environ["GODOT_URL"]
+    GODOT_SHA512 = os.environ["GODOT_SHA512"]
+    GODOT_BINARY = os.environ["GODOT_BINARY"]
+    DOTNET_VERSION = os.environ["DOTNET_VERSION"]
+    DOTNET_URL = os.environ["DOTNET_URL"]
+    DOTNET_SHA512 = os.environ["DOTNET_SHA512"]
+
+    DATA_ROOT = Path("/config/tools")
+    RELEASES = DATA_ROOT / "releases"
+    DOWNLOADS = DATA_ROOT / "downloads"
+    DESKTOP_ROOT = Path("/config/Desktop")
+    AUTOSTART_ROOT = Path("/config/.config/autostart")
+
+
+    # Keep a marker beside each extracted release so incomplete data is never reused.
+    def marker_contents(name: str, version: str, checksum: str) -> str:
+        return f"{name}={version}\nsha512={checksum}\n"
+
+
+    # Reuse only a release that completed checksum verification and extraction.
+    def is_ready(target: Path, marker: str) -> bool:
+        ready = target / ".ready"
+        return ready.is_file() and ready.read_text() == marker
+
+
+    # Hash archive files as streams so warm-cache verification has bounded memory use.
+    def sha512_file(path: Path) -> str:
+        with path.open("rb") as source:
+            return hashlib.file_digest(source, "sha512").hexdigest()
+
+
+    # Download to a temporary file, verify it, then atomically publish the cache entry.
+    def verified_download(name: str, url: str, checksum: str) -> Path:
+        destination = DOWNLOADS / f"{name}-{checksum}"
+        # Verify a cached archive again before trusting it after a pod restart.
+        if destination.is_file():
+            digest = sha512_file(destination)
+            if digest == checksum:
+                return destination
+            # Remove a failed cache entry so the next download is not blocked by it.
+            destination.unlink()
+
+        descriptor, temporary_name = tempfile.mkstemp(prefix=f".{name}.", suffix=".part", dir=DOWNLOADS)
+        temporary = Path(temporary_name)
+        try:
+            # Stream the artifact so the init container does not need to hold it in memory.
+            with os.fdopen(descriptor, "wb") as output, urllib.request.urlopen(url) as response:
+                digest = hashlib.sha512()
+                while chunk := response.read(1024 * 1024):
+                    output.write(chunk)
+                    digest.update(chunk)
+                output.flush()
+                os.fsync(output.fileno())
+
+            # Reject a corrupt or substituted artifact before it reaches durable storage.
+            if digest.hexdigest() != checksum:
+                raise RuntimeError(f"SHA-512 verification failed for {name}")
+
+            temporary.replace(destination)
+            return destination
+        except BaseException:
+            temporary.unlink(missing_ok=True)
+            raise
+
+
+    # Extract into a temporary version directory and publish it only when it is complete.
+    def install_release(name: str, version: str, checksum: str, archive: Path, extract) -> Path:
+        target = RELEASES / f"{name}-{version}"
+        marker = marker_contents(name, version, checksum)
+        if is_ready(target, marker):
+            return target
+
+        # Remove only an incomplete copy of this exact version; older ready releases stay intact.
+        if target.exists():
+            shutil.rmtree(target)
+
+        staging = Path(tempfile.mkdtemp(prefix=f".{name}-{version}.", dir=RELEASES))
+        try:
+            # Populate the staging directory before publishing it as a usable release.
+            extract(archive, staging)
+            (staging / ".ready").write_text(marker)
+            staging.replace(target)
+            return target
+        except BaseException:
+            shutil.rmtree(staging, ignore_errors=True)
+            raise
+
+
+    # Validate archive members before extraction to avoid writing outside the release directory.
+    def safe_extract_zip(archive: Path, destination: Path) -> None:
+        with zipfile.ZipFile(archive) as source:
+            for member in source.infolist():
+                if Path(member.filename).is_absolute() or ".." in Path(member.filename).parts:
+                    raise RuntimeError(f"unsafe ZIP member: {member.filename}")
+            source.extractall(destination)
+
+
+    # Validate tar members before extraction to avoid writing outside the release directory.
+    def safe_extract_tar(archive: Path, destination: Path) -> None:
+        with tarfile.open(archive, "r:gz") as source:
+            for member in source.getmembers():
+                if Path(member.name).is_absolute() or ".." in Path(member.name).parts:
+                    raise RuntimeError(f"unsafe tar member: {member.name}")
+            source.extractall(destination, filter="data")
+
+
+    # Write a complete text file beside its target and atomically replace the prior version.
+    def publish_text(path: Path, contents: str, mode: int) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        descriptor, temporary_name = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
+        temporary = Path(temporary_name)
+        try:
+            # Flush the complete replacement before making it visible to desktop sessions.
+            with os.fdopen(descriptor, "w") as output:
+                output.write(contents)
+                output.flush()
+                os.fsync(output.fileno())
+            temporary.chmod(mode)
+            temporary.replace(path)
+        except BaseException:
+            # Remove only the unpublished temporary file and preserve the prior working target.
+            temporary.unlink(missing_ok=True)
+            raise
+
+
+    # Create stable launch paths only after both verified release directories are ready.
+    def publish_launchers(godot: Path, dotnet: Path) -> None:
+        # Use the executable location verified from the released ZIP member layout.
+        binary = godot / GODOT_BINARY
+        if not binary.is_file():
+            raise RuntimeError(f"Godot binary is missing: {binary}")
+        binary.chmod(binary.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+
+        # Create the stable launcher only after the verified Godot executable is executable.
+        wrapper = DATA_ROOT / "bin" / "godot"
+        publish_text(
+            wrapper,
+            "#!/usr/bin/env bash\n"
+            f"export DOTNET_ROOT={dotnet}\n"
+            f"export PATH={dotnet}:$PATH\n"
+            f"exec {binary} --lsp-port 6005 \"$@\"\n",
+            0o755,
+        )
+
+        # Define one desktop entry that always uses the stable launcher.
+        desktop_contents = (
+            "[Desktop Entry]\n"
+            "Type=Application\n"
+            "Name=Godot .NET\n"
+            "Exec=/config/tools/bin/godot --editor\n"
+            "Terminal=false\n"
+            "Categories=Development;IDE;\n"
+        )
+
+        # Add a desktop shortcut for manually reopening the editor.
+        desktop_entry = DESKTOP_ROOT / "Godot .NET.desktop"
+        publish_text(desktop_entry, desktop_contents, 0o755)
+
+        # Start Godot automatically after the persistent XFCE session initializes.
+        autostart_entry = AUTOSTART_ROOT / "godot.desktop"
+        autostart_contents = desktop_contents + "X-GNOME-Autostart-enabled=true\n"
+        publish_text(autostart_entry, autostart_contents, 0o644)
+
+
+    # Install both runtime components before publishing a launcher visible to users.
+    def main() -> None:
+        # Prepare durable directories before downloading either large release archive.
+        RELEASES.mkdir(parents=True, exist_ok=True)
+        DOWNLOADS.mkdir(parents=True, exist_ok=True)
+
+        # Install the Godot editor release and keep the prior known-good release on upgrades.
+        godot_archive = verified_download("godot", GODOT_URL, GODOT_SHA512)
+        godot_release = install_release(
+            "godot", GODOT_VERSION, GODOT_SHA512, godot_archive, safe_extract_zip
+        )
+
+        # Install the matching .NET SDK release in its own immutable version directory.
+        dotnet_archive = verified_download("dotnet", DOTNET_URL, DOTNET_SHA512)
+        dotnet_release = install_release(
+            "dotnet", DOTNET_VERSION, DOTNET_SHA512, dotnet_archive, safe_extract_tar
+        )
+
+        # Publish the desktop launcher after both runtime components have passed their checks.
+        publish_launchers(godot_release, dotnet_release)
+
+
+    if __name__ == "__main__":
+        main()
+  configure-ssh.sh: |
+    #!/usr/bin/with-contenv bash
+    set -euo pipefail
+
+    # Fail early when the supported package-install mod did not provide sshd.
+    command -v sshd >/dev/null
+    id abc >/dev/null
+
+    # Install the declarative SOPS-managed host key so Orychamber can verify this server exactly.
+    ssh_root=/config/ssh
+    install -d -m 0700 -o root -g root "$ssh_root"
+    printf '%s\n' "$GODOT_SSH_HOST_ED25519_KEY" > "$ssh_root/ssh_host_ed25519_key"
+    chmod 0600 "$ssh_root/ssh_host_ed25519_key"
+
+    # Normalize valid public keys to their type and base64 body so comments do not affect identity.
+    normalize_public_key() {
+      public_key="$1"
+      if ! printf '%s\n' "$public_key" | ssh-keygen -l -f - >/dev/null 2>&1; then
+        return 1
+      fi
+      set -- $public_key
+      [ "$#" -ge 2 ] || return 1
+      printf '%s %s\n' "$1" "$2"
+    }
+
+    # Compare the derived and configured host identities, failing closed on malformed data.
+    if ! derived_host_public_key="$(normalize_public_key "$(ssh-keygen -y -f "$ssh_root/ssh_host_ed25519_key")")" \
+      || ! configured_host_public_key="$(normalize_public_key "$GODOT_SSH_HOST_ED25519_PUBLIC_KEY")"; then
+      printf '%s\n' 'Configured SSH host public key is malformed.' >&2
+      exit 1
+    fi
+    if [ "$derived_host_public_key" != "$configured_host_public_key" ]; then
+      printf '%s\n' 'Configured SSH host key does not match its pinned public key.' >&2
+      exit 1
+    fi
+
+    # Install the SOPS-managed client public key for the non-root desktop user only.
+    install -d -m 0700 -o abc -g abc /config/.ssh
+    printf '%s\n' "$GODOT_SSH_AUTHORIZED_KEY" > /config/.ssh/authorized_keys
+    chown abc:abc /config/.ssh/authorized_keys
+    chmod 0600 /config/.ssh/authorized_keys
+
+    # Restrict the in-container server to public-key shell access and local Godot port forwards.
+    cat > "$ssh_root/sshd_config" <<'EOF'
+    Port 2222
+    ListenAddress 0.0.0.0
+    Protocol 2
+    HostKey /config/ssh/ssh_host_ed25519_key
+    PidFile /run/godot-sshd.pid
+    AuthorizedKeysFile /config/.ssh/authorized_keys
+    AllowUsers abc
+    PermitRootLogin no
+    PubkeyAuthentication yes
+    AuthenticationMethods publickey
+    PasswordAuthentication no
+    KbdInteractiveAuthentication no
+    ChallengeResponseAuthentication no
+    PermitEmptyPasswords no
+    UsePAM no
+    PermitUserEnvironment no
+    AllowAgentForwarding no
+    X11Forwarding no
+    AllowTcpForwarding local
+    AllowStreamLocalForwarding no
+    GatewayPorts no
+    PermitTunnel no
+    PermitListen none
+    PermitOpen 127.0.0.1:6005 127.0.0.1:6006 127.0.0.1:6007
+    EOF
+
+    # Validate the generated server configuration before s6 starts the supervised service.
+    install -d -m 0755 /run/sshd
+    sshd -t -f "$ssh_root/sshd_config"
+    touch /run/godot-sshd-configured
+  run-sshd: |
+    #!/usr/bin/with-contenv bash
+    set -euo pipefail
+
+    # Keep sshd under s6 supervision inside Webtop without replacing the image /init entrypoint.
+    test -f /run/godot-sshd-configured
+    exec /usr/sbin/sshd -D -e -f /config/ssh/sshd_config

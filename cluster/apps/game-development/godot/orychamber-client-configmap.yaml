@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: godot-client-v1
+  namespace: game-development
+  labels:
+    app.kubernetes.io/name: godot
+    app.kubernetes.io/component: orychamber-integration
+immutable: true
+data:
+  ssh_config: |
+    Host godot-webtop
+      HostName godot-ssh.game-development.svc.cluster.local
+      Port 2222
+      User abc
+      IdentityFile /var/run/secrets/godot-client/id_ed25519
+      IdentitiesOnly yes
+      StrictHostKeyChecking yes
+      UserKnownHostsFile /var/run/secrets/godot-client/known_hosts
+      ServerAliveInterval 30
+      ServerAliveCountMax 3
+  godot-ssh: |
+    #!/bin/sh
+    # Stop on setup or forwarding errors so callers do not use an invalid tunnel.
+    set -eu
+
+    # Discard the conventional separator before passing the remote command to SSH.
+    if [ "$${1:-}" = "--" ]; then
+      shift
+    fi
+
+    # Run the remote command through the pinned Godot SSH configuration.
+    exec ssh -F /opt/godot-client/ssh_config godot-webtop "$@"
+  godot-forward: |
+    #!/bin/sh
+    # Stop before creating a partial debugger tunnel.
+    set -eu
+
+    # Expose only the three loopback debugger destinations allowed by the server.
+    exec ssh -N -o ExitOnForwardFailure=yes \
+      -L 127.0.0.1:6005:127.0.0.1:6005 \
+      -L 127.0.0.1:6006:127.0.0.1:6006 \
+      -L 127.0.0.1:6007:127.0.0.1:6007 \
+      -F /opt/godot-client/ssh_config \
+      godot-webtop
+  godot-browser: |
+    #!/bin/sh
+    # Stop before starting a visual check without its dedicated Browserless token.
+    set -eu
+
+    # Route visual checks through the token-protected Godot Browserless service.
+    : "$${GODOT_BROWSERLESS_TOKEN:?Godot Browserless token is unavailable}"
+    export AGENT_BROWSER_CDP="ws://godot-browserless.game-development.svc.cluster.local:3000/chrome?token=$GODOT_BROWSERLESS_TOKEN"
+    # Keep Godot browser sessions in a dedicated daemon socket namespace.
+    export AGENT_BROWSER_SOCKET_DIR=/tmp/godot-agent-browser
+    mkdir -p "$AGENT_BROWSER_SOCKET_DIR"
+    # Start the standard browser client with the dedicated CDP endpoint.
+    exec agent-browser "$@"
+  SKILL.md: |
+    ---
+    name: godot
+    description: Use the Godot Webtop runtime, SSH access, debugger forwards, and dedicated visual browser.
+    ---
+
+    - Run `godot-ssh -- /config/tools/bin/godot --version` to execute Godot in the actual Webtop runtime.
+    - Godot clones live under `/config/projects`; Orychamber clones remain under its configured workspace and must be synchronized with explicit Git fetch, pull, commit, and push commands.
+    - Run `godot-forward` before connecting tools to local ports 6005 (LSP), 6006 (DAP), or 6007 (Godot debugger).
+    - Use `godot-browser open http://godot.game-development.svc.cluster.local:3000/` only for Godot visual checks.

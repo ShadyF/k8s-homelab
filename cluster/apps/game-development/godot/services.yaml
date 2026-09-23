@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: godot
+  namespace: game-development
+  labels:
+    app.kubernetes.io/name: godot
+    app.kubernetes.io/component: ide
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: godot
+    app.kubernetes.io/component: ide
+  ports:
+    - name: web
+      port: 3000
+      targetPort: web
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: godot-ssh
+  namespace: game-development
+  labels:
+    app.kubernetes.io/name: godot
+    app.kubernetes.io/component: ssh
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: godot
+    app.kubernetes.io/component: ide
+  ports:
+    - name: ssh
+      port: 2222
+      targetPort: ssh
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: godot-browserless
+  namespace: game-development
+  labels:
+    app.kubernetes.io/name: godot-browserless
+    app.kubernetes.io/component: visual-check
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: godot-browserless
+    app.kubernetes.io/component: visual-check
+  ports:
+    - name: chrome
+      port: 3000
+      targetPort: chrome
