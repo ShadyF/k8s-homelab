@@ -1,0 +1,8 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: game-development
+  # Keep the namespace available during rollback until all versioned consumers terminate.
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
