@@ -13,8 +13,8 @@ its own names, storage, services, log wrapper, and public host:
 The Deployment runs one `openchamber` container and one bootstrap init
 container, with `Recreate` strategy on amd64 nodes. Both use the pinned
 `mcr.microsoft.com/devcontainers/universal:6.1.7-noble` image. Bootstrap
-installs the pinned `opencode-ai` `1.18.31`, `@openchamber/web` `1.23.2`, and
-`agent-browser` `0.37.1` packages into persistent workspace storage.
+installs the pinned `@opencode/cli` `2.0.15`, `@openchamber/web` `2.0.0`, and
+`agent-browser` `0.38.1` packages into persistent workspace storage.
 
 Compared with `cluster/apps/default/opencode/`, this deployment intentionally
 has no nested container engine, cluster credentials, Kubernetes API access,

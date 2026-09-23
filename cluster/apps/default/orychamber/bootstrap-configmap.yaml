@@ -38,8 +38,8 @@ data:
     }
 
     # Install the pinned OpenCode, OpenChamber, and agent-browser packages.
-    if ! package_is_pinned opencode-ai "$OPENCODE_VERSION" opencode; then
-      npm install --global "opencode-ai@$OPENCODE_VERSION"
+    if ! package_is_pinned @opencode/cli "$OPENCODE_VERSION" opencode; then
+      npm install --global "@opencode/cli@$OPENCODE_VERSION"
     fi
     if ! package_is_pinned @openchamber/web "$OPENCHAMBER_VERSION" openchamber; then
       npm install --global "@openchamber/web@$OPENCHAMBER_VERSION"

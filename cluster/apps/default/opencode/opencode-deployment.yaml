@@ -50,12 +50,12 @@ spec:
               value: /home/codespace/.config
             - name: XDG_DATA_HOME
               value: /home/codespace/.local/share
-            # renovate: datasource=npm depName=opencode-ai
+            # renovate: datasource=npm depName=@opencode/cli
             - name: OPENCODE_VERSION
-              value: "1.18.31"
+              value: "2.0.15"
             # renovate: datasource=npm depName=@openchamber/web
             - name: OPENCHAMBER_VERSION
-              value: "1.24.2"
+              value: "2.0.0"
             # renovate: datasource=npm depName=agent-browser
             - name: AGENT_BROWSER_VERSION
               value: "0.38.1"

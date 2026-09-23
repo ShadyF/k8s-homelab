@@ -91,7 +91,7 @@
       ],
       matchPackageNames: [
         '@openchamber/web',
-        'opencode-ai',
+        '@opencode/cli',
         'agent-browser',
       ],
       groupName: 'OpenChamber and OpenCode npm packages',
