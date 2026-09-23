@@ -173,7 +173,7 @@ spec:
             - name: DOCKER_CONFIG
               value: /home/codespace/.config/docker
             - name: OPENCODE_BINARY
-              value: /opt/opencode-wrapper/opencode-wrapper
+              value: ~/.npm-global/bin/opencode
             - name: OPENCODE_PORT
               value: "4096"
             - name: OPENCHAMBER_OPENCODE_HOSTNAME
@@ -269,9 +269,6 @@ spec:
             - name: opencode-api-access
               mountPath: /var/run/secrets/kubernetes.io/serviceaccount
               readOnly: true
-            - name: opencode-log-wrapper
-              mountPath: /opt/opencode-wrapper
-              readOnly: true
       volumes:
         - name: opencode-data
           persistentVolumeClaim:
@@ -304,13 +301,6 @@ spec:
                     - path: namespace
                       fieldRef:
                         fieldPath: metadata.namespace
-        - name: opencode-log-wrapper
-          configMap:
-            name: opencode-log-wrapper
-            defaultMode: 0555
-            items:
-              - key: opencode-wrapper
-                path: opencode-wrapper
         - name: bootstrap
           configMap:
             name: opencode-bootstrap
