@@ -31,7 +31,7 @@ spec:
       containers:
         - name: browserless
           # renovate: datasource=docker depName=ghcr.io/browserless/chrome versioning=docker
-          image: ghcr.io/browserless/chrome:v2.56.7@sha256:d600eac6283f03d2b540ea8af705b3c382cf1bf886b52a699ec9fe054142c241
+          image: ghcr.io/browserless/chrome:v2.56.7
           imagePullPolicy: IfNotPresent
           env:
             - name: TOKEN
