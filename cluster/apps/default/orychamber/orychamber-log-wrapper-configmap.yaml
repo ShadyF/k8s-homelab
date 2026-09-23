@@ -13,7 +13,7 @@ data:
     # Keep stdout attached to OpenChamber because it detects the server listening line there.
     if [ "$#" -gt 0 ] && [ "$1" = serve ]; then
       # Send managed server logs to the container's inherited stderr stream.
-      exec "$opencode_binary" "$@" --print-logs --log-level INFO 2>/proc/1/fd/2
+      exec "$opencode_binary" "$@" --print-logs --log-level info 2>/proc/1/fd/2
     fi
 
     # Preserve version, help, and every non-server invocation unchanged.
