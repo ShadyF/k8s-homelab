@@ -118,7 +118,7 @@ spec:
             - name: PNPM_HOME
               value: /home/codespace/.local/share/pnpm
             - name: OPENCODE_BINARY
-              value: /opt/orychamber-opencode-wrapper/opencode-wrapper
+              value: ~/.npm-global/bin/opencode
             - name: OPENCODE_PORT
               value: "4096"
             - name: OPENCHAMBER_OPENCODE_HOSTNAME
@@ -206,9 +206,6 @@ spec:
               mountPath: /home/linuxbrew
             - name: tmp
               mountPath: /tmp
-            - name: orychamber-opencode-wrapper
-              mountPath: /opt/orychamber-opencode-wrapper
-              readOnly: true
       volumes:
         - name: orychamber-data
           persistentVolumeClaim:
@@ -218,13 +215,6 @@ spec:
             claimName: orychamber-homebrew
         - name: tmp
           emptyDir: {}
-        - name: orychamber-opencode-wrapper
-          configMap:
-            name: orychamber-opencode-log-wrapper
-            defaultMode: 0555
-            items:
-              - key: opencode-wrapper
-                path: opencode-wrapper
         - name: orychamber-bootstrap
           configMap:
             name: orychamber-bootstrap
