@@ -33,7 +33,7 @@ spec:
       containers:
         - name: webtop
           # renovate: datasource=docker depName=lscr.io/linuxserver/webtop versioning=docker
-          image: lscr.io/linuxserver/webtop:ubuntu-xfce@sha256:02981f1744ece407788da6ce8effa0952f09ad915f5ef585a516a9584778c8eb
+          image: lscr.io/linuxserver/webtop:ubuntu-xfce@sha256:accf70a100e874367e381d994769d706fafd4d37a2ca7b3decf7c3e1642cf4d2
           imagePullPolicy: IfNotPresent
           env:
             # Install SSH and ZIP support through LinuxServer's supported runtime package mod.
