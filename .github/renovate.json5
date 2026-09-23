@@ -281,6 +281,19 @@
       ],
     },
     {
+      description: [
+        'Track only versioned Ubuntu XFCE builds for LinuxServer Webtop',
+      ],
+      matchDatasources: [
+        'docker',
+      ],
+      matchPackageNames: [
+        'lscr.io/linuxserver/webtop',
+      ],
+      versioning: 'loose',
+      allowedVersions: '/^ubuntu-xfce-version-[0-9a-f]+$/',
+    },
+    {
       matchDatasources: [
         'docker',
       ],

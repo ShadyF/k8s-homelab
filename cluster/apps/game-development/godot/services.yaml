@@ -33,21 +33,3 @@ spec:
     - name: ssh
       port: 2222
       targetPort: ssh
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: godot-browserless
-  namespace: game-development
-  labels:
-    app.kubernetes.io/name: godot-browserless
-    app.kubernetes.io/component: visual-check
-spec:
-  type: ClusterIP
-  selector:
-    app.kubernetes.io/name: godot-browserless
-    app.kubernetes.io/component: visual-check
-  ports:
-    - name: chrome
-      port: 3000
-      targetPort: chrome

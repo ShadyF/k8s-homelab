@@ -32,13 +32,13 @@ spec:
           type: RuntimeDefault
       containers:
         - name: webtop
-          # renovate: datasource=docker depName=lscr.io/linuxserver/webtop versioning=docker
-          image: lscr.io/linuxserver/webtop:ubuntu-xfce@sha256:02981f1744ece407788da6ce8effa0952f09ad915f5ef585a516a9584778c8eb
+          # renovate: datasource=docker depName=lscr.io/linuxserver/webtop versioning=loose
+          image: lscr.io/linuxserver/webtop:ubuntu-xfce-version-ce206d66
           imagePullPolicy: IfNotPresent
           env:
             # Install SSH and ZIP support through LinuxServer's supported runtime package mod.
             - name: DOCKER_MODS
-              value: lscr.io/linuxserver/mods:universal-package-install@sha256:ae68d698c8745c48cd634e807eca41a57a2aacb142bee4ca6a2c3b2b6c64afaf
+              value: lscr.io/linuxserver/mods:universal-package-install
             - name: INSTALL_PACKAGES
               value: openssh-server|unzip
             - name: PUID
@@ -141,7 +141,7 @@ spec:
       initContainers:
         - name: install-artifacts
           # Use Python 3.13.15 on Alpine 3.24 for the tarfile data filter and streaming hash API.
-          image: python:3.13.15-alpine3.24@sha256:7415fbc3c9e4979cc717d92377ab2bc7b2b4a2af1ac03cc52b5f3f88efedaf3a
+          image: python:3.13.15-alpine3.24
           imagePullPolicy: IfNotPresent
           command:
             - python3
