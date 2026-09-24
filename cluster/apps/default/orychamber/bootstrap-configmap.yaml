@@ -20,6 +20,9 @@ data:
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     test -x "$(command -v brew)"
 
+    # Create OpenCode's persistent log directory before the log sidecar starts.
+    mkdir -p "$HOME/.local/share/opencode/log"
+
     # Keep npm packages and agent-browser state on the workspace PVC.
     export NPM_CONFIG_PREFIX="$HOME/.npm-global"
     export npm_config_cache="$HOME/.npm"

@@ -206,6 +206,34 @@ spec:
               mountPath: /home/linuxbrew
             - name: tmp
               mountPath: /tmp
+        # Stream new OpenCode log lines from only the read-only log subPath.
+        - name: opencode-logs
+          image: busybox:1.37.0
+          imagePullPolicy: IfNotPresent
+          command:
+            - tail
+            - -n
+            - "0"
+            - -F
+            - /var/log/opencode/opencode.log
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+          volumeMounts:
+            - name: orychamber-data
+              mountPath: /var/log/opencode
+              subPath: .local/share/opencode/log
+              readOnly: true
       volumes:
         - name: orychamber-data
           persistentVolumeClaim:
