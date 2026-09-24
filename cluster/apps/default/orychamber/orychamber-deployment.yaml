@@ -57,7 +57,7 @@ spec:
               value: "2.0.16"
             # renovate: datasource=npm depName=@openchamber/web
             - name: OPENCHAMBER_VERSION
-              value: "2.0.0"
+              value: "2.0.1"
             # renovate: datasource=npm depName=agent-browser
             - name: AGENT_BROWSER_VERSION
               value: "0.38.1"
