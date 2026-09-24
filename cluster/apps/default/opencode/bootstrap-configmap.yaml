@@ -200,7 +200,7 @@ data:
     skill_file="$HOME/.agents/skills/agent-browser/SKILL.md"
     skill_revision="v$AGENT_BROWSER_VERSION"
     skill_revision_marker="$HOME/.agent-browser-skill-revision"
-    skill_marker_value="${skill_revision}-worktree-paths"
+    skill_marker_value="$skill_revision-worktree-paths"
     if [ ! -s "$skill_file" ] \
       || [ "$(cat "$skill_revision_marker" 2>/dev/null || true)" != "$skill_marker_value" ] \
       || ! grep -Fq -- '## OpenCode cluster environment' "$skill_file"; then
