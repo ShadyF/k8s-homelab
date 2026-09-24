@@ -139,6 +139,9 @@ spec:
             - name: opencode-data
               mountPath: /home/codespace/workspaces
               subPath: workspaces
+            - name: opencode-data
+              mountPath: /home/codespace/.local/share/opencode/worktree
+              subPath: .local/share/opencode/worktree
         - name: openchamber
           image: mcr.microsoft.com/devcontainers/universal:6.1.7-noble
           imagePullPolicy: IfNotPresent

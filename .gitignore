@@ -14,3 +14,4 @@ venv/
 !.opencode/skills
 
 ./falco.yaml
+.cortexkit/magic-context/

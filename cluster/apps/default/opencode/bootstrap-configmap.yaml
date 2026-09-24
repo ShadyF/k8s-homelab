@@ -106,7 +106,8 @@ data:
     export NPM_CONFIG_PREFIX="$HOME/.npm-global"
     export npm_config_cache="$HOME/.npm"
     export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
-    mkdir -p "$NPM_CONFIG_PREFIX" "$npm_config_cache" "$HOME/.agents/skills/agent-browser" "$AGENT_BROWSER_SOCKET_DIR"
+    # Create app-user paths before Kubernetes prepares DinD's worktree subPath mount.
+    mkdir -p "$NPM_CONFIG_PREFIX" "$npm_config_cache" "$HOME/.agents/skills/agent-browser" "$AGENT_BROWSER_SOCKET_DIR" "$HOME/.local/share/opencode/worktree"
 
     package_is_pinned() {
       package_name="$1"
@@ -199,8 +200,9 @@ data:
     skill_file="$HOME/.agents/skills/agent-browser/SKILL.md"
     skill_revision="v$AGENT_BROWSER_VERSION"
     skill_revision_marker="$HOME/.agent-browser-skill-revision"
+    skill_marker_value="${skill_revision}-worktree-paths"
     if [ ! -s "$skill_file" ] \
-      || [ "$(cat "$skill_revision_marker" 2>/dev/null || true)" != "$skill_revision" ] \
+      || [ "$(cat "$skill_revision_marker" 2>/dev/null || true)" != "$skill_marker_value" ] \
       || ! grep -Fq -- '## OpenCode cluster environment' "$skill_file"; then
       curl --fail --silent --show-error --location \
         "https://raw.githubusercontent.com/vercel-labs/agent-browser/$skill_revision/skills/agent-browser/SKILL.md" \
@@ -214,7 +216,8 @@ data:
     - Start project preview servers on `0.0.0.0:4173`.
     - Browse previews at `http://opencode.default.svc.cluster.local:4173`, not localhost.
     - Close browser sessions after verification.
-    - Run Docker and Compose from canonical paths under `/home/codespace/workspaces`.
+    - Run Docker and Compose from repositories under `/home/codespace/workspaces` or native OpenCode worktrees under
+      `/home/codespace/.local/share/opencode/worktree`; both paths are mounted into DinD at the same absolute paths.
     - Treat Dockerfiles and Compose files as executable code; inspect privileged mounts, published ports, and network access first.
     - Set a unique `COMPOSE_PROJECT_NAME` when workspaces or sessions can overlap.
     - Prefer project-provided Docker and Compose commands unchanged and wait on health checks instead of fixed sleeps.
@@ -225,5 +228,5 @@ data:
     - The DinD TLS API has no Service or Ingress but is reachable through the Pod IP; never treat port 2376 as unauthenticated or expose it further.
     EOF
       mv "$skill_file.tmp" "$skill_file"
-      printf '%s\n' "$skill_revision" > "$skill_revision_marker"
+      printf '%s\n' "$skill_marker_value" > "$skill_revision_marker"
     fi
