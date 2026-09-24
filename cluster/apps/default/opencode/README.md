@@ -1,38 +1,31 @@
 # OpenCode logging
 
-OpenChamber manages the OpenCode server as a child process of the `openchamber`
-container. The `opencode-log-wrapper` ConfigMap mounts a small executable wrapper
-at `/opt/opencode-wrapper/opencode-wrapper` and `OPENCODE_BINARY` points to it.
+OpenCode v2 writes its logs to
+`$HOME/.local/share/opencode/log/opencode.log` on the `opencode-data` PVC. The
+`opencode-logs` sidecar in the `opencode` Deployment tails that file to its
+container stdout. It mounts only the log directory, read-only, rather than the
+rest of the OpenCode home directory.
 
-- `serve` invocations add `--print-logs --log-level INFO`.
-- OpenCode server stderr is redirected to the parent container's stderr stream.
-- OpenCode server stdout remains a pipe so OpenChamber can detect the listening
-  line during startup.
-- Version, help, and other non-server invocations pass through unchanged.
-
-View the managed OpenCode logs with:
+View the streamed logs with:
 
 ```sh
-kubectl logs deployment/opencode -n default -c openchamber
+kubectl logs -n default deployment/opencode -c opencode-logs -f
 ```
+
+The sidecar starts at the end of the existing file and follows the filename
+across rotation, retrying while the file is absent. It streams only new lines;
+existing log content (including the current roughly 35 MB file) is not replayed.
+
+Logs can contain sensitive prompts, model responses, tool output, or other
+private data. Restrict access to Kubernetes logs and apply appropriate
+retention controls to both the persistent PVC file and the cluster's log
+backend. The sidecar's read-only subPath mount limits its access to the log
+directory but does not remove sensitive content from the logs.
 
 ## Activation
 
-Flux applies the ConfigMap but does not restart Pods when referenced ConfigMap
-data changes. The OpenCode-specific
-`opencode.home.arpa/binary-settings-revision` pod-template annotation triggers
-the rollout for this bootstrap change. After Flux applies the manifests, wait
-for that rollout before checking logs.
-
-The bootstrap owns migration of the persisted OpenChamber setting. On every
-successful bootstrap it atomically preserves all settings and writes
-`opencodeBinary: ""`, the documented clear sentinel. OpenChamber then leaves
-the manifest-provided `OPENCODE_BINARY` value unchanged, so the manifest owns
-selection of the log wrapper and the wrapper owns selection of the installed
-OpenCode CLI. Malformed settings are rejected without replacement. For future
-bootstrap or wrapper changes, use an OpenCode-specific pod-template change or
-an intentional rollout restart; do not rely on ConfigMap reconciliation alone.
-
-OpenChamber still keeps only its normal captured stderr tail for diagnostics;
-after this redirect, managed OpenCode stderr is available through Kubernetes
-container logs instead of that OpenChamber tail.
+The bootstrap init container creates the log directory before the application
+containers start. Adding the sidecar changes the Deployment pod template and
+triggers a rollout when Flux applies it; wait for that rollout before checking
+the streamed logs. Later changes to the bootstrap ConfigMap alone do not restart
+Pods, so use an intentional rollout when a bootstrap change must take effect.

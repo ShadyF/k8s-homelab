@@ -8,6 +8,10 @@ data:
     set -o pipefail
 
     export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
+
+    # Create the OpenCode log directory before Kubernetes starts the log sidecar.
+    mkdir -p "$HOME/.local/share/opencode/log"
+
     if [ ! -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
       NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
