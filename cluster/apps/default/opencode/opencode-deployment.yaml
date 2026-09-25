@@ -89,8 +89,9 @@ spec:
             - name: bootstrap
               mountPath: /opt/opencode-bootstrap
               readOnly: true
-      containers:
+        # Keep the Docker daemon available for the pod lifetime and block app startup until TLS is ready.
         - name: dind
+          restartPolicy: Always
           # renovate: datasource=docker depName=docker versioning=docker
           image: docker:29.8.1-dind
           imagePullPolicy: IfNotPresent
@@ -115,6 +116,14 @@ spec:
             periodSeconds: 5
             timeoutSeconds: 5
             failureThreshold: 12
+          startupProbe:
+            exec:
+              command:
+                - docker
+                - info
+            periodSeconds: 5
+            timeoutSeconds: 10
+            failureThreshold: 120
           securityContext:
             privileged: true
             runAsNonRoot: false
@@ -142,6 +151,7 @@ spec:
             - name: opencode-data
               mountPath: /home/codespace/.local/share/opencode/worktree
               subPath: .local/share/opencode/worktree
+      containers:
         - name: openchamber
           image: mcr.microsoft.com/devcontainers/universal:6.1.7-noble
           imagePullPolicy: IfNotPresent
@@ -237,11 +247,9 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
           livenessProbe:
-            exec:
-              command:
-                - node
-                - -e
-                - "require('http').get('http://127.0.0.1:3000/health', r => process.exit(r.statusCode >= 200 && r.statusCode < 300 ? 0 : 1)).on('error', () => process.exit(1));"
+            httpGet:
+              path: /health
+              port: openchamber
             initialDelaySeconds: 30
             periodSeconds: 30
             timeoutSeconds: 5

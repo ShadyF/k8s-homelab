@@ -30,78 +30,49 @@ data:
     done
 
     docker_cli_path="$(command -v docker)"
-    homebrew_prefix="$(brew --prefix)"
     docker_config_dir="$HOME/.config/docker"
     export DOCKER_CONFIG="$docker_config_dir"
-    mkdir -p "$docker_config_dir/cli-plugins"
+    docker_plugin_dir="/home/linuxbrew/.linuxbrew/lib/docker/cli-plugins"
+    docker_user_plugin_dir="$DOCKER_CONFIG/cli-plugins"
+    mkdir -p "$docker_user_plugin_dir"
     test -x "$docker_cli_path"
 
-    # Discover formula-specific plugin paths without assuming a single Homebrew layout.
-    find_homebrew_plugin() {
-      formula="$1"
-      plugin_name="$2"
-      formula_prefix="$(brew --prefix "$formula")"
-      for candidate in \
-        "$homebrew_prefix/libexec/docker/cli-plugins/$plugin_name" \
-        "$homebrew_prefix/lib/docker/cli-plugins/$plugin_name" \
-        "$formula_prefix/libexec/docker/cli-plugins/$plugin_name" \
-        "$formula_prefix/lib/docker/cli-plugins/$plugin_name" \
-        "$formula_prefix/bin/$plugin_name"; do
-        if [ -x "$candidate" ]; then
-          printf '%s\n' "$candidate"
-          return 0
+    # Point Docker's native plugin directory at Homebrew's fixed plugin locations.
+    for plugin_name in docker-compose docker-buildx; do
+      plugin_target="$docker_plugin_dir/$plugin_name"
+      plugin_link="$docker_user_plugin_dir/$plugin_name"
+      test -x "$plugin_target" || { printf 'Docker plugin is missing or not executable: %s\n' "$plugin_target" >&2; exit 1; }
+      if [ -L "$plugin_link" ]; then
+        existing_target="$(readlink "$plugin_link")"
+        case "$existing_target" in
+          "$plugin_target"|/home/linuxbrew/.linuxbrew/*/docker/cli-plugins/"$plugin_name"|/home/linuxbrew/.linuxbrew/*/libexec/docker/cli-plugins/"$plugin_name"|/home/linuxbrew/.linuxbrew/Cellar/*/bin/"$plugin_name") ;;
+          *) printf 'Refusing to replace unexpected Docker plugin link: %s -> %s\n' "$plugin_link" "$existing_target" >&2; exit 1 ;;
+        esac
+        if [ "$existing_target" != "$plugin_target" ]; then
+          rm "$plugin_link"
+          ln -s "$plugin_target" "$plugin_link"
         fi
-      done
-      return 1
-    }
+      elif [ -e "$plugin_link" ]; then
+        printf 'Refusing to replace unexpected Docker plugin file: %s\n' "$plugin_link" >&2
+        exit 1
+      else
+        ln -s "$plugin_target" "$plugin_link"
+      fi
+    done
 
-    # Link Homebrew's plugin binaries into Docker's user plugin directory.
-    docker_compose_path="$(find_homebrew_plugin docker-compose docker-compose)"
-    docker_buildx_path="$(find_homebrew_plugin docker-buildx docker-buildx)"
-    test -x "$docker_compose_path"
-    test -x "$docker_buildx_path"
-    ln -sfn "$docker_compose_path" "$docker_config_dir/cli-plugins/docker-compose"
-    ln -sfn "$docker_buildx_path" "$docker_config_dir/cli-plugins/docker-buildx"
-    test -x "$docker_config_dir/cli-plugins/docker-compose"
-    test -x "$docker_config_dir/cli-plugins/docker-buildx"
-
-    # Verify client-side commands without contacting the not-yet-started DinD daemon.
-    docker_client_version="$("$docker_cli_path" version --format '{{.Client.Version}}' 2>/dev/null || true)"
-    if [ -z "$docker_client_version" ]; then
-      "$docker_cli_path" version --help >/dev/null
-    fi
+    # Check Docker and plugin command versions without contacting the DinD daemon.
     "$docker_cli_path" --version >/dev/null
     "$docker_cli_path" compose version --short >/dev/null
     "$docker_cli_path" buildx version >/dev/null
 
-    # Wait for TLS material and the sidecar daemon so early agent commands fail clearly.
-    mkdir -p "$HOME/.local/bin" /certs/client
-    cat > "$HOME/.local/bin/docker" <<'EOF'
-    #!/bin/sh
-    set -eu
-
-    docker_cli=/home/linuxbrew/.linuxbrew/bin/docker
-    if [ "${DOCKER_HOST:-}" = "tcp://127.0.0.1:2376" ]; then
-      max_attempts=30
-      attempt=0
-      while [ "$attempt" -lt "$max_attempts" ]; do
-        if [ -r "${DOCKER_CERT_PATH:-/certs/client}/ca.pem" ] \
-          && [ -r "${DOCKER_CERT_PATH:-/certs/client}/cert.pem" ] \
-          && [ -r "${DOCKER_CERT_PATH:-/certs/client}/key.pem" ] \
-          && "$docker_cli" info >/dev/null 2>&1; then
-          break
-        fi
-        attempt=$((attempt + 1))
-        sleep 1
-      done
-      if [ "$attempt" -eq "$max_attempts" ]; then
-        printf '%s\n' 'Docker is starting or unavailable; retry after the DinD sidecar is ready.' >&2
-        exit 1
-      fi
+    # Remove only the known persisted wait wrapper, then keep Homebrew Docker first on PATH.
+    old_docker_wrapper="$HOME/.local/bin/docker"
+    if [ -f "$old_docker_wrapper" ] && grep -Fq 'docker_cli=/home/linuxbrew/.linuxbrew/bin/docker' "$old_docker_wrapper" \
+      && grep -Fq 'retry after the DinD sidecar is ready.' "$old_docker_wrapper"; then
+      rm -f "$old_docker_wrapper"
     fi
-    exec "$docker_cli" "$@"
-    EOF
-    chmod 0755 "$HOME/.local/bin/docker"
+    export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
+    test "$(command -v docker)" = "$docker_cli_path"
 
     export NPM_CONFIG_PREFIX="$HOME/.npm-global"
     export npm_config_cache="$HOME/.npm"
@@ -159,6 +130,7 @@ data:
           : 'OpenChamber settings could not be read; refusing to overwrite it.\n');
         process.exit(1);
       }
+      process.exit(0);
     }
 
     // Keep every setting and add the empty sentinel used to clear the binary override.
@@ -166,6 +138,7 @@ data:
       process.stderr.write('OpenChamber settings must contain a JSON object; refusing to overwrite it.\n');
       process.exit(1);
     }
+    if (settings.opencodeBinary === undefined || settings.opencodeBinary === '') process.exit(0);
     settings.opencodeBinary = '';
 
     // Replace the file in one same-directory rename while retaining restrictive permissions.
