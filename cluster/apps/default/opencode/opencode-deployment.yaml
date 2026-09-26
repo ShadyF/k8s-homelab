@@ -282,7 +282,7 @@ spec:
               readOnly: true
         # Stream new OpenCode file logs through a separate Kubernetes log stream.
         - name: opencode-logs
-          image: busybox:1.37.0
+          image: busybox:1.38.0
           imagePullPolicy: IfNotPresent
           command:
             - tail

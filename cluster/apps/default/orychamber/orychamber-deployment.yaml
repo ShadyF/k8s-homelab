@@ -208,7 +208,7 @@ spec:
               mountPath: /tmp
         # Stream new OpenCode log lines from only the read-only log subPath.
         - name: opencode-logs
-          image: busybox:1.37.0
+          image: busybox:1.38.0
           imagePullPolicy: IfNotPresent
           command:
             - tail
