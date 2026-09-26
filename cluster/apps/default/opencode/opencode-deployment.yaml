@@ -62,9 +62,6 @@ spec:
             - name: AGENT_BROWSER_SOCKET_DIR
               value: /tmp/agent-browser
           securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
@@ -212,13 +209,13 @@ spec:
             capabilities:
               drop:
                 - ALL
-          # Restore the server's prior combined-container memory ceiling; verify its post-split peak after rollout.
+          # Bound server memory separately and watch its peak during busy sessions.
           resources:
             requests:
               cpu: 1
               memory: 5Gi
             limits:
-              memory: 10Gi
+              memory: 6Gi
           volumeMounts:
             - name: opencode-data
               mountPath: /home/codespace
@@ -348,7 +345,7 @@ spec:
               cpu: 250m
               memory: 1Gi
             limits:
-              memory: 5Gi
+              memory: 2Gi
           volumeMounts:
             - name: opencode-data
               mountPath: /home/codespace
@@ -401,7 +398,7 @@ spec:
         - name: opencode-homebrew
           persistentVolumeClaim:
             claimName: opencode-homebrew
-        # Share generated TLS material while exposing only the DinD client directory to OpenChamber.
+        # Share generated TLS material with both app containers through the client directory.
         - name: docker-certs
           emptyDir:
             sizeLimit: 16Mi

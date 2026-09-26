@@ -14,7 +14,7 @@ kubectl logs -n default deployment/opencode -c opencode-logs -f
 
 The sidecar starts at the end of the existing file and follows the filename
 across rotation, retrying while the file is absent. It streams only new lines;
-existing log content (including the current roughly 35 MB file) is not replayed.
+existing log content is not replayed.
 
 Logs can contain sensitive prompts, model responses, tool output, or other
 private data. Restrict access to Kubernetes logs and apply appropriate
