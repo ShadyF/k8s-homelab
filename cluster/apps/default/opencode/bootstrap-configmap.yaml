@@ -4,6 +4,119 @@ metadata:
   name: opencode-bootstrap
   namespace: default
 data:
+  setup-docker-context.sh: |
+    set -eu
+
+    # Keep Docker context files private because they include a copy of the client key.
+    umask 077
+
+    # Use the same Docker defaults as the extension service, not the app container's connection variables.
+    unset DOCKER_HOST DOCKER_CONTEXT DOCKER_TLS_VERIFY DOCKER_CERT_PATH
+    export DOCKER_CONFIG="$HOME/.docker"
+    context_name=openchamber-dind
+    docker_cli=/home/linuxbrew/.linuxbrew/bin/docker
+    daemon_host=tcp://127.0.0.1:2376
+    ca_file=/certs/client/ca.pem
+    cert_file=/certs/client/cert.pem
+    key_file=/certs/client/key.pem
+
+    # Fail before changing the persisted context if Homebrew Docker or the current DinD certificates are unavailable.
+    test -x "$docker_cli"
+    test -r "$ca_file"
+    test -r "$cert_file"
+    test -r "$key_file"
+    mkdir -p "$DOCKER_CONFIG"
+
+    # Refresh the named context in place so the persistent Docker config always points at this pod's TLS material.
+    if "$docker_cli" context inspect "$context_name" >/dev/null 2>&1; then
+      "$docker_cli" context update "$context_name" --docker "host=$daemon_host,ca=$ca_file,cert=$cert_file,key=$key_file,skip-tls-verify=false"
+    else
+      "$docker_cli" context create "$context_name" --docker "host=$daemon_host,ca=$ca_file,cert=$cert_file,key=$key_file,skip-tls-verify=false"
+    fi
+    "$docker_cli" context use "$context_name" >/dev/null
+    printf 'Selected Docker context: %s\n' "$context_name"
+
+    # Verify the selected context reaches the local daemon without exposing certificate contents or daemon details in logs.
+    timeout --kill-after=5s 30s env -i HOME="$HOME" PATH="$PATH" DOCKER_CONFIG="$DOCKER_CONFIG" "$docker_cli" info >/dev/null
+  start-openchamber.sh: |
+    set -eu
+
+    # Run context setup in a child shell so its Docker environment changes do not affect OpenChamber.
+    /bin/bash /opt/opencode-bootstrap/setup-docker-context.sh
+
+    # Replace the wrapper with OpenChamber so it receives signals directly as PID 1.
+    exec /home/codespace/.npm-global/bin/openchamber "$@"
+  start-opencode-service.sh: |
+    set -eu
+
+    # Write the service password without passing it through OpenCode's logged CLI arguments.
+    node /opt/opencode-bootstrap/configure-opencode-service.js
+
+    # Replace the wrapper with the loopback-only service so Kubernetes can manage its lifecycle directly.
+    exec /home/codespace/.npm-global/bin/opencode serve --service --hostname 127.0.0.1 --port 4096
+  configure-opencode-service.js: |
+    'use strict';
+
+    const fs = require('node:fs');
+    const path = require('node:path');
+
+    // Keep the password out of logs and reject an absent or empty secret before touching configuration.
+    const password = process.env.OPENCODE_SERVER_PASSWORD;
+    if (!password) {
+      process.stderr.write('OpenCode service password is not configured.\n');
+      process.exit(1);
+    }
+
+    const configDirectory = '/home/codespace/.config/opencode';
+    const configPath = path.join(configDirectory, 'service.json');
+    let config = {};
+
+    // Read only a regular, non-symlink config and preserve every existing setting.
+    try {
+      const stat = fs.lstatSync(configPath);
+      if (!stat.isFile()) throw new Error('invalid config file type');
+      const descriptor = fs.openSync(configPath, fs.constants.O_RDONLY | fs.constants.O_NOFOLLOW);
+      try {
+        config = JSON.parse(fs.readFileSync(descriptor, 'utf8'));
+      } finally {
+        fs.closeSync(descriptor);
+      }
+      if (!config || typeof config !== 'object' || Array.isArray(config)) throw new Error('invalid config object');
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        process.stderr.write('OpenCode service configuration is invalid; refusing to replace it.\n');
+        process.exit(1);
+      }
+    }
+    config.password = password;
+
+    // Atomically replace the file with private permissions and sync both file and directory.
+    let temporaryPath;
+    try {
+      fs.mkdirSync(configDirectory, { recursive: true, mode: 0o700 });
+      temporaryPath = path.join(configDirectory, `.service.json.${process.pid}.${Date.now()}.tmp`);
+      const descriptor = fs.openSync(temporaryPath, 'wx', 0o600);
+      try {
+        fs.writeFileSync(descriptor, JSON.stringify(config, null, 2) + '\n', 'utf8');
+        fs.fsyncSync(descriptor);
+      } finally {
+        fs.closeSync(descriptor);
+      }
+      fs.chmodSync(temporaryPath, 0o600);
+      fs.renameSync(temporaryPath, configPath);
+      const directoryDescriptor = fs.openSync(configDirectory, 'r');
+      try {
+        fs.fsyncSync(directoryDescriptor);
+      } finally {
+        fs.closeSync(directoryDescriptor);
+      }
+    } catch (_) {
+      if (temporaryPath) {
+        try { fs.rmSync(temporaryPath, { force: true }); } catch (_) {}
+      }
+      process.stderr.write('OpenCode service configuration could not be written safely.\n');
+      process.exit(1);
+    }
   bootstrap.sh: |
     set -o pipefail
 

@@ -18,8 +18,8 @@ installs the pinned `@opencode/cli` `2.0.15`, `@openchamber/web` `2.0.0`, and
 `agent-browser` `0.38.1` packages into persistent workspace storage.
 
 Compared with `cluster/apps/default/opencode/`, this deployment intentionally
-has no nested container engine, cluster credentials, Kubernetes API access,
-Plannotator, or Plannotator service. It has:
+has no nested container engine, cluster credentials, or Kubernetes API access.
+It has:
 
 - a 20 GiB `orychamber-data` workspace PVC;
 - a 5 GiB writable `orychamber-homebrew` PVC;

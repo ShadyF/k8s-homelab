@@ -151,13 +151,100 @@ spec:
             - name: opencode-data
               mountPath: /home/codespace/.local/share/opencode/worktree
               subPath: .local/share/opencode/worktree
+        # Keep the authenticated OpenCode service independent of OpenChamber's process lifecycle.
+        - name: opencode-service
+          restartPolicy: Always
+          image: mcr.microsoft.com/devcontainers/universal:6.1.7-noble
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/bash
+          args:
+            - -e
+            - /opt/opencode-bootstrap/start-opencode-service.sh
+          env:
+            - name: HOME
+              value: /home/codespace
+            - name: XDG_CONFIG_HOME
+              value: /home/codespace/.config
+            - name: XDG_DATA_HOME
+              value: /home/codespace/.local/share
+            - name: PATH
+              value: /home/codespace/.local/bin:/home/codespace/.npm-global/bin:/home/codespace/.local/share/pnpm:/home/linuxbrew/.linuxbrew/bin:/usr/local/share/nvm/current/bin:/usr/local/sbin:/usr/bin:/sbin:/bin
+            - name: NPM_CONFIG_PREFIX
+              value: /home/codespace/.npm-global
+            - name: PNPM_HOME
+              value: /home/codespace/.local/share/pnpm
+            - name: DOCKER_HOST
+              value: tcp://127.0.0.1:2376
+            - name: DOCKER_TLS_VERIFY
+              value: "1"
+            - name: DOCKER_CERT_PATH
+              value: /certs/client
+            - name: DOCKER_CONFIG
+              value: /home/codespace/.config/docker
+            - name: OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS
+              value: "true"
+            - name: OPENCODE_ENABLE_EXA
+              value: "true"
+            - name: AGENT_BROWSER_CDP
+              value: ws://browserless-chrome-svc.default.svc.cluster.local:3000/chrome
+            - name: AGENT_BROWSER_CONTENT_BOUNDARIES
+              value: "1"
+            - name: AGENT_BROWSER_SOCKET_DIR
+              value: /tmp/agent-browser
+          envFrom:
+            - secretRef:
+                name: opencode-openchamber-secrets
+          workingDir: /home/codespace/workspaces
+          # Gate OpenChamber startup with an in-container check of the loopback-only service.
+          startupProbe:
+            exec:
+              command:
+                - node
+                - -e
+                - "const net=require('node:net'); const socket=net.createConnection({host:'127.0.0.1',port:4096}); const timer=setTimeout(()=>{socket.destroy();process.exit(1)},3000); socket.once('connect',()=>{clearTimeout(timer);socket.end();process.exit(0)}); socket.once('error',()=>{clearTimeout(timer);process.exit(1)});"
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 120
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          # Restore the server's prior combined-container memory ceiling; verify its post-split peak after rollout.
+          resources:
+            requests:
+              cpu: 1
+              memory: 5Gi
+            limits:
+              memory: 10Gi
+          volumeMounts:
+            - name: opencode-data
+              mountPath: /home/codespace
+            - name: opencode-homebrew
+              mountPath: /home/linuxbrew
+            - name: tmp
+              mountPath: /tmp
+            - name: docker-certs
+              mountPath: /certs/client
+              subPath: client
+              readOnly: true
+            - name: bootstrap
+              mountPath: /opt/opencode-bootstrap
+              readOnly: true
+            - name: opencode-api-access
+              mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+              readOnly: true
       containers:
         - name: openchamber
           image: mcr.microsoft.com/devcontainers/universal:6.1.7-noble
           imagePullPolicy: IfNotPresent
           command:
-            - /home/codespace/.npm-global/bin/openchamber
+            - /bin/bash
           args:
+            - -e
+            - /opt/opencode-bootstrap/start-openchamber.sh
             - serve
             - --port
             - $(OPENCHAMBER_PORT)
@@ -189,6 +276,10 @@ spec:
               value: ~/.npm-global/bin/opencode
             - name: OPENCODE_PORT
               value: "4096"
+            - name: OPENCODE_HOST
+              value: http://127.0.0.1:4096
+            - name: OPENCODE_SKIP_START
+              value: "true"
             - name: OPENCHAMBER_OPENCODE_HOSTNAME
               value: 127.0.0.1
             - name: OPENCHAMBER_OPENCODE_CWD
@@ -211,12 +302,6 @@ spec:
               value: "1"
             - name: AGENT_BROWSER_SOCKET_DIR
               value: /tmp/agent-browser
-            - name: PLANNOTATOR_REMOTE
-              value: "1"
-            - name: PLANNOTATOR_PORT
-              value: "19432"
-            - name: PLANNOTATOR_SHARE
-              value: disabled
           envFrom:
             - secretRef:
                 name: opencode-openchamber-secrets
@@ -226,8 +311,6 @@ spec:
               containerPort: 3000
             - name: preview
               containerPort: 4173
-            - name: plannotator
-              containerPort: 19432
           startupProbe:
             exec:
               command:
@@ -259,13 +342,13 @@ spec:
             capabilities:
               drop:
                 - ALL
-          # Reserve observed interactive usage while retaining headroom for busy sessions.
+          # Start the separate UI budget conservatively; its post-split peak still needs observation.
           resources:
             requests:
-              cpu: 1
-              memory: 5Gi
+              cpu: 250m
+              memory: 1Gi
             limits:
-              memory: 10Gi
+              memory: 5Gi
           volumeMounts:
             - name: opencode-data
               mountPath: /home/codespace
@@ -276,6 +359,9 @@ spec:
             - name: docker-certs
               mountPath: /certs/client
               subPath: client
+              readOnly: true
+            - name: bootstrap
+              mountPath: /opt/opencode-bootstrap
               readOnly: true
             - name: opencode-api-access
               mountPath: /var/run/secrets/kubernetes.io/serviceaccount
