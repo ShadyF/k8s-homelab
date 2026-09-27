@@ -9,4 +9,4 @@ spec:
   storageClassName: longhorn
   resources:
     requests:
-      storage: 400Mi
+      storage: 600Mi
