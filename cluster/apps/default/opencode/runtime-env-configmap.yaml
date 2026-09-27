@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opencode-runtime-env
+  namespace: default
+data:
+  HOME: /home/codespace
+  XDG_CONFIG_HOME: /home/codespace/.config
+  XDG_DATA_HOME: /home/codespace/.local/share
+  PATH: /home/codespace/.local/bin:/home/codespace/.npm-global/bin:/home/codespace/.local/share/pnpm:/home/linuxbrew/.linuxbrew/bin:/usr/local/share/nvm/current/bin:/usr/local/sbin:/usr/bin:/sbin:/bin
+  NPM_CONFIG_PREFIX: /home/codespace/.npm-global
+  PNPM_HOME: /home/codespace/.local/share/pnpm
+  DOCKER_HOST: tcp://127.0.0.1:2376
+  DOCKER_TLS_VERIFY: "1"
+  DOCKER_CERT_PATH: /certs/client
+  DOCKER_CONFIG: /home/codespace/.docker
+  OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS: "true"
+  OPENCODE_ENABLE_EXA: "true"
+  AGENT_BROWSER_CDP: ws://browserless-chrome-svc.default.svc.cluster.local:3000/chrome
+  AGENT_BROWSER_CONTENT_BOUNDARIES: "1"
+  AGENT_BROWSER_SOCKET_DIR: /tmp/agent-browser
