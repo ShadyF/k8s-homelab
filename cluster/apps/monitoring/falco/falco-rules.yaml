@@ -54,9 +54,11 @@ data:
           override:
             condition: append
 
+        # Allow the Debian PostgreSQL healthcheck wrapper to resolve its user account.
         - macro: user_read_sensitive_file_conditions
           condition: >
             or (container.image.repository == "docker.io/library/alpine" and proc.name == "adduser" and k8s.ns.name == "monitoring")
+            or (fd.name == "/etc/shadow" and proc.name == "pg_isready" and proc.exepath == "/usr/bin/perl" and proc.pname == "sh" and user.uid == 0 and proc.cmdline startswith "pg_isready /usr/bin/pg_isready -U ")
           override:
             condition: append
 
