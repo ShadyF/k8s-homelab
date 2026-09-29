@@ -22,6 +22,8 @@ metadata:
   labels:
     app.kubernetes.io/name: opencode
     app.kubernetes.io/component: docker-data
+    recurring-job.longhorn.io/source: enabled
+    recurring-job-group.longhorn.io/nobackup: enabled
 spec:
   accessModes:
     - ReadWriteOnce
