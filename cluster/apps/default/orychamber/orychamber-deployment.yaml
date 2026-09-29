@@ -122,13 +122,12 @@ spec:
             periodSeconds: 5
             timeoutSeconds: 5
             failureThreshold: 120
-          # Keep the Pod unready when the running service stops answering HTTP requests.
+          # Keep the Pod unready when the authenticated service stops answering HTTP requests.
           readinessProbe:
             exec:
               command:
                 - node
-                - -e
-                - "const req=require('node:http').get('http://127.0.0.1:4096/api/info',r=>{r.resume();process.exit(r.statusCode>=200&&r.statusCode<300?0:1)});req.setTimeout(3000,()=>req.destroy());req.on('error',()=>process.exit(1));"
+                - /opt/orychamber-bootstrap/check-opencode-health.js
             periodSeconds: 10
             timeoutSeconds: 5
           # Restart only the service after sustained failures, not transient session load.
@@ -136,8 +135,7 @@ spec:
             exec:
               command:
                 - node
-                - -e
-                - "const req=require('node:http').get('http://127.0.0.1:4096/api/info',r=>{r.resume();process.exit(r.statusCode>=200&&r.statusCode<300?0:1)});req.setTimeout(3000,()=>req.destroy());req.on('error',()=>process.exit(1));"
+                - /opt/orychamber-bootstrap/check-opencode-health.js
             periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 6
@@ -164,6 +162,9 @@ spec:
               mountPath: /home/linuxbrew
             - name: tmp
               mountPath: /tmp
+            - name: orychamber-bootstrap
+              mountPath: /opt/orychamber-bootstrap
+              readOnly: true
       containers:
         - name: openchamber
           # renovate: datasource=docker depName=mcr.microsoft.com/devcontainers/universal versioning=docker

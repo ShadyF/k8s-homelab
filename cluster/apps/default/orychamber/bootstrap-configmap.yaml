@@ -4,6 +4,33 @@ metadata:
   name: orychamber-bootstrap
   namespace: default
 data:
+  check-opencode-health.js: |
+    'use strict';
+
+    const http = require('node:http');
+
+    // Require the same service password used by OpenCode and OpenChamber.
+    const password = process.env.OPENCODE_PASSWORD;
+    if (!password) {
+      process.exit(1);
+    }
+
+    // Authenticate the loopback request without exposing the password in probe arguments.
+    const authorization = 'Basic ' + Buffer.from('opencode:' + password).toString('base64');
+    const request = http.get('http://127.0.0.1:4096/api/info', {
+      headers: { Authorization: authorization },
+    }, response => {
+      // Drain the response and accept only successful HTTP status codes.
+      response.resume();
+      response.on('end', () => {
+        process.exit(response.statusCode >= 200 && response.statusCode < 300 ? 0 : 1);
+      });
+      response.on('error', () => process.exit(1));
+    });
+
+    // Fail after three seconds of socket inactivity; Kubernetes bounds total probe time.
+    request.setTimeout(3000, () => request.destroy());
+    request.on('error', () => process.exit(1));
   check-openchamber-health.js: |
     'use strict';
 
