@@ -20,7 +20,7 @@ spec:
         app.kubernetes.io/name: orychamber
         app.kubernetes.io/component: backend
       annotations:
-        orychamber.home.arpa/binary-settings-revision: "1"
+        orychamber.home.arpa/binary-settings-revision: "2"
     spec:
       automountServiceAccountToken: false
       securityContext:
