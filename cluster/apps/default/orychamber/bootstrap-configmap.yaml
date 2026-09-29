@@ -4,33 +4,77 @@ metadata:
   name: orychamber-bootstrap
   namespace: default
 data:
-  check-opencode-health.js: |
+  start-opencode-service.sh: |
+    set -eu
+
+    # Write the service password without passing it through OpenCode's logged CLI arguments.
+    node /opt/orychamber-bootstrap/configure-opencode-service.js
+
+    # Replace the wrapper with the loopback-only service so Kubernetes can manage its lifecycle directly.
+    exec /home/codespace/.npm-global/bin/opencode --print-logs serve --service --hostname 127.0.0.1 --port 4096
+  configure-opencode-service.js: |
     'use strict';
 
-    const http = require('node:http');
+    const fs = require('node:fs');
+    const path = require('node:path');
 
-    // Require the same service password used by OpenCode and OpenChamber.
-    const password = process.env.OPENCODE_PASSWORD;
+    // Keep the password out of logs and reject an absent or empty secret before touching configuration.
+    const password = process.env.OPENCODE_SERVER_PASSWORD;
     if (!password) {
+      process.stderr.write('OpenCode service password is not configured.\n');
       process.exit(1);
     }
 
-    // Authenticate the loopback request without exposing the password in probe arguments.
-    const authorization = 'Basic ' + Buffer.from('opencode:' + password).toString('base64');
-    const request = http.get('http://127.0.0.1:4096/api/info', {
-      headers: { Authorization: authorization },
-    }, response => {
-      // Drain the response and accept only successful HTTP status codes.
-      response.resume();
-      response.on('end', () => {
-        process.exit(response.statusCode >= 200 && response.statusCode < 300 ? 0 : 1);
-      });
-      response.on('error', () => process.exit(1));
-    });
+    const configDirectory = '/home/codespace/.config/opencode';
+    const configPath = path.join(configDirectory, 'service.json');
+    let config = {};
 
-    // Fail after three seconds of socket inactivity; Kubernetes bounds total probe time.
-    request.setTimeout(3000, () => request.destroy());
-    request.on('error', () => process.exit(1));
+    // Read only a regular, non-symlink config and preserve every existing setting.
+    try {
+      const stat = fs.lstatSync(configPath);
+      if (!stat.isFile()) throw new Error('invalid config file type');
+      const descriptor = fs.openSync(configPath, fs.constants.O_RDONLY | fs.constants.O_NOFOLLOW);
+      try {
+        config = JSON.parse(fs.readFileSync(descriptor, 'utf8'));
+      } finally {
+        fs.closeSync(descriptor);
+      }
+      if (!config || typeof config !== 'object' || Array.isArray(config)) throw new Error('invalid config object');
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        process.stderr.write('OpenCode service configuration is invalid; refusing to replace it.\n');
+        process.exit(1);
+      }
+    }
+    config.password = password;
+
+    // Atomically replace the file with private permissions and sync both file and directory.
+    let temporaryPath;
+    try {
+      fs.mkdirSync(configDirectory, { recursive: true, mode: 0o700 });
+      temporaryPath = path.join(configDirectory, '.service.json.' + process.pid + '.' + Date.now() + '.tmp');
+      const descriptor = fs.openSync(temporaryPath, 'wx', 0o600);
+      try {
+        fs.writeFileSync(descriptor, JSON.stringify(config, null, 2) + '\n', 'utf8');
+        fs.fsyncSync(descriptor);
+      } finally {
+        fs.closeSync(descriptor);
+      }
+      fs.chmodSync(temporaryPath, 0o600);
+      fs.renameSync(temporaryPath, configPath);
+      const directoryDescriptor = fs.openSync(configDirectory, 'r');
+      try {
+        fs.fsyncSync(directoryDescriptor);
+      } finally {
+        fs.closeSync(directoryDescriptor);
+      }
+    } catch (_) {
+      if (temporaryPath) {
+        try { fs.rmSync(temporaryPath, { force: true }); } catch (_) {}
+      }
+      process.stderr.write('OpenCode service configuration could not be written safely.\n');
+      process.exit(1);
+    }
   check-openchamber-health.js: |
     'use strict';
 

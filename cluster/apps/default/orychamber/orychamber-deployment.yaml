@@ -97,15 +97,10 @@ spec:
           image: mcr.microsoft.com/devcontainers/universal:6.1.7-noble
           imagePullPolicy: IfNotPresent
           command:
-            - /home/codespace/.npm-global/bin/opencode
+            - /bin/bash
           args:
-            - --print-logs
-            - serve
-            - --service
-            - --hostname
-            - 127.0.0.1
-            - --port
-            - "4096"
+            - -e
+            - /opt/orychamber-bootstrap/start-opencode-service.sh
           envFrom:
             - secretRef:
                 name: orychamber-openchamber-secrets
@@ -122,23 +117,6 @@ spec:
             periodSeconds: 5
             timeoutSeconds: 5
             failureThreshold: 120
-          # Keep the Pod unready when the authenticated service stops answering HTTP requests.
-          readinessProbe:
-            exec:
-              command:
-                - node
-                - /opt/orychamber-bootstrap/check-opencode-health.js
-            periodSeconds: 10
-            timeoutSeconds: 5
-          # Restart only the service after sustained failures, not transient session load.
-          livenessProbe:
-            exec:
-              command:
-                - node
-                - /opt/orychamber-bootstrap/check-opencode-health.js
-            periodSeconds: 30
-            timeoutSeconds: 5
-            failureThreshold: 6
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000
