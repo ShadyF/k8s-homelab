@@ -4,6 +4,24 @@ metadata:
   name: orychamber-bootstrap
   namespace: default
 data:
+  check-openchamber-health.js: |
+    'use strict';
+
+    const http = require('node:http');
+
+    // Return success only when OpenChamber reports a successful, ready OpenCode connection.
+    http.get('http://127.0.0.1:3000/health', response => {
+      let body = '';
+      response.on('data', chunk => body += chunk);
+      response.on('end', () => {
+        try {
+          const health = JSON.parse(body);
+          process.exit(response.statusCode >= 200 && response.statusCode < 300 && health.openCodeRunning === true && health.isOpenCodeReady === true ? 0 : 1);
+        } catch (_) {
+          process.exit(1);
+        }
+      });
+    }).on('error', () => process.exit(1));
   bootstrap.sh: |
     # Stop immediately when any pipeline command fails.
     set -o pipefail
@@ -144,3 +162,21 @@ data:
       mv "$skill_file.tmp" "$skill_file"
       printf '%s\n' "$skill_revision" > "$skill_revision_marker"
     fi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orychamber-runtime-env
+  namespace: default
+data:
+  HOME: /home/codespace
+  XDG_CONFIG_HOME: /home/codespace/.config
+  XDG_DATA_HOME: /home/codespace/.local/share
+  PATH: /home/codespace/.local/bin:/home/codespace/.npm-global/bin:/home/codespace/.local/share/pnpm:/home/linuxbrew/.linuxbrew/bin:/usr/local/share/nvm/current/bin:/usr/local/sbin:/usr/bin:/sbin:/bin
+  NPM_CONFIG_PREFIX: /home/codespace/.npm-global
+  PNPM_HOME: /home/codespace/.local/share/pnpm
+  OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS: "true"
+  OPENCODE_ENABLE_EXA: "true"
+  AGENT_BROWSER_CDP: ws://browserless-chrome-svc.default.svc.cluster.local:3000/chrome
+  AGENT_BROWSER_CONTENT_BOUNDARIES: "1"
+  AGENT_BROWSER_SOCKET_DIR: /tmp/agent-browser
