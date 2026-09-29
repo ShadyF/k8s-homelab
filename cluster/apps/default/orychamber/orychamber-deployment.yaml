@@ -154,9 +154,9 @@ spec:
           resources:
             requests:
               cpu: 1
-              memory: 6Gi
+              memory: 2Gi
             limits:
-              memory: 12Gi
+              memory: 4Gi
           volumeMounts:
             - name: orychamber-data
               mountPath: /home/codespace
