@@ -2,7 +2,7 @@
 
 Orychamber is an additive OpenChamber deployment for the `default` namespace.
 It keeps the OpenCode and OpenChamber workflow from `opencode` while giving it
-its own names, storage, services, log sidecar, and public host:
+its own names, storage, services, and public host:
 
 - UI: `https://orychamber.${SECRET_DOMAIN}`
 - Preview service: `http://orychamber-preview.default.svc.cluster.local:4173`
@@ -10,12 +10,17 @@ its own names, storage, services, log sidecar, and public host:
 
 ## Architecture
 
-The Deployment runs one `openchamber` application container, one bootstrap init
-container, and one `opencode-logs` sidecar, with `Recreate` strategy on amd64
-nodes. The application and bootstrap containers use the pinned
-`mcr.microsoft.com/devcontainers/universal:6.1.7-noble` image. Bootstrap
-installs the pinned `@opencode/cli` `2.0.15`, `@openchamber/web` `2.0.0`, and
-`agent-browser` `0.38.1` packages into persistent workspace storage.
+The Deployment runs a bootstrap init container, a restartable `opencode-service`
+init sidecar, and an `openchamber` application container, with `Recreate`
+strategy on amd64 nodes. Bootstrap installs the pinned OpenCode, OpenChamber,
+and agent-browser packages declared in the Deployment into persistent workspace
+storage.
+
+OpenCode runs independently on `127.0.0.1:4096`, and OpenChamber connects to it
+through the shared Pod network. Kubernetes starts OpenChamber only after the
+OpenCode service accepts connections. Direct service probes remove the Pod from
+ready endpoints when OpenCode is unhealthy and restart only the service after a
+sustained failure.
 
 Compared with `cluster/apps/default/opencode/`, this deployment intentionally
 has no nested container engine, cluster credentials, or Kubernetes API access.
@@ -24,8 +29,6 @@ It has:
 - a 20 GiB `orychamber-data` workspace PVC;
 - a 5 GiB writable `orychamber-homebrew` PVC;
 - a public UI Service on port 3000 and an internal preview Service on port 4173;
-- a BusyBox `opencode-logs` sidecar that reads only the OpenCode log directory
-  from `orychamber-data` through a read-only subPath mount;
 - unrestricted egress, with ingress limited to the UI ingress controller and
   Browserless preview traffic.
 
@@ -41,27 +44,6 @@ Browserless CDP and the `orychamber-preview` service. Start preview servers on
 
 Provider and model authentication are intentionally not preconfigured here.
 Configure the required provider credentials and model settings after launch.
-
-## OpenCode logs
-
-OpenCode v2 writes logs to
-`$HOME/.local/share/opencode/log/opencode.log` on the `orychamber-data` PVC.
-Bootstrap creates the directory before the application containers start. The
-`opencode-logs` sidecar tails the file to its container stdout and mounts only
-that log directory, read-only; it does not have access to the rest of the home
-directory.
-
-Follow the streamed logs with:
-
-```sh
-kubectl logs -n default deployment/orychamber -c opencode-logs -f
-```
-
-The sidecar starts at the end of the current file, follows the filename across
-rotation, and retries while the file is absent. Existing lines are not replayed.
-Logs may contain sensitive prompts, model responses, tool output, or other
-private data. Restrict access to Kubernetes logs and set suitable retention for
-both the PVC file and the cluster log backend.
 
 ## Secret provisioning
 
@@ -96,9 +78,9 @@ plaintext.
 
 Flux discovers this directory through the recursive `cluster/apps` source. It
 decrypts `secrets.enc.yaml` when present, substitutes `${SECRET_DOMAIN}`, and
-reconciles the manifests. Adding the sidecar changes the Deployment pod
-template and triggers a rollout when Flux applies it. ConfigMap changes alone
-do not restart an existing Pod; for future bootstrap changes, update the
+reconciles the manifests. Deployment changes trigger a rollout when Flux applies
+them. ConfigMap changes alone do not restart an existing Pod; for future
+bootstrap changes, update the
 `orychamber.home.arpa/binary-settings-revision` Pod-template annotation or
 intentionally restart the Deployment.
 
@@ -108,12 +90,13 @@ After the encrypted Secret is available and Flux has reconciled, verify with:
 kubectl -n default get deployment,pod,svc,ingress,pvc -l app.kubernetes.io/name=orychamber
 kubectl -n default rollout status deployment/orychamber
 kubectl -n default logs deployment/orychamber -c bootstrap
+kubectl -n default logs deployment/orychamber -c opencode-service
 kubectl -n default logs deployment/orychamber -c openchamber
-kubectl logs -n default deployment/orychamber -c opencode-logs -f
 kubectl -n default describe pod -l app.kubernetes.io/name=orychamber
 ```
 
-The OpenChamber readiness and liveness probes use `/health` on port 3000 and
-also confirm that its managed OpenCode server is ready. Preview access is
-internal to the cluster; Browserless should reach it through
+The OpenCode service has direct startup, readiness, and liveness probes.
+OpenChamber readiness checks its reported integration state, while its liveness
+probe checks only the UI endpoint. Preview access is internal to the cluster;
+Browserless should reach it through
 `orychamber-preview.default.svc.cluster.local:4173`.

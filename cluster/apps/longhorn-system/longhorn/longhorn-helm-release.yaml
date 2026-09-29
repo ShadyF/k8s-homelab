@@ -6,11 +6,12 @@ metadata:
   namespace: longhorn-system
 spec:
   interval: 5m
+  timeout: 30m
   chart:
     spec:
       # renovate: registryUrl=https://charts.longhorn.io
       chart: longhorn
-      version: 1.12.1
+      version: 1.13.0
       sourceRef:
         kind: HelmRepository
         name: longhorn-charts
@@ -20,10 +21,10 @@ spec:
     remediation:
       retries: 3
   upgrade:
-    cleanupOnFail: true
-    remediation:
-      retries: 3
-  # https://github.com/longhorn/charts/blob/v1.10.x/charts/longhorn/values.yaml
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  # https://github.com/longhorn/charts/blob/v1.13.x/charts/longhorn/values.yaml
   values:
     # https://github.com/longhorn/longhorn/issues/1861#issuecomment-716459507
     csi:
