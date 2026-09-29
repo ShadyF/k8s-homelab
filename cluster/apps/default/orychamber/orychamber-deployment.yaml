@@ -162,6 +162,11 @@ spec:
               value: http://127.0.0.1:4096
             - name: OPENCODE_SKIP_START
               value: "true"
+            - name: OPENCODE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: orychamber-openchamber-secrets
+                  key: OPENCODE_SERVER_PASSWORD
             - name: OPENCHAMBER_OPENCODE_CWD
               value: /home/codespace/workspaces
             - name: OPENCHAMBER_HOST
