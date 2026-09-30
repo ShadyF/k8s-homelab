@@ -182,9 +182,9 @@ spec:
           resources:
             requests:
               cpu: 1
-              memory: 8Gi
+              memory: 4Gi
             limits:
-              memory: 15Gi
+              memory: 8Gi
           volumeMounts:
             - name: opencode-data
               mountPath: /home/codespace
