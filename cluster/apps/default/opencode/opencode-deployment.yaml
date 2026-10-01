@@ -88,7 +88,7 @@ spec:
         - name: dind
           restartPolicy: Always
           # renovate: datasource=docker depName=docker versioning=docker
-          image: docker:29.8.1-dind
+          image: docker:29.8.2-dind
           imagePullPolicy: IfNotPresent
           env:
             - name: DOCKER_TLS_CERTDIR
