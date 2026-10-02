@@ -182,9 +182,9 @@ spec:
           resources:
             requests:
               cpu: 1
-              memory: 4Gi
+              memory: 5Gi
             limits:
-              memory: 8Gi
+              memory: 9Gi
           volumeMounts:
             - name: opencode-data
               mountPath: /home/codespace
@@ -268,9 +268,9 @@ spec:
           resources:
             requests:
               cpu: 250m
-              memory: 500Mi
+              memory: 400Mi
             limits:
-              memory: 750Mi
+              memory: 600Mi
           volumeMounts:
             - name: opencode-data
               mountPath: /home/codespace
