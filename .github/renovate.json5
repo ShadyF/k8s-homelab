@@ -9,6 +9,12 @@
     'prIgnoreNotification',
   ],
   rebaseWhen: 'conflicted',
+  flux: {
+    managerFilePatterns: [
+      '/^cluster\\/apps\\/securo\\/securo\\/securo-helm-release\\.yaml$/',
+      '/^cluster\\/base\\/flux-system-extras\\/oci-repositories\\/securo-charts\\.yaml$/',
+    ],
+  },
   'helm-values': {
     managerFilePatterns: [
       '/cluster/.+\\.ya?ml$/',

@@ -78,6 +78,7 @@ spec:
     # Pin every application component to the verified Securo release image.
     backend:
       image:
+        repository: ghcr.io/securo-finance/securo-backend
         tag: 0.16.0
       service:
         type: ClusterIP
@@ -91,6 +92,7 @@ spec:
           memory: 512Mi
     frontend:
       image:
+        repository: ghcr.io/securo-finance/securo-frontend
         tag: 0.16.0
       service:
         type: ClusterIP
