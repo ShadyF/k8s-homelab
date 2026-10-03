@@ -79,7 +79,7 @@ spec:
     backend:
       image:
         repository: ghcr.io/securo-finance/securo-backend
-        tag: 0.16.0
+        tag: 0.16.2
       service:
         type: ClusterIP
         port: 8000
