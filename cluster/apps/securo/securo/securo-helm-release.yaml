@@ -93,7 +93,7 @@ spec:
     frontend:
       image:
         repository: ghcr.io/securo-finance/securo-frontend
-        tag: 0.16.0
+        tag: 0.16.2
       service:
         type: ClusterIP
         port: 3000
