@@ -277,6 +277,23 @@
       separateMinorPatch: false,
     },
     {
+      description: [
+        'Group Securo Helm chart, backend, and frontend updates',
+      ],
+      matchDatasources: [
+        'docker',
+      ],
+      matchPackageNames: [
+        'ghcr.io/securo-finance/charts/securo',
+        'ghcr.io/securo-finance/securo-backend',
+        'ghcr.io/securo-finance/securo-frontend',
+      ],
+      groupName: 'Securo chart and images',
+      groupSlug: 'securo',
+      separateMajorMinor: false,
+      separateMinorPatch: false,
+    },
+    {
       matchDatasources: [
         'docker',
       ],
