@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: securo
-      version: 0.16.2
+      version: 0.16.3
       interval: 15m
       sourceRef:
         kind: HelmRepository
@@ -79,7 +79,7 @@ spec:
     backend:
       image:
         repository: ghcr.io/securo-finance/securo-backend
-        tag: 0.16.2
+        tag: 0.16.3
       service:
         type: ClusterIP
         port: 8000
@@ -93,7 +93,7 @@ spec:
     frontend:
       image:
         repository: ghcr.io/securo-finance/securo-frontend
-        tag: 0.16.2
+        tag: 0.16.3
       service:
         type: ClusterIP
         port: 3000
