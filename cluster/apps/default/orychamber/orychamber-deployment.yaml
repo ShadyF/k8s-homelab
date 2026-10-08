@@ -36,7 +36,7 @@ spec:
       initContainers:
         - name: bootstrap
           # renovate: datasource=docker depName=mcr.microsoft.com/devcontainers/universal versioning=docker
-          image: mcr.microsoft.com/devcontainers/universal:6.1.7-noble
+          image: mcr.microsoft.com/devcontainers/universal:6.1.9-noble
           imagePullPolicy: IfNotPresent
           command:
             - /bin/bash
@@ -94,7 +94,7 @@ spec:
         - name: opencode-service
           restartPolicy: Always
           # renovate: datasource=docker depName=mcr.microsoft.com/devcontainers/universal versioning=docker
-          image: mcr.microsoft.com/devcontainers/universal:6.1.7-noble
+          image: mcr.microsoft.com/devcontainers/universal:6.1.9-noble
           imagePullPolicy: IfNotPresent
           command:
             - /bin/bash
@@ -146,7 +146,7 @@ spec:
       containers:
         - name: openchamber
           # renovate: datasource=docker depName=mcr.microsoft.com/devcontainers/universal versioning=docker
-          image: mcr.microsoft.com/devcontainers/universal:6.1.7-noble
+          image: mcr.microsoft.com/devcontainers/universal:6.1.9-noble
           imagePullPolicy: IfNotPresent
           command:
             - /home/codespace/.npm-global/bin/openchamber
