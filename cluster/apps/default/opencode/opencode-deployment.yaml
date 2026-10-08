@@ -270,7 +270,7 @@ spec:
               cpu: 250m
               memory: 500Mi
             limits:
-              memory: 700Mi
+              memory: 800Mi
           volumeMounts:
             - name: opencode-data
               mountPath: /home/codespace
