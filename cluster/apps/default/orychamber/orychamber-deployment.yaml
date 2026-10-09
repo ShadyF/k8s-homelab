@@ -31,6 +31,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       nodeSelector:
         kubernetes.io/arch: amd64
+        kubernetes.io/hostname: k8-w5
       # Preserve the workspace while allowing both application processes to shut down cleanly.
       terminationGracePeriodSeconds: 60
       initContainers:
@@ -205,7 +206,7 @@ spec:
                 - /opt/orychamber-bootstrap/check-openchamber-health.js
             initialDelaySeconds: 5
             periodSeconds: 10
-            timeoutSeconds: 5
+            timeoutSeconds: 15
           # Restart the container when the UI health endpoint stops responding.
           livenessProbe:
             httpGet:
