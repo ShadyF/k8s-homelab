@@ -62,7 +62,7 @@ spec:
               value: "2.2.0"
             # renovate: datasource=npm depName=agent-browser
             - name: AGENT_BROWSER_VERSION
-              value: "0.38.2"
+              value: "0.39.0"
             - name: AGENT_BROWSER_SOCKET_DIR
               value: /tmp/agent-browser
           securityContext:
