@@ -12,9 +12,9 @@ its own names, storage, services, and public host:
 
 The Deployment runs a bootstrap init container, a restartable `opencode-service`
 init sidecar, and an `openchamber` application container, with `Recreate`
-strategy on amd64 nodes. Bootstrap installs the pinned OpenCode, OpenChamber,
-and agent-browser packages declared in the Deployment into persistent workspace
-storage.
+strategy on the amd64 GPU node `k8-w5`. Bootstrap installs the pinned OpenCode,
+OpenChamber, and agent-browser packages declared in the Deployment into
+persistent workspace storage.
 
 OpenCode runs independently on `127.0.0.1:4096`, and OpenChamber connects to it
 through the shared Pod network. Kubernetes starts OpenChamber only after the
@@ -44,6 +44,34 @@ Browserless CDP and the `orychamber-preview` service. Start preview servers on
 
 Provider and model authentication are intentionally not preconfigured here.
 Configure the required provider credentials and model settings after launch.
+
+## GPU access
+
+The Pod uses the `nvidia` runtime class. The `opencode-service` sidecar requests
+one `nvidia.com/gpu` time-sharing slot and enables the `compute,utility,graphics`
+driver capabilities for compute and headless graphics. Blender jobs launched by
+OpenCode run in this sidecar; the UI and bootstrap containers have no GPU
+allocation.
+
+The node has one NVIDIA GeForce GTX 1660 SUPER with 6 GiB VRAM, shared with
+WhisperX. Time-sliced scheduling provides no VRAM or performance isolation, so
+concurrent workloads can exhaust GPU memory or slow each other down.
+
+This configuration provides GPU devices and driver libraries. It does not install
+Blender or the CUDA toolkit. After Flux deploys the manifest, use an account with
+Pod exec permission to check device access and the installed Blender version:
+
+```sh
+# Check GPU visibility in the container that runs tool jobs.
+kubectl -n default exec deployment/orychamber -c opencode-service -- nvidia-smi -L
+
+# Check the Blender version if Blender is installed.
+kubectl -n default exec deployment/orychamber -c opencode-service -- blender --version
+```
+
+Then enumerate Cycles GPU devices in that Blender version and run a small GPU
+render. Confirm that it uses the allocated GPU without falling back to CPU
+rendering before relying on GPU acceleration.
 
 ## Secret provisioning
 

@@ -23,6 +23,7 @@ spec:
         orychamber.home.arpa/binary-settings-revision: "2"
     spec:
       automountServiceAccountToken: false
+      runtimeClassName: nvidia
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -102,6 +103,10 @@ spec:
           args:
             - -e
             - /opt/orychamber-bootstrap/start-opencode-service.sh
+          # Provide compute and headless graphics libraries to tool processes.
+          env:
+            - name: NVIDIA_DRIVER_CAPABILITIES
+              value: compute,utility,graphics
           envFrom:
             - secretRef:
                 name: orychamber-openchamber-secrets
@@ -131,9 +136,11 @@ spec:
           resources:
             requests:
               cpu: 1
-              memory: 2Gi
-            limits:
               memory: 4Gi
+              nvidia.com/gpu: 1
+            limits:
+              memory: 7Gi
+              nvidia.com/gpu: 1
           volumeMounts:
             - name: orychamber-data
               mountPath: /home/codespace
