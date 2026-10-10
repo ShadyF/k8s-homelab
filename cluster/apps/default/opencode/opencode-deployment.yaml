@@ -32,7 +32,7 @@ spec:
       terminationGracePeriodSeconds: 60
       initContainers:
         - name: bootstrap
-          image: mcr.microsoft.com/devcontainers/universal:6.1.9-noble
+          image: mcr.microsoft.com/devcontainers/universal:6.1.10-noble
           imagePullPolicy: IfNotPresent
           command:
             - /bin/bash
@@ -149,7 +149,7 @@ spec:
         # Keep the authenticated OpenCode service independent of OpenChamber's process lifecycle.
         - name: opencode-service
           restartPolicy: Always
-          image: mcr.microsoft.com/devcontainers/universal:6.1.9-noble
+          image: mcr.microsoft.com/devcontainers/universal:6.1.10-noble
           imagePullPolicy: IfNotPresent
           command:
             - /bin/bash
@@ -204,7 +204,7 @@ spec:
               readOnly: true
       containers:
         - name: openchamber
-          image: mcr.microsoft.com/devcontainers/universal:6.1.9-noble
+          image: mcr.microsoft.com/devcontainers/universal:6.1.10-noble
           imagePullPolicy: IfNotPresent
           command:
             - /bin/bash
