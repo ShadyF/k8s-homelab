@@ -50,7 +50,7 @@ spec:
               value: /home/codespace/.local/share
             # renovate: datasource=npm depName=@opencode/cli
             - name: OPENCODE_VERSION
-              value: "2.0.28"
+              value: "2.0.29"
             # renovate: datasource=npm depName=@openchamber/web
             - name: OPENCHAMBER_VERSION
               value: "2.3.2"
