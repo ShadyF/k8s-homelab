@@ -102,6 +102,9 @@ spec:
           # Allow concurrent nested development workloads while retaining a process ceiling.
           args:
             - --default-ulimit=nproc=4096:4096
+            # Match default and newly created Docker bridges to the pod network MTU.
+            - --mtu=1450
+            - --default-network-opt=bridge=com.docker.network.driver.mtu=1450
           readinessProbe:
             exec:
               command:
@@ -178,11 +181,10 @@ spec:
             capabilities:
               drop:
                 - ALL
-          # Bound server memory separately and watch its peak during busy sessions.
           resources:
             requests:
               cpu: 1
-              memory: 5Gi
+              memory: 6Gi
             limits:
               memory: 9Gi
           volumeMounts:
@@ -270,7 +272,7 @@ spec:
               cpu: 250m
               memory: 500Mi
             limits:
-              memory: 800Mi
+              memory: 1Gi
           volumeMounts:
             - name: opencode-data
               mountPath: /home/codespace
