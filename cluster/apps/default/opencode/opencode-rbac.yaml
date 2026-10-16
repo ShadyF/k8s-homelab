@@ -17,6 +17,30 @@ subjects:
     name: opencode
     namespace: default
 ---
+# Allow read-only access to cluster-scoped nodes without node subresources.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: opencode-node-reader
+rules:
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get", "list", "watch"]
+---
+# Bind node reads to the OpenCode service account in default.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: opencode-node-reader
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: opencode-node-reader
+subjects:
+  - kind: ServiceAccount
+    name: opencode
+    namespace: default
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
