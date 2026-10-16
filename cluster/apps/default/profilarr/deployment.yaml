@@ -17,9 +17,15 @@ spec:
       labels:
         app: profilarr
     spec:
+      # Let the non-root entrypoint write to the fresh Longhorn volume.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       containers:
         - name: profilarr
-          image: santiagosayshey/profilarr:v1.1.5
+          image: ghcr.io/dictionarry-hub/profilarr:2.2.0
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 6868
@@ -27,28 +33,38 @@ spec:
           env:
             - name: TZ
               value: "Africa/Cairo"
-            - name: URL_BASE
-              value: ""
-            - name: BASE_URL
+            - name: AUTH
+              value: "on"
+            - name: ORIGIN
               value: "https://profilarr.${SECRET_DOMAIN}"
           volumeMounts:
             - mountPath: "/config"
               name: profilarr-data-volume
+          # Initial local sizing; tune from observed usage during PCD builds.
           resources:
             requests:
-              cpu: 10m
-              memory: 100Mi
+              cpu: 100m
+              memory: 256Mi
             limits:
-              memory: 200Mi
-      #          livenessProbe:
-      #            httpGet:
-      #              path: /
-      #              port: http
-      #          readinessProbe:
-      #            httpGet:
-      #              path: /
-      #              port: http
+              memory: 1Gi
+
+          # Allow up to 30 minutes for startup before restarting the container.
+          startupProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 180
+
+          # Remove unhealthy instances from Service traffic without restarting builds.
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
       volumes:
         - name: profilarr-data-volume
           persistentVolumeClaim:
-            claimName: profilarr-pvc
+            claimName: profilarr-v2-pvc
