@@ -42,7 +42,7 @@ spec:
           main:
             image:
               repository: ghcr.io/home-operations/sonarr
-              tag: 5.0.0.2569
+              tag: 5.0.0.2635
               pullPolicy: IfNotPresent
             env:
               TZ: Africa/Cairo
