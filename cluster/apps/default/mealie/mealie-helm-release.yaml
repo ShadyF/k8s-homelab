@@ -43,7 +43,7 @@ spec:
           main:
             image:
               repository: ghcr.io/mealie-recipes/mealie
-              tag: v3.28.0
+              tag: v3.29.0
               pullPolicy: IfNotPresent
 
             securityContext:
