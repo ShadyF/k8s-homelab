@@ -53,7 +53,7 @@ spec:
               type: RuntimeDefault
         containers:
           main:
-            image:
+            image: &whisperxImage
               repository: ghcr.io/shadyf/whisperx-asr-service
               tag: 0.4.7
               pullPolicy: IfNotPresent
@@ -132,10 +132,7 @@ spec:
         # Populate NLTK resources on the PVC before the read-only application starts.
         initContainers:
           nltk-data:
-            image:
-              repository: ghcr.io/shadyf/whisperx-asr-service
-              tag: 0.4.6
-              pullPolicy: IfNotPresent
+            image: *whisperxImage
             command:
               - python3
               - -c
