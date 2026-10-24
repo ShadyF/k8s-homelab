@@ -36,7 +36,7 @@ spec:
           main:
             image:
               repository: binwiederhier/ntfy
-              tag: v2.32.0
+              tag: v2.33.1
               pullPolicy: IfNotPresent
             args: [ "serve" ]
 
