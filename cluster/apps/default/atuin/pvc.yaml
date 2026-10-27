@@ -10,3 +10,17 @@ spec:
     requests:
       storage: 100Mi
   storageClassName: longhorn
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: atuin-config-restored-20261027
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+  storageClassName: longhorn
+  volumeName: atuin-config-restored-20261027
