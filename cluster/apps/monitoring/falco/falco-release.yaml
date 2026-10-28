@@ -22,8 +22,10 @@ spec:
       retries: 3
   upgrade:
     cleanupOnFail: true
-    remediation:
-      retries: 3
+    # Preserve rollout progress while nodes install signed artifacts.
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
   uninstall:
     keepHistory: false
   valuesFrom:
