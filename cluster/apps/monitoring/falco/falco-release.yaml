@@ -5,6 +5,7 @@ metadata:
   namespace: monitoring
 spec:
   interval: 15m
+  timeout: 30m
   chart:
     spec:
       # renovate: registryUrl=https://falcosecurity.github.io/charts
