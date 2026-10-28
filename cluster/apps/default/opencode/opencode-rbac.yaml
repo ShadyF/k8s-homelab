@@ -41,6 +41,31 @@ subjects:
     name: opencode
     namespace: default
 ---
+# Allow reading only the PriorityClass used for ASR configuration sweeps.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: opencode-priorityclass-reader
+rules:
+  - apiGroups: ["scheduling.k8s.io"]
+    resources: ["priorityclasses"]
+    resourceNames: ["asr-config-sweep"]
+    verbs: ["get"]
+---
+# Bind the named PriorityClass read to the OpenCode service account in default.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: opencode-priorityclass-reader
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: opencode-priorityclass-reader
+subjects:
+  - kind: ServiceAccount
+    name: opencode
+    namespace: default
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -58,6 +83,15 @@ rules:
   # Allow rolling restarts; RBAC cannot limit patches to restart annotations.
   - apiGroups: ["apps"]
     resources: ["deployments", "statefulsets", "daemonsets"]
+    verbs: ["patch"]
+  # Allow creating and deleting batch jobs in default.
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["create", "delete"]
+  # Allow patching this HelmRelease; RBAC cannot restrict patches to the suspend field.
+  - apiGroups: ["helm.toolkit.fluxcd.io"]
+    resources: ["helmreleases"]
+    resourceNames: ["whisperx-asr-service"]
     verbs: ["patch"]
 ---
 # Bind workload operations only within the default namespace.
