@@ -92,70 +92,12 @@ spec:
             - name: orychamber-bootstrap
               mountPath: /opt/orychamber-bootstrap
               readOnly: true
-        # Keep the loopback-only OpenCode service independent of OpenChamber's process lifecycle.
-        - name: opencode-service
-          restartPolicy: Always
-          # renovate: datasource=docker depName=mcr.microsoft.com/devcontainers/universal versioning=docker
-          image: mcr.microsoft.com/devcontainers/universal:6.1.12-noble
-          imagePullPolicy: IfNotPresent
-          command:
-            - /bin/bash
-          args:
-            - -e
-            - /opt/orychamber-bootstrap/start-opencode-service.sh
-          # Provide compute and headless graphics libraries to tool processes.
-          env:
-            - name: NVIDIA_DRIVER_CAPABILITIES
-              value: compute,utility,graphics
-          envFrom:
-            - secretRef:
-                name: orychamber-openchamber-secrets
-            - configMapRef:
-                name: orychamber-runtime-env
-          workingDir: /home/codespace/workspaces
-          # Gate OpenChamber startup on the local OpenCode service accepting connections.
-          startupProbe:
-            exec:
-              command:
-                - node
-                - -e
-                - "const net=require('node:net'); const socket=net.createConnection({host:'127.0.0.1',port:4096}); const timer=setTimeout(()=>{socket.destroy();process.exit(1)},3000); socket.once('connect',()=>{clearTimeout(timer);socket.end();process.exit(0)}); socket.once('error',()=>{clearTimeout(timer);process.exit(1)});"
-            periodSeconds: 5
-            timeoutSeconds: 5
-            failureThreshold: 120
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop:
-                - ALL
-          # Bound server memory separately while retaining headroom for busy sessions.
-          resources:
-            requests:
-              cpu: 1
-              memory: 4Gi
-              nvidia.com/gpu: 1
-            limits:
-              memory: 7Gi
-              nvidia.com/gpu: 1
-          volumeMounts:
-            - name: orychamber-data
-              mountPath: /home/codespace
-            - name: orychamber-homebrew
-              mountPath: /home/linuxbrew
-            - name: tmp
-              mountPath: /tmp
-            - name: orychamber-bootstrap
-              mountPath: /opt/orychamber-bootstrap
-              readOnly: true
       containers:
         - name: openchamber
           # renovate: datasource=docker depName=mcr.microsoft.com/devcontainers/universal versioning=docker
           image: mcr.microsoft.com/devcontainers/universal:6.1.12-noble
           imagePullPolicy: IfNotPresent
+          # Start OpenChamber directly so it manages its child and receives shutdown signals.
           command:
             - /home/codespace/.npm-global/bin/openchamber
           args:
@@ -166,10 +108,13 @@ spec:
             - $(OPENCHAMBER_HOST)
             - --foreground
           env:
-            - name: OPENCODE_HOST
-              value: http://127.0.0.1:4096
-            - name: OPENCODE_SKIP_START
-              value: "true"
+            # Provide compute and headless graphics libraries to managed tool processes.
+            - name: NVIDIA_DRIVER_CAPABILITIES
+              value: compute,utility,graphics
+            - name: OPENCODE_PORT
+              value: "4096"
+            - name: OPENCHAMBER_OPENCODE_HOSTNAME
+              value: 127.0.0.1
             - name: OPENCODE_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -196,7 +141,7 @@ spec:
               containerPort: 3000
             - name: preview
               containerPort: 4173
-          # Wait for OpenChamber to report a ready connection to the separate OpenCode service.
+          # Wait for OpenChamber and its managed OpenCode child to become ready.
           startupProbe:
             exec:
               command:
@@ -205,7 +150,7 @@ spec:
             failureThreshold: 120
             periodSeconds: 5
             timeoutSeconds: 5
-          # Confirm that the UI remains connected to the separate OpenCode service.
+          # Confirm that the UI remains connected to its managed OpenCode child.
           readinessProbe:
             exec:
               command:
@@ -214,14 +159,16 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 10
             timeoutSeconds: 15
-          # Restart the container when the UI health endpoint stops responding.
+          # Restart both processes when the UI or its managed child cannot recover.
           livenessProbe:
-            httpGet:
-              path: /health
-              port: openchamber
+            exec:
+              command:
+                - node
+                - /opt/orychamber-bootstrap/check-openchamber-health.js
             initialDelaySeconds: 30
             periodSeconds: 30
             timeoutSeconds: 5
+            failureThreshold: 3
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000
@@ -231,13 +178,15 @@ spec:
             capabilities:
               drop:
                 - ALL
-          # Budget the UI separately from the OpenCode service.
+          # Preserve the combined UI and OpenCode resource budget.
           resources:
             requests:
-              cpu: 250m
-              memory: 500Mi
+              cpu: 1250m
+              memory: 4596Mi
+              nvidia.com/gpu: 1
             limits:
-              memory: 750Mi
+              memory: 7918Mi
+              nvidia.com/gpu: 1
           volumeMounts:
             - name: orychamber-data
               mountPath: /home/codespace
@@ -247,6 +196,36 @@ spec:
               mountPath: /tmp
             - name: orychamber-bootstrap
               mountPath: /opt/orychamber-bootstrap
+              readOnly: true
+        - name: opencode-logs
+          image: busybox:1.38.0
+          imagePullPolicy: IfNotPresent
+          # Follow the managed OpenCode log without replaying persisted entries.
+          command:
+            - tail
+            - -n
+            - "0"
+            - -F
+            - /var/log/opencode/opencode.log
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 64Mi
+          volumeMounts:
+            - name: orychamber-data
+              mountPath: /var/log/opencode
+              subPath: .local/share/opencode/log
               readOnly: true
       volumes:
         - name: orychamber-data

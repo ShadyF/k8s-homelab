@@ -39,6 +39,7 @@ data:
     # Verify the selected context reaches the local daemon without exposing certificate contents or daemon details in logs.
     timeout --kill-after=5s 30s env -i HOME="$HOME" PATH="$PATH" DOCKER_CONFIG="$DOCKER_CONFIG" "$docker_cli" info >/dev/null
   start-openchamber.sh: |
+    # Stop startup if Docker context setup fails.
     set -eu
 
     # Run context setup in a child shell so its Docker environment changes do not affect OpenChamber.
@@ -46,77 +47,6 @@ data:
 
     # Replace the wrapper with OpenChamber so it receives signals directly as PID 1.
     exec /home/codespace/.npm-global/bin/openchamber "$@"
-  start-opencode-service.sh: |
-    set -eu
-
-    # Write the service password without passing it through OpenCode's logged CLI arguments.
-    node /opt/opencode-bootstrap/configure-opencode-service.js
-
-    # Replace the wrapper with the loopback-only service so Kubernetes can manage its lifecycle directly.
-    exec /home/codespace/.npm-global/bin/opencode --print-logs serve --service --hostname 127.0.0.1 --port 4096
-  configure-opencode-service.js: |
-    'use strict';
-
-    const fs = require('node:fs');
-    const path = require('node:path');
-
-    // Keep the password out of logs and reject an absent or empty secret before touching configuration.
-    const password = process.env.OPENCODE_SERVER_PASSWORD;
-    if (!password) {
-      process.stderr.write('OpenCode service password is not configured.\n');
-      process.exit(1);
-    }
-
-    const configDirectory = '/home/codespace/.config/opencode';
-    const configPath = path.join(configDirectory, 'service.json');
-    let config = {};
-
-    // Read only a regular, non-symlink config and preserve every existing setting.
-    try {
-      const stat = fs.lstatSync(configPath);
-      if (!stat.isFile()) throw new Error('invalid config file type');
-      const descriptor = fs.openSync(configPath, fs.constants.O_RDONLY | fs.constants.O_NOFOLLOW);
-      try {
-        config = JSON.parse(fs.readFileSync(descriptor, 'utf8'));
-      } finally {
-        fs.closeSync(descriptor);
-      }
-      if (!config || typeof config !== 'object' || Array.isArray(config)) throw new Error('invalid config object');
-    } catch (error) {
-      if (error.code !== 'ENOENT') {
-        process.stderr.write('OpenCode service configuration is invalid; refusing to replace it.\n');
-        process.exit(1);
-      }
-    }
-    config.password = password;
-
-    // Atomically replace the file with private permissions and sync both file and directory.
-    let temporaryPath;
-    try {
-      fs.mkdirSync(configDirectory, { recursive: true, mode: 0o700 });
-      temporaryPath = path.join(configDirectory, '.service.json.' + process.pid + '.' + Date.now() + '.tmp');
-      const descriptor = fs.openSync(temporaryPath, 'wx', 0o600);
-      try {
-        fs.writeFileSync(descriptor, JSON.stringify(config, null, 2) + '\n', 'utf8');
-        fs.fsyncSync(descriptor);
-      } finally {
-        fs.closeSync(descriptor);
-      }
-      fs.chmodSync(temporaryPath, 0o600);
-      fs.renameSync(temporaryPath, configPath);
-      const directoryDescriptor = fs.openSync(configDirectory, 'r');
-      try {
-        fs.fsyncSync(directoryDescriptor);
-      } finally {
-        fs.closeSync(directoryDescriptor);
-      }
-    } catch (_) {
-      if (temporaryPath) {
-        try { fs.rmSync(temporaryPath, { force: true }); } catch (_) {}
-      }
-      process.stderr.write('OpenCode service configuration could not be written safely.\n');
-      process.exit(1);
-    }
   check-openchamber-health.js: |
     'use strict';
 
@@ -205,8 +135,9 @@ data:
     export NPM_CONFIG_PREFIX="$HOME/.npm-global"
     export npm_config_cache="$HOME/.npm"
     export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
-    # Create app-user paths before Kubernetes prepares DinD's worktree subPath mount.
-    mkdir -p "$NPM_CONFIG_PREFIX" "$npm_config_cache" "$HOME/.agents/skills/agent-browser" "$AGENT_BROWSER_SOCKET_DIR" "$HOME/.local/share/opencode/worktree"
+
+    # Create app-user paths before Kubernetes prepares the worktree and log subPath mounts.
+    mkdir -p "$NPM_CONFIG_PREFIX" "$npm_config_cache" "$HOME/.agents/skills/agent-browser" "$AGENT_BROWSER_SOCKET_DIR" "$HOME/.local/share/opencode/worktree" "$HOME/.local/share/opencode/log"
 
     package_is_pinned() {
       package_name="$1"

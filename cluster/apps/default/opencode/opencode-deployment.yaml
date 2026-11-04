@@ -149,61 +149,6 @@ spec:
             - name: opencode-data
               mountPath: /home/codespace/.local/share/opencode/worktree
               subPath: .local/share/opencode/worktree
-        # Keep the authenticated OpenCode service independent of OpenChamber's process lifecycle.
-        - name: opencode-service
-          restartPolicy: Always
-          image: mcr.microsoft.com/devcontainers/universal:6.1.12-noble
-          imagePullPolicy: IfNotPresent
-          command:
-            - /bin/bash
-          args:
-            - -e
-            - /opt/opencode-bootstrap/start-opencode-service.sh
-          envFrom:
-            - secretRef:
-                name: opencode-openchamber-secrets
-            - configMapRef:
-                name: opencode-runtime-env
-          workingDir: /home/codespace/workspaces
-          # Gate OpenChamber startup with an in-container check of the loopback-only service.
-          startupProbe:
-            exec:
-              command:
-                - node
-                - -e
-                - "const net=require('node:net'); const socket=net.createConnection({host:'127.0.0.1',port:4096}); const timer=setTimeout(()=>{socket.destroy();process.exit(1)},3000); socket.once('connect',()=>{clearTimeout(timer);socket.end();process.exit(0)}); socket.once('error',()=>{clearTimeout(timer);process.exit(1)});"
-            periodSeconds: 5
-            timeoutSeconds: 5
-            failureThreshold: 120
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop:
-                - ALL
-          resources:
-            requests:
-              cpu: 1
-              memory: 6Gi
-            limits:
-              memory: 10Gi
-          volumeMounts:
-            - name: opencode-data
-              mountPath: /home/codespace
-            - name: opencode-homebrew
-              mountPath: /home/linuxbrew
-            - name: tmp
-              mountPath: /tmp
-            - name: docker-certs
-              mountPath: /certs/client
-              subPath: client
-              readOnly: true
-            - name: bootstrap
-              mountPath: /opt/opencode-bootstrap
-              readOnly: true
-            - name: opencode-api-access
-              mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-              readOnly: true
       containers:
         - name: openchamber
           image: mcr.microsoft.com/devcontainers/universal:6.1.12-noble
@@ -220,10 +165,15 @@ spec:
             - 0.0.0.0
             - --foreground
           env:
-            - name: OPENCODE_HOST
-              value: http://127.0.0.1:4096
-            - name: OPENCODE_SKIP_START
-              value: "true"
+            - name: OPENCODE_PORT
+              value: "4096"
+            - name: OPENCHAMBER_OPENCODE_HOSTNAME
+              value: "127.0.0.1"
+            - name: OPENCODE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: opencode-openchamber-secrets
+                  key: OPENCODE_SERVER_PASSWORD
             - name: OPENCHAMBER_ALLOW_REMOTE_OPENAI_COMPAT_URLS
               value: "true"
           envFrom:
@@ -254,9 +204,10 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
           livenessProbe:
-            httpGet:
-              path: /health
-              port: openchamber
+            exec:
+              command:
+                - node
+                - /opt/opencode-bootstrap/check-openchamber-health.js
             initialDelaySeconds: 30
             periodSeconds: 30
             timeoutSeconds: 5
@@ -266,13 +217,13 @@ spec:
             capabilities:
               drop:
                 - ALL
-          # Start the separate UI budget conservatively; its post-split peak still needs observation.
+          # Reserve the combined OpenChamber and managed OpenCode service budget.
           resources:
             requests:
-              cpu: 250m
-              memory: 600Mi
+              cpu: 1250m
+              memory: 6744Mi
             limits:
-              memory: 1.1Gi
+              memory: 11.1Gi
           volumeMounts:
             - name: opencode-data
               mountPath: /home/codespace
@@ -290,6 +241,37 @@ spec:
             - name: opencode-api-access
               mountPath: /var/run/secrets/kubernetes.io/serviceaccount
               readOnly: true
+        # Forward OpenCode logs to container output with read-only access to only the log directory.
+        - name: opencode-logs
+          image: busybox:1.38.0
+          imagePullPolicy: IfNotPresent
+          command:
+            - tail
+          args:
+            - -n
+            - "0"
+            - -F
+            - /var/log/opencode/opencode.log
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 64Mi
+          volumeMounts:
+            - name: opencode-data
+              mountPath: /var/log/opencode
+              subPath: .local/share/opencode/log
+              readOnly: true
       volumes:
         - name: opencode-data
           persistentVolumeClaim:
@@ -297,7 +279,7 @@ spec:
         - name: opencode-homebrew
           persistentVolumeClaim:
             claimName: opencode-homebrew
-        # Share generated TLS material with both app containers through the client directory.
+        # Share generated TLS material with the app container through the client directory.
         - name: docker-certs
           emptyDir:
             sizeLimit: 16Mi
