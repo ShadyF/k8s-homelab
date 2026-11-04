@@ -55,7 +55,7 @@ spec:
           main:
             image: &whisperxImage
               repository: ghcr.io/shadyf/whisperx-asr-service
-              tag: 0.4.7
+              tag: egyptian-turbo-test
               pullPolicy: IfNotPresent
             securityContext:
               allowPrivilegeEscalation: false
@@ -65,20 +65,27 @@ spec:
                   - ALL
             # Configure CUDA inference and keep downloaded model files on the PVC.
             env:
+              ASR_BACKEND: whisper
+              DEFAULT_MODEL: mohammedaly22/whisper-large-v3-turbo-egyptian-code-switching
               DEVICE: cuda
               COMPUTE_TYPE: int8_float16
               SERVE_MODE: simple
               WHISPER_DECODE_MODE: native
+              WHISPER_BEAM_SIZE: "8"
+              WHISPER_NATIVE_BEST_OF: "5"
+              WHISPER_NATIVE_TEMPERATURES: "0.0,0.2,0.4,0.6,0.8,1.0"
+              WHISPER_NATIVE_CONDITION_ON_PREVIOUS_TEXT: "false"
               GPU_CONCURRENCY: "1"
               BATCH_SIZE: "2"
+              VAD_METHOD: silero
               VAD_CHUNK_SIZE: "20"
-              VAD_ONSET: "0.500"
+              VAD_ONSET: "0.5"
               VAD_OFFSET: "0.363"
-              NO_SPEECH_THRESHOLD: "0.80"
+              NO_SPEECH_THRESHOLD: "0.8"
               COMPRESSION_RATIO_THRESHOLD: "2.4"
               LOG_PROB_THRESHOLD: "-0.8"
               ALIGN_DEVICE: cpu
-              PRELOAD_MODEL: large-v3
+              PRELOAD_MODEL: ""
               MAX_FILE_SIZE_MB: "400"
               MODEL_KEEP_ALIVE_SECONDS: "900"
               MODEL_EVICTION_INTERVAL_SECONDS: "60"
@@ -97,7 +104,7 @@ spec:
                   secretKeyRef:
                     name: whisperx-asr-service
                     key: HF_TOKEN
-            # Allow a long first start while the image downloads and preloads its model.
+            # Allow a long first start while the image downloads and the service initializes.
             probes:
               startup:
                 enabled: true
