@@ -42,7 +42,7 @@ spec:
           main:
             image:
               repository: ghcr.io/home-operations/radarr
-              tag: 7.0.1.10859
+              tag: 7.0.2.10888
               pullPolicy: IfNotPresent
             env:
               TZ: Africa/Cairo
