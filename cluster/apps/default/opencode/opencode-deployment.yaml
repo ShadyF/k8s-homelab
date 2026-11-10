@@ -16,6 +16,8 @@ spec:
       app.kubernetes.io/component: backend
   template:
     metadata:
+      annotations:
+        opencode.home.arpa/bootstrap-revision: "1"
       labels:
         app.kubernetes.io/name: opencode
         app.kubernetes.io/component: backend
@@ -54,9 +56,6 @@ spec:
             # renovate: datasource=npm depName=@openchamber/web
             - name: OPENCHAMBER_VERSION
               value: "2.7.0"
-            # renovate: datasource=npm depName=agent-browser
-            - name: AGENT_BROWSER_VERSION
-              value: "0.41.2"
             - name: AGENT_BROWSER_SOCKET_DIR
               value: /tmp/agent-browser
           securityContext:

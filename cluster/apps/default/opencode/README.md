@@ -3,7 +3,9 @@
 ## Runtime
 
 The `openchamber` container runs OpenChamber and its managed OpenCode child
-process. Bootstrap installs the package versions pinned in the Deployment.
+process. Bootstrap independently installs the `@opencode/cli` and
+`@openchamber/web` executable packages at the versions pinned in the Deployment
+and updated together by Renovate. OpenChamber runs and manages the OpenCode service.
 OpenCode listens on `127.0.0.1:4096`; the UI listens on port 3000.
 OpenChamber and its managed OpenCode child use the server password supplied
 through environment variables from the encrypted Secret.
@@ -15,6 +17,12 @@ container. Restarting OpenChamber also interrupts active OpenCode work.
 The Docker sidecar, TLS client certificates, Kubernetes credentials, workspace
 storage, and native worktree mounts remain available to tool jobs in this
 container. The `opencode` Kubernetes Service exposes preview port 4173.
+
+Install and update agent-browser manually in the application container. Install
+its skill manually and update it with `npx skills update`. Packages and skills
+persist on the workspace PVC. Browserless CDP and browser runtime settings are
+provided through the runtime ConfigMap. Start preview servers on `0.0.0.0:4173`
+and browse `http://opencode.default.svc.cluster.local:4173`, not localhost.
 
 The workspace, Homebrew, and Docker PVCs retain data across Pod recreation.
 Back up persistent state before rollout. After Flux reconciles, check existing

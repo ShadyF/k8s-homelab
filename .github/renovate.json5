@@ -98,7 +98,6 @@
       matchPackageNames: [
         '@openchamber/web',
         '@opencode/cli',
-        'agent-browser',
       ],
       groupName: 'OpenChamber and OpenCode npm packages',
     },
@@ -360,7 +359,7 @@
         'n8nio/n8n',
         'bitnami/postgresql',
         'ghcr.io/atuinsh/atuin',
-        'santiagosayshey/profilarr',
+        'ghcr.io/dictionarry-hub/profilarr',
         'ghcr.io/home-operations/radarr',
         'ghcr.io/home-operations/sonarr',
         'ghcr.io/home-operations/prowlarr',

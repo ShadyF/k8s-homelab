@@ -20,7 +20,7 @@ spec:
         app.kubernetes.io/name: orychamber
         app.kubernetes.io/component: backend
       annotations:
-        orychamber.home.arpa/binary-settings-revision: "2"
+        orychamber.home.arpa/binary-settings-revision: "3"
     spec:
       automountServiceAccountToken: false
       runtimeClassName: nvidia
@@ -60,9 +60,6 @@ spec:
             # renovate: datasource=npm depName=@openchamber/web
             - name: OPENCHAMBER_VERSION
               value: "2.7.0"
-            # renovate: datasource=npm depName=agent-browser
-            - name: AGENT_BROWSER_VERSION
-              value: "0.41.2"
             - name: AGENT_BROWSER_SOCKET_DIR
               value: /tmp/agent-browser
           securityContext:

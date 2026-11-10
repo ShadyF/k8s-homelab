@@ -14,9 +14,11 @@ The Deployment runs a bootstrap init container, an `openchamber` application
 container, and an `opencode-logs` log follower, with `Recreate` strategy on the
 amd64 GPU node `k8-w5`.
 OpenChamber manages OpenCode as a child process in the same container.
-Bootstrap installs the pinned OpenCode,
-OpenChamber, and agent-browser packages declared in the Deployment into
-persistent workspace storage.
+Bootstrap independently installs the `@opencode/cli` and `@openchamber/web`
+executable packages at the versions pinned in the Deployment and updated together
+by Renovate into persistent workspace storage. OpenChamber runs and manages the
+OpenCode service. Bootstrap clears the persisted OpenCode binary override while
+preserving other OpenChamber settings.
 
 OpenCode listens on `127.0.0.1:4096`. OpenChamber and its managed OpenCode child
 use the server password supplied through environment variables from the
@@ -41,9 +43,12 @@ the Pod has no Docker daemon or socket, Docker connection variables,
 Kubernetes token, or RBAC binding.
 
 The base image continues to provide the language and development tools used by
-OpenCode. The agent-browser skill is updated during bootstrap for remote
-Browserless CDP and the `orychamber-preview` service. Start preview servers on
-`0.0.0.0:4173`, then browse them through that service rather than localhost.
+OpenCode. Install and update agent-browser manually in the application container.
+Install its skill manually and update it with `npx skills update`. Packages and
+skills persist on the workspace PVC. Browserless CDP and browser runtime settings
+are provided through the runtime ConfigMap. Start preview servers on
+`0.0.0.0:4173`, then browse them through the `orychamber-preview` service rather
+than localhost.
 
 Provider and model authentication are intentionally not preconfigured here.
 Configure the required provider credentials and model settings after launch.

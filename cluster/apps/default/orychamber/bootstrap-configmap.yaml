@@ -41,11 +41,11 @@ data:
     # Create OpenCode's persistent log directory before Kubernetes prepares the log subPath mount.
     mkdir -p "$HOME/.local/share/opencode/log"
 
-    # Keep npm packages and agent-browser state on the workspace PVC.
+    # Keep npm packages on the workspace PVC and prepare the browser socket directory.
     export NPM_CONFIG_PREFIX="$HOME/.npm-global"
     export npm_config_cache="$HOME/.npm"
     export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
-    mkdir -p "$NPM_CONFIG_PREFIX" "$npm_config_cache" "$HOME/.agents/skills/agent-browser" "$AGENT_BROWSER_SOCKET_DIR" "$HOME/workspaces"
+    mkdir -p "$NPM_CONFIG_PREFIX" "$npm_config_cache" "$AGENT_BROWSER_SOCKET_DIR" "$HOME/workspaces"
     test -w "$HOME/workspaces"
 
     # Reinstall a package only when its executable or exact pinned version is missing.
@@ -58,19 +58,15 @@ data:
         "$NPM_CONFIG_PREFIX/lib/node_modules/$package_name/package.json" "$package_version"
     }
 
-    # Install the pinned OpenCode, OpenChamber, and agent-browser packages.
+    # Install both pinned executables; OpenChamber manages the OpenCode service.
     if ! package_is_pinned @opencode/cli "$OPENCODE_VERSION" opencode; then
       npm install --global "@opencode/cli@$OPENCODE_VERSION"
     fi
     if ! package_is_pinned @openchamber/web "$OPENCHAMBER_VERSION" openchamber; then
       npm install --global "@openchamber/web@$OPENCHAMBER_VERSION"
     fi
-    if ! package_is_pinned agent-browser "$AGENT_BROWSER_VERSION" agent-browser; then
-      npm install --global "agent-browser@$AGENT_BROWSER_VERSION"
-    fi
     test -x "$NPM_CONFIG_PREFIX/bin/opencode"
     test -x "$NPM_CONFIG_PREFIX/bin/openchamber"
-    test -x "$NPM_CONFIG_PREFIX/bin/agent-browser"
 
     # Clear only the persisted binary override so the Deployment environment owns selection.
     opencode_settings_dir="$${OPENCHAMBER_DATA_DIR:-$HOME/.config/openchamber}"
@@ -137,31 +133,6 @@ data:
     }
     NODE
 
-    # Keep the pinned agent-browser skill synchronized with the installed package.
-    skill_file="$HOME/.agents/skills/agent-browser/SKILL.md"
-    skill_revision="v$AGENT_BROWSER_VERSION"
-    skill_revision_marker="$HOME/.agent-browser-skill-revision"
-    if [ ! -s "$skill_file" ] \
-      || [ "$(cat "$skill_revision_marker" 2>/dev/null || true)" != "$skill_revision" ] \
-      || ! grep -Fq -- '## OpenChamber preview environment' "$skill_file"; then
-      curl --fail --silent --show-error --location \
-        "https://raw.githubusercontent.com/vercel-labs/agent-browser/$skill_revision/skills/agent-browser/SKILL.md" \
-        --output "$skill_file.tmp"
-      test -s "$skill_file.tmp"
-
-      # Add only the remote-browser and cluster-local preview rules needed by this app.
-      cat >> "$skill_file.tmp" <<'EOF'
-
-    ## OpenChamber preview environment
-
-    - Chromium is remote; do not run `agent-browser install`.
-    - Start project preview servers on `0.0.0.0:4173`.
-    - Browse previews at `http://orychamber-preview.default.svc.cluster.local:4173`, not localhost.
-    - Close browser sessions after verification.
-    EOF
-      mv "$skill_file.tmp" "$skill_file"
-      printf '%s\n' "$skill_revision" > "$skill_revision_marker"
-    fi
 ---
 apiVersion: v1
 kind: ConfigMap
