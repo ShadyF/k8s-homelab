@@ -6,7 +6,8 @@ metadata:
   namespace: default
 spec:
   interval: 15m
-  timeout: 20m
+  # Allow image pulls and init work beyond the unmeasured model startup budget.
+  timeout: 90m
   chart:
     spec:
       # renovate: registryUrl=https://bjw-s-labs.github.io/helm-charts
@@ -27,7 +28,7 @@ spec:
   dependsOn:
     - name: longhorn
       namespace: longhorn-system
-  # Keep Kubernetes from declaring a cold image pull stalled before Helm times out.
+  # Allow 75 minutes for rollout progress, including cold image pulls and init work.
   postRenderers:
     - kustomize:
         patches:
@@ -39,7 +40,7 @@ spec:
             patch: |
               - op: add
                 path: /spec/progressDeadlineSeconds
-                value: 900
+                value: 4500
   values:
     # Keep the model cache on its own persistent Longhorn volume.
     controllers:
@@ -55,7 +56,7 @@ spec:
           main:
             image: &whisperxImage
               repository: ghcr.io/shadyf/whisperx-asr-service
-              tag: egyptian-turbo-test
+              tag: "0.4.8"
               pullPolicy: IfNotPresent
             securityContext:
               allowPrivilegeEscalation: false
@@ -65,46 +66,47 @@ spec:
                   - ALL
             # Configure CUDA inference and keep downloaded model files on the PVC.
             env:
-              ASR_BACKEND: whisper
-              DEFAULT_MODEL: mohammedaly22/whisper-large-v3-turbo-egyptian-code-switching
-              DEVICE: cuda
-              COMPUTE_TYPE: int8_float16
-              SERVE_MODE: simple
-              WHISPER_DECODE_MODE: native
+              ASR_BACKEND: "whisper"
+              DEFAULT_MODEL: "mohammedaly22/whisper-large-v3-turbo-egyptian-code-switching"
+              DEVICE: "cuda"
+              COMPUTE_TYPE: "int8_float16"
+              SERVE_MODE: "simple"
+              WHISPER_DECODE_MODE: "native"
               WHISPER_BEAM_SIZE: "8"
               WHISPER_NATIVE_BEST_OF: "5"
               WHISPER_NATIVE_TEMPERATURES: "0.0,0.2,0.4,0.6,0.8,1.0"
               WHISPER_NATIVE_CONDITION_ON_PREVIOUS_TEXT: "false"
               GPU_CONCURRENCY: "1"
               BATCH_SIZE: "2"
-              VAD_METHOD: silero
+              VAD_METHOD: "silero"
               VAD_CHUNK_SIZE: "20"
               VAD_ONSET: "0.5"
               VAD_OFFSET: "0.363"
               NO_SPEECH_THRESHOLD: "0.8"
               COMPRESSION_RATIO_THRESHOLD: "2.4"
               LOG_PROB_THRESHOLD: "-0.8"
-              ALIGN_DEVICE: cpu
-              PRELOAD_MODEL: ""
+              ALIGN_DEVICE: "cpu"
+              PRELOAD_MODEL: "mohammedaly22/whisper-large-v3-turbo-egyptian-code-switching"
               MAX_FILE_SIZE_MB: "400"
               MODEL_KEEP_ALIVE_SECONDS: "900"
               MODEL_EVICTION_INTERVAL_SECONDS: "60"
-              DIARIZE_CLUSTERING_THRESHOLD: 0.5
+              DIARIZE_CLUSTERING_THRESHOLD: "0.5"
               # DIARIZE_MIN_DURATION_OFF: 0.1
-              DIARIZE_FILL_NEAREST: false
-              RESEGMENT_BY_SPEAKER: true
-              CACHE_DIR: /.cache
-              HF_HOME: /.cache
-              XDG_CACHE_HOME: /.cache
-              TORCH_HOME: /.cache/torch
-              MPLCONFIGDIR: /.cache/matplotlib
-              NLTK_DATA: /.cache/nltk_data
+              DIARIZE_FILL_NEAREST: "false"
+              RESEGMENT_BY_SPEAKER: "true"
+              CACHE_DIR: "/.cache"
+              HF_HOME: "/.cache"
+              XDG_CACHE_HOME: "/.cache"
+              TORCH_HOME: "/.cache/torch"
+              MPLCONFIGDIR: "/.cache/matplotlib"
+              NLTK_DATA: "/.cache/nltk_data"
               HF_TOKEN:
                 valueFrom:
                   secretKeyRef:
                     name: whisperx-asr-service
                     key: HF_TOKEN
-            # Allow a long first start while the image downloads and the service initializes.
+            # Budget 60 minutes for unmeasured cold model download and CPU conversion.
+            # Startup gates liveness/readiness; preload failure can still leave the API serving.
             probes:
               startup:
                 enabled: true
@@ -115,7 +117,7 @@ spec:
                     port: &port 9000
                   periodSeconds: 10
                   timeoutSeconds: 5
-                  failureThreshold: 120
+                  failureThreshold: 360
               readiness: &healthProbe
                 enabled: true
                 custom: true
@@ -153,7 +155,7 @@ spec:
                     raise_on_error=True,
                 )
             env:
-              NLTK_DATA: /.cache/nltk_data
+              NLTK_DATA: "/.cache/nltk_data"
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true

@@ -8,27 +8,27 @@ node has an NVIDIA GTX 1660 SUPER with 6 GiB VRAM. It uses the normal image,
 not a Blackwell image: the GTX 1660 SUPER is a Turing-generation GPU and does
 not support the Blackwell-specific CUDA target.
 
-## Manual Egyptian Turbo trial
+## Egyptian Turbo configuration
 
 The proposed GitOps configuration uses
-`ghcr.io/shadyf/whisperx-asr-service:egyptian-turbo-test` with `pullPolicy: IfNotPresent`
+`ghcr.io/shadyf/whisperx-asr-service:0.4.8` with `pullPolicy: IfNotPresent`
 for both the main container and NLTK init container through the shared image
-anchor. This is a moving candidate tag, not an immutable release: nodes reuse
-cached images and only pull the current candidate when it is absent. See the upstream
-[Egyptian Turbo recipe](https://github.com/ShadyF/whisperx-asr-service/blob/feature/egyptian-turbo/README.md#egyptian-turbo-opt-in).
+anchor. The standard variant matches the GTX 1660 SUPER; `0.4.8-blackwell`
+is for RTX 50xx GPUs. See the versioned
+[Egyptian Turbo recipe](https://github.com/ShadyF/whisperx-asr-service/tree/v0.4.8#egyptian-turbo-opt-in).
 
 Deployment requires explicit approval. Do not merge, apply, reconcile, or restart
 the deployment before approval. Keep one replica with the `Recreate` strategy;
-the trial replaces the existing pod rather than running a parallel GPU pod.
+the upgrade replaces the existing pod rather than running a parallel GPU pod.
 
 ```yaml
-ASR_BACKEND: whisper
-DEFAULT_MODEL: mohammedaly22/whisper-large-v3-turbo-egyptian-code-switching
-PRELOAD_MODEL: ""
-DEVICE: cuda
-COMPUTE_TYPE: int8_float16
-WHISPER_DECODE_MODE: native
-VAD_METHOD: silero
+ASR_BACKEND: "whisper"
+DEFAULT_MODEL: "mohammedaly22/whisper-large-v3-turbo-egyptian-code-switching"
+PRELOAD_MODEL: "mohammedaly22/whisper-large-v3-turbo-egyptian-code-switching"
+DEVICE: "cuda"
+COMPUTE_TYPE: "int8_float16"
+WHISPER_DECODE_MODE: "native"
+VAD_METHOD: "silero"
 VAD_CHUNK_SIZE: "20"
 VAD_ONSET: "0.5"
 WHISPER_BEAM_SIZE: "8"
@@ -38,8 +38,8 @@ WHISPER_NATIVE_CONDITION_ON_PREVIOUS_TEXT: "false"
 NO_SPEECH_THRESHOLD: "0.8"
 LOG_PROB_THRESHOLD: "-0.8"
 COMPRESSION_RATIO_THRESHOLD: "2.4"
-CACHE_DIR: /.cache
-TORCH_HOME: /.cache/torch
+CACHE_DIR: "/.cache"
+TORCH_HOME: "/.cache/torch"
 ```
 
 `OPENAI_WHISPER1_MODEL` is unset so `whisper-1` follows `DEFAULT_MODEL`.
@@ -49,8 +49,9 @@ diarization, speaker resegmentation, and the existing `HF_TOKEN` Secret referenc
 are preserved. Native decoding ignores the retained `BATCH_SIZE: "2"`;
 Silero ignores the retained `VAD_OFFSET: "0.363"`.
 
-Empty `PRELOAD_MODEL` defers preparation to first use. The candidate downloads
-pinned original weights and converts them once on CPU, then reuses valid
+`PRELOAD_MODEL` prepares and loads the Egyptian model during startup. An
+uncached startup downloads pinned original weights and converts them once on CPU,
+then subsequent starts reuse valid
 completed conversions from the persistent cache. This needs several GB free
 for source weights, staging, and output, not just the approximately 819 MB
 converted artifact. CPU/RAM requirements and first-load duration have not been
@@ -58,7 +59,7 @@ measured. The retained main-container requests are 2 CPU / 8 GiB RAM and limits
 are 6 CPU / 10 GiB RAM; these are not validated conversion sizing.
 
 Silero also downloads into the persisted Torch Hub cache at `/.cache/torch`.
-First use requires network access unless all needed assets are already cached.
+Startup requires network access unless all needed assets are already cached.
 A healthy endpoint does not establish successful Egyptian model preparation.
 No transcription, inference, conversion-as-test, benchmarks, or GPU smoke tests
 are part of pre-deployment verification.
@@ -66,7 +67,7 @@ are part of pre-deployment verification.
 ## Capacity and retained settings
 
 - The service keeps simple serving mode, one GPU worker, CPU alignment, and
-  CUDA `int8_float16`. GPU fit for this candidate has not been established.
+  CUDA `int8_float16`. Release-specific GPU fit has not been established.
 - The NVIDIA device plugin exposes the physical GPU as four time-sliced
   `nvidia.com/gpu` slots. This pod requests one slot. Time slicing does **not**
   partition VRAM, so all four potential clients share the 6 GiB device memory
@@ -84,23 +85,50 @@ are part of pre-deployment verification.
   A 400 MiB input can therefore consume substantially more pod memory during
   decoding and processing.
 
-### Cache inspection: 2026-11-04 13:45 UTC
+### Startup budget and deployment checks
 
-The existing 30 GiB PVC had 31,526,391,808 bytes total and 10,285,342,720 bytes
-free (9.58 GiB) at `/.cache`, providing several GB of preparation headroom.
-This is a point-in-time observation, not a measured peak-space requirement;
-recheck before an approved trial. If several GB are no longer available, stop
-and propose a storage change without deleting cache data or using another PVC.
+The startup probe allows approximately 60 minutes (360 failures at 10-second
+intervals). Kubernetes defers liveness and readiness probes until startup passes,
+so liveness does not repeatedly kill a model still preparing within that budget.
+The Deployment progress deadline is 75 minutes and the Helm timeout is 90 minutes,
+leaving additional time for scheduling, image pulls, and NLTK initialization.
+These are conservative operational limits, not measured preparation times or a
+guarantee that conversion fits. A longer failed rollout also delays remediation.
 
-The running service user was UID/GID `0:0`. The cache root and inspected model,
-Torch Hub, NLTK, and Matplotlib directories were owned by `root:root`, mode
-`755`, and passed runtime write-access checks. No probe files were created;
-permissions were assessed without a write test. `/.cache/huggingface` did not
-exist; `HF_HOME` remains `/.cache`. The mount was read-write `ext4` on the
-Longhorn volume backing the existing PVC. The inspected candidate image config
-also defaults to UID 0; its source-revision entrypoint does not switch users.
-This supports cache permission compatibility, not successful model preparation.
-Recheck image identity if the moving candidate tag changes.
+Before approval, check current node CPU/RAM availability, cache free space,
+read/write access for the service user, and egress policies. Keep several GB
+free beyond the completed artifact; if space is insufficient, stop and propose
+a storage change without deleting data or using another PVC. The release
+Dockerfile defaults to root; preserve the existing security settings and check
+the actual runtime user after deployment.
+
+Read-only inspection on 2026-11-11 confirmed the GTX 1660 SUPER and writable
+cache access as UID 0. The 30 GiB cache had about 6.5 GiB free. This is several
+GB of headroom, but does not establish peak preparation-space requirements.
+The node had 8 CPU and approximately 30.3 GiB allocatable RAM; observed usage
+was 1.475 CPU and 13,988 MiB RAM. Scheduled requests consumed 78% of CPU and
+76% of RAM, including this service. Limits are overcommitted, so current idle
+capacity is not guaranteed during concurrent load. Preserve the existing
+2 CPU / 8 GiB requests and 6 CPU / 10 GiB limits pending actual startup evidence.
+
+Initial preparation needs DNS and HTTPS access to Hugging Face and its download
+hosts, plus GitHub/Torch Hub for Silero. Existing cache contents alone do not
+establish network access for missing assets. The repository's NetworkPolicies
+do not select this workload or restrict its egress; live policies confirmed this
+on 2026-11-11. DNS/HTTPS reachability and external network controls were not tested.
+
+After an approved rollout, inspect startup logs for all of these messages using
+the full Egyptian model ID:
+
+- `startup: preloading model <id>`
+- `Model <id> loaded successfully`
+- `startup: preloaded model <id>`
+
+`startup: failed to preload model '<id>': ...` means preload failed even when
+the pod becomes Ready. The application logs preload failures and continues
+serving. Record whether preparation created or reused a completed conversion;
+do not treat a healthy endpoint as evidence of successful model loading.
+Do not run inference, benchmarks, or model-quality evaluations for verification.
 
 ## Internal API and monitoring
 
@@ -165,18 +193,18 @@ requires separate approval.
 
 ## Rollback: restore image and complete configuration
 
-The complete pre-trial HelmRelease is recorded in Git at
-`79744f75048d6159b92fd7a4759b141015ad4915`, path
+The complete pre-upgrade HelmRelease is recorded in Git at
+`23fac51e0894c4b09d80666473b55b7b506f8b6e`, path
 `cluster/apps/default/whisperx-asr-service/whisperx-asr-service-helm-release.yaml`.
-It includes image tag `0.4.7`, `pullPolicy: IfNotPresent`, the entire previous
-environment (including `PRELOAD_MODEL: large-v3`), Secret references, probes,
+It includes image tag `egyptian-turbo-test`, `pullPolicy: IfNotPresent`, the entire
+previous environment (including empty `PRELOAD_MODEL`), Secret references, probes,
 resources, security settings, and persistent-volume mounts. There is no token
 value in this HelmRelease; retain the existing encrypted Secret unchanged.
 
 1. Inspect the complete saved configuration from the repository root:
 
    ```sh
-   git show 79744f75048d6159b92fd7a4759b141015ad4915:cluster/apps/default/whisperx-asr-service/whisperx-asr-service-helm-release.yaml
+   git show 23fac51e0894c4b09d80666473b55b7b506f8b6e:cluster/apps/default/whisperx-asr-service/whisperx-asr-service-helm-release.yaml
    ```
 
 2. Prepare the rollback by restoring the **whole** HelmRelease, not just its
@@ -184,15 +212,17 @@ value in this HelmRelease; retain the existing encrypted Secret unchanged.
    edits before running it:
 
    ```sh
-   git restore --source=79744f75048d6159b92fd7a4759b141015ad4915 -- cluster/apps/default/whisperx-asr-service/whisperx-asr-service-helm-release.yaml
+   git restore --source=23fac51e0894c4b09d80666473b55b7b506f8b6e -- cluster/apps/default/whisperx-asr-service/whisperx-asr-service-helm-release.yaml
    git diff -- cluster/apps/default/whisperx-asr-service/whisperx-asr-service-helm-release.yaml
    ```
 
 3. Render and validate the restored configuration. Verify both containers use
-   `ghcr.io/shadyf/whisperx-asr-service:0.4.7`, `PRELOAD_MODEL` is `large-v3`, and
-   all Egyptian-only environment additions are gone. After explicit approval,
+   `ghcr.io/shadyf/whisperx-asr-service:egyptian-turbo-test`, `PRELOAD_MODEL` is
+   empty, and the previous environment and timeout settings are restored. After explicit approval,
    submit the rollback through the normal GitOps review and deployment process.
 
 Keep PVC `whisperx-asr-service-cache` and its contents throughout rollback.
 Do not delete cache entries or repurpose another PVC. Image-only rollback leaves
-trial model selection and decoder controls active and is not sufficient.
+startup preloading enabled and is not sufficient. The previous candidate tag is
+mutable: record the live imageID before deployment if exact binary rollback is
+required; restoring the tag alone cannot guarantee identical image contents.
