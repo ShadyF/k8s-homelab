@@ -7,7 +7,7 @@ metadata:
 spec:
   interval: 15m
   # Allow image pulls and init work beyond the unmeasured model startup budget.
-  timeout: 90m
+  timeout: 30m
   chart:
     spec:
       # renovate: registryUrl=https://bjw-s-labs.github.io/helm-charts
@@ -28,7 +28,7 @@ spec:
   dependsOn:
     - name: longhorn
       namespace: longhorn-system
-  # Allow 75 minutes for rollout progress, including cold image pulls and init work.
+  # Allow 25 minutes for rollout progress, including cold image pulls and init work.
   postRenderers:
     - kustomize:
         patches:
@@ -40,7 +40,7 @@ spec:
             patch: |
               - op: add
                 path: /spec/progressDeadlineSeconds
-                value: 4500
+                value: 1500
   values:
     # Keep the model cache on its own persistent Longhorn volume.
     controllers:
@@ -105,7 +105,7 @@ spec:
                   secretKeyRef:
                     name: whisperx-asr-service
                     key: HF_TOKEN
-            # Budget 60 minutes for unmeasured cold model download and CPU conversion.
+            # Budget 20 minutes for unmeasured cold model download and CPU conversion.
             # Startup gates liveness/readiness; preload failure can still leave the API serving.
             probes:
               startup:
@@ -117,7 +117,7 @@ spec:
                     port: &port 9000
                   periodSeconds: 10
                   timeoutSeconds: 5
-                  failureThreshold: 360
+                  failureThreshold: 120
               readiness: &healthProbe
                 enabled: true
                 custom: true

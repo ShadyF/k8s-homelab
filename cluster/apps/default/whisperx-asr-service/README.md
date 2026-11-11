@@ -87,12 +87,12 @@ are part of pre-deployment verification.
 
 ### Startup budget and deployment checks
 
-The startup probe allows approximately 60 minutes (360 failures at 10-second
+The startup probe allows approximately 20 minutes (120 failures at 10-second
 intervals). Kubernetes defers liveness and readiness probes until startup passes,
 so liveness does not repeatedly kill a model still preparing within that budget.
-The Deployment progress deadline is 75 minutes and the Helm timeout is 90 minutes,
+The Deployment progress deadline is 25 minutes and the Helm timeout is 30 minutes,
 leaving additional time for scheduling, image pulls, and NLTK initialization.
-These are conservative operational limits, not measured preparation times or a
+These are operational limits, not measured preparation times or a
 guarantee that conversion fits. A longer failed rollout also delays remediation.
 
 Before approval, check current node CPU/RAM availability, cache free space,
