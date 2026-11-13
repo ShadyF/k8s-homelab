@@ -38,7 +38,7 @@ spec:
       initContainers:
         - name: bootstrap
           # renovate: datasource=docker depName=mcr.microsoft.com/devcontainers/universal versioning=docker
-          image: mcr.microsoft.com/devcontainers/universal:6.1.12-noble
+          image: mcr.microsoft.com/devcontainers/universal:6.1.14-noble
           imagePullPolicy: IfNotPresent
           command:
             - /bin/bash
@@ -92,7 +92,7 @@ spec:
       containers:
         - name: openchamber
           # renovate: datasource=docker depName=mcr.microsoft.com/devcontainers/universal versioning=docker
-          image: mcr.microsoft.com/devcontainers/universal:6.1.12-noble
+          image: mcr.microsoft.com/devcontainers/universal:6.1.14-noble
           imagePullPolicy: IfNotPresent
           # Start OpenChamber directly so it manages its child and receives shutdown signals.
           command:

@@ -34,7 +34,7 @@ spec:
       terminationGracePeriodSeconds: 60
       initContainers:
         - name: bootstrap
-          image: mcr.microsoft.com/devcontainers/universal:6.1.12-noble
+          image: mcr.microsoft.com/devcontainers/universal:6.1.14-noble
           imagePullPolicy: IfNotPresent
           command:
             - /bin/bash
@@ -150,7 +150,7 @@ spec:
               subPath: .local/share/opencode/worktree
       containers:
         - name: openchamber
-          image: mcr.microsoft.com/devcontainers/universal:6.1.12-noble
+          image: mcr.microsoft.com/devcontainers/universal:6.1.14-noble
           imagePullPolicy: IfNotPresent
           command:
             - /bin/bash
