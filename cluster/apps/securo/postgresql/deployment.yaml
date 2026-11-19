@@ -89,9 +89,9 @@ spec:
                 - /bin/sh
                 - -c
                 - pg_isready -h 127.0.0.1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"
-            periodSeconds: 10
+            periodSeconds: 30
             timeoutSeconds: 5
-            failureThreshold: 6
+            failureThreshold: 3
           livenessProbe:
             exec:
               command:
@@ -99,9 +99,9 @@ spec:
                 - -c
                 - pg_isready -h 127.0.0.1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"
             initialDelaySeconds: 30
-            periodSeconds: 20
+            periodSeconds: 60
             timeoutSeconds: 5
-            failureThreshold: 6
+            failureThreshold: 3
           resources:
             requests:
               cpu: 25m
