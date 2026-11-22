@@ -15,31 +15,6 @@ spec:
       labels:
         app: atuin-postgresql
     spec:
-      # Temporary cleanup of the PostgreSQL 18 backups left by the 18 to 19 migration.
-      # Remove this init container once it has run.
-      initContainers:
-        - name: remove-postgres-18-backup
-          image: postgres:19.0
-          command: [ "/bin/sh", "-c" ]
-          args:
-            - |
-              set -eu
-              base=/var/lib/postgresql
-
-              # Delete the v18 dump and data only when the v19 cluster exists, so the backup is never the last copy.
-              if [ -s "$base/19/docker/PG_VERSION" ]; then
-                rm -rf "$base/18-to-19.sql" "$base/18"
-                echo "Removed PostgreSQL 18 backups"
-              fi
-          resources:
-            requests:
-              cpu: 100m
-              memory: 100Mi
-            limits:
-              memory: 100Mi
-          volumeMounts:
-            - mountPath: /var/lib/postgresql
-              name: database
       containers:
         - name: postgresql
           image: postgres:19.0
