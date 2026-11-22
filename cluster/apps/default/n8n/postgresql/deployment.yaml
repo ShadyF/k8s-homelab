@@ -15,6 +15,50 @@ spec:
       labels:
         app: n8n-postgresql
     spec:
+      # Temporary one-time migration from PostgreSQL 18 to 19 by dump and restore.
+      # Remove this init container and the initdb volume once the upgrade is verified.
+      initContainers:
+        - name: dump-postgres-18
+          image: postgres:18
+          command: [ "/bin/sh", "-c" ]
+          args:
+            - |
+              set -eu
+              base=/var/lib/postgresql
+
+              # Run only while v18 data exists and v19 has not been initialized yet.
+              if [ -s "$base/19/docker/PG_VERSION" ] || [ ! -s "$base/18/docker/PG_VERSION" ]; then
+                echo "Nothing to migrate"
+                exit 0
+              fi
+
+              # Start v18 on the local socket only, so no client can write during the dump.
+              gosu postgres pg_ctl -D "$base/18/docker" -w -t 120 -o "-c listen_addresses=''" start
+              gosu postgres pg_dumpall -U "$POSTGRES_USER" -f "$base/18-to-19.sql"
+              gosu postgres pg_ctl -D "$base/18/docker" -w -t 60 -m fast stop
+
+              # Keep v18 data as a backup, under a name the v19 entrypoint does not treat as an old cluster.
+              mv "$base/18/docker" "$base/18/docker.pre-19"
+
+              # Let the v19 first-boot init restore the dump. Errors for the role and database that initdb already created are expected.
+              echo 'psql -v ON_ERROR_STOP=0 --username "$POSTGRES_USER" --dbname postgres -f /var/lib/postgresql/18-to-19.sql' > /docker-entrypoint-initdb.d/restore-18.sh
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: n8n-postgresql-secrets
+                  key: N8N_DB_USERNAME
+          resources:
+            requests:
+              cpu: 26m
+              memory: 100Mi
+            limits:
+              memory: 100Mi
+          volumeMounts:
+            - mountPath: /var/lib/postgresql
+              name: database
+            - mountPath: /docker-entrypoint-initdb.d
+              name: initdb
       containers:
         - name: postgresql
           image: postgres:19.0
@@ -46,7 +90,11 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/postgresql
               name: database
+            - mountPath: /docker-entrypoint-initdb.d
+              name: initdb
       volumes:
+        - name: initdb
+          emptyDir: {}
         - name: database
           persistentVolumeClaim:
             claimName: n8n-postgresql-data
