@@ -34,7 +34,8 @@ spec:
 
               # Start v18 on the local socket only, so no client can write during the dump.
               gosu postgres pg_ctl -D "$base/18/docker" -w -t 120 -o "-c listen_addresses=''" start
-              gosu postgres pg_dumpall -U "$POSTGRES_USER" -f "$base/18-to-19.sql"
+              # Root writes the file because the volume root is not writable by the postgres user.
+              gosu postgres pg_dumpall -U "$POSTGRES_USER" > "$base/18-to-19.sql"
               gosu postgres pg_ctl -D "$base/18/docker" -w -t 60 -m fast stop
 
               # Keep v18 data as a backup, under a name the v19 entrypoint does not treat as an old cluster.
