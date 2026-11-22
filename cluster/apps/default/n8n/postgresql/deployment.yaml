@@ -15,40 +15,22 @@ spec:
       labels:
         app: n8n-postgresql
     spec:
-      # Temporary one-time migration from PostgreSQL 18 to 19 by dump and restore.
-      # Remove this init container and the initdb volume once the upgrade is verified.
+      # Temporary cleanup of the PostgreSQL 18 backups left by the 18 to 19 migration.
+      # Remove this init container once it has run.
       initContainers:
-        - name: dump-postgres-18
-          image: postgres:18
+        - name: remove-postgres-18-backup
+          image: postgres:19.0
           command: [ "/bin/sh", "-c" ]
           args:
             - |
               set -eu
               base=/var/lib/postgresql
 
-              # Run only while v18 data exists and v19 has not been initialized yet.
-              if [ -s "$base/19/docker/PG_VERSION" ] || [ ! -s "$base/18/docker/PG_VERSION" ]; then
-                echo "Nothing to migrate"
-                exit 0
+              # Delete the v18 dump and data only when the v19 cluster exists, so the backup is never the last copy.
+              if [ -s "$base/19/docker/PG_VERSION" ]; then
+                rm -rf "$base/18-to-19.sql" "$base/18"
+                echo "Removed PostgreSQL 18 backups"
               fi
-
-              # Start v18 on the local socket only, so no client can write during the dump.
-              gosu postgres pg_ctl -D "$base/18/docker" -w -t 120 -o "-c listen_addresses=''" start
-              # Root writes the file because the volume root is not writable by the postgres user.
-              gosu postgres pg_dumpall -U "$POSTGRES_USER" > "$base/18-to-19.sql"
-              gosu postgres pg_ctl -D "$base/18/docker" -w -t 60 -m fast stop
-
-              # Keep v18 data as a backup, under a name the v19 entrypoint does not treat as an old cluster.
-              mv "$base/18/docker" "$base/18/docker.pre-19"
-
-              # Let the v19 first-boot init restore the dump. Errors for the role and database that initdb already created are expected.
-              echo 'psql -v ON_ERROR_STOP=0 --username "$POSTGRES_USER" --dbname postgres -f /var/lib/postgresql/18-to-19.sql' > /docker-entrypoint-initdb.d/restore-18.sh
-          env:
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: n8n-postgresql-secrets
-                  key: N8N_DB_USERNAME
           resources:
             requests:
               cpu: 26m
@@ -58,8 +40,6 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/postgresql
               name: database
-            - mountPath: /docker-entrypoint-initdb.d
-              name: initdb
       containers:
         - name: postgresql
           image: postgres:19.0
@@ -81,7 +61,8 @@ spec:
           lifecycle:
             preStop:
               exec:
-                command: [ "/usr/local/bin/pg_ctl", "stop", "-D", "/var/lib/postgresql/data", "-w", "-t", "60", "-m", "fast" ]
+                # pg_ctl refuses to run as root, and it reads the data directory from the image's PGDATA.
+                command: [ "gosu", "postgres", "pg_ctl", "stop", "-w", "-t", "60", "-m", "fast" ]
           resources:
             requests:
               cpu: 26m
@@ -91,11 +72,7 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/postgresql
               name: database
-            - mountPath: /docker-entrypoint-initdb.d
-              name: initdb
       volumes:
-        - name: initdb
-          emptyDir: {}
         - name: database
           persistentVolumeClaim:
             claimName: n8n-postgresql-data
