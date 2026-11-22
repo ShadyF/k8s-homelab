@@ -19,7 +19,7 @@ spec:
       # Remove this init container and the initdb volume once the upgrade is verified.
       initContainers:
         - name: dump-postgres-18
-          image: postgres:18
+          image: postgres:19
           command: [ "/bin/sh", "-c" ]
           args:
             - |
