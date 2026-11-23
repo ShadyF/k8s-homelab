@@ -77,3 +77,34 @@ data:
                 - [default, opencode-, opencode, dind, docker.io/library/docker, dockerd, docker-init, /usr/local/bin/dockerd, 0, AF_PACKET]
           override:
             exceptions: append
+
+        # Skip Docker build steps (apt-get, dpkg, ldconfig) run by BuildKit in the OpenCode DinD sidecar.
+        - rule: Drop and execute new binary in container
+          exceptions:
+            - name: dind_buildkit_build_steps
+              fields: [container.id]
+              comps: [startswith]
+              values:
+                - [buildkit/]
+          override:
+            exceptions: append
+
+        - rule: Fileless execution via memfd_create
+          exceptions:
+            - name: dind_buildkit_build_steps
+              fields: [container.id]
+              comps: [startswith]
+              values:
+                - [buildkit/]
+          override:
+            exceptions: append
+
+        - rule: Read sensitive file untrusted
+          exceptions:
+            - name: dind_buildkit_build_steps
+              fields: [container.id]
+              comps: [startswith]
+              values:
+                - [buildkit/]
+          override:
+            exceptions: append

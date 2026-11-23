@@ -41,6 +41,11 @@ spec:
 
     cleanPrometheusOperatorObjectNames: true
 
+    defaultRules:
+      disabled:
+        # Homelab memory requests exceed N-1 node capacity by design, so this never clears.
+        KubeMemoryOvercommit: true
+
     alertmanager:
       config:
         global:
