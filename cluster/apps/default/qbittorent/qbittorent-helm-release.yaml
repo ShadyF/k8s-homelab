@@ -28,6 +28,11 @@ spec:
           # Permission denied issues in qbittorrent container if fsGroup 1001 is not added.
           securityContext:
             fsGroup: 1001
+          # Resolve tracker names directly instead of trying every cluster search domain first.
+          dnsConfig:
+            options:
+              - name: ndots
+                value: "1"
         containers:
           main:
             image:
@@ -84,6 +89,9 @@ spec:
                 value: "am.i.mullvad.net"
               - name: TZ
                 value: "Africa/Cairo"
+              # Use IP targets so the health check does not depend on gluetun's DNS.
+              - name: HEALTH_TARGET_ADDRESSES
+                value: "1.1.1.1:443,8.8.8.8:443"
             probes:
               startup:
                 enabled: true
@@ -129,6 +137,7 @@ spec:
                 cpu: 265m
                 memory: 768Mi
               limits:
+                cpu: 500m
                 memory: 1Gi
 
     service:
