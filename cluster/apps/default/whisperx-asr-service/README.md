@@ -11,11 +11,11 @@ not support the Blackwell-specific CUDA target.
 ## Egyptian Turbo configuration
 
 The proposed GitOps configuration uses
-`ghcr.io/shadyf/whisperx-asr-service:0.4.8` with `pullPolicy: IfNotPresent`
+`ghcr.io/shadyf/whisperx-asr-service:0.4.9` with `pullPolicy: IfNotPresent`
 for both the main container and NLTK init container through the shared image
-anchor. The standard variant matches the GTX 1660 SUPER; `0.4.8-blackwell`
+anchor. The standard variant matches the GTX 1660 SUPER; `0.4.9-blackwell`
 is for RTX 50xx GPUs. See the versioned
-[Egyptian Turbo recipe](https://github.com/ShadyF/whisperx-asr-service/tree/v0.4.8#egyptian-turbo-opt-in).
+[Egyptian Turbo recipe](https://github.com/ShadyF/whisperx-asr-service/tree/v0.4.9#egyptian-turbo-opt-in).
 
 Deployment requires explicit approval. Do not merge, apply, reconcile, or restart
 the deployment before approval. Keep one replica with the `Recreate` strategy;
