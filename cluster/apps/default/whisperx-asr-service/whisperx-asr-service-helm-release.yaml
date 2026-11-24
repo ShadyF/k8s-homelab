@@ -56,7 +56,7 @@ spec:
           main:
             image: &whisperxImage
               repository: ghcr.io/shadyf/whisperx-asr-service
-              tag: "0.4.8"
+              tag: "0.4.9"
               pullPolicy: IfNotPresent
             securityContext:
               allowPrivilegeEscalation: false
