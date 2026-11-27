@@ -55,7 +55,7 @@ spec:
               value: "2.4.2"
             # renovate: datasource=npm depName=@openchamber/web
             - name: OPENCHAMBER_VERSION
-              value: "2.8.0"
+              value: "2.8.1"
             - name: AGENT_BROWSER_SOCKET_DIR
               value: /tmp/agent-browser
           securityContext:
