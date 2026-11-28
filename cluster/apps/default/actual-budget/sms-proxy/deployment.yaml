@@ -17,7 +17,6 @@ spec:
       labels:
         app: actual-budget-sms-proxy
     spec:
-      # TODO: Add requests and limits
       # TODO: Add readiness and liveness probes
       containers:
         - name: proxy
@@ -50,9 +49,10 @@ spec:
           resources:
             requests:
               cpu: 10m
-              memory: 225Mi
+              memory: 512Mi
             limits:
-              memory: 225Mi
+              cpu: 300m
+              memory: 512Mi
       volumes:
         - name: config-volume
           configMap:
